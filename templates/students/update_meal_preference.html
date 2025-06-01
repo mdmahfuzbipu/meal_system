@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
+    <h2 class="text-xl font-bold mb-4 text-blue-700">Update Meal Preference for {{ month }}</h2>
+
+    {% if existing %}
+        <p class="text-green-600 mb-2 font-semibold">Your current preference: 
+        {% if existing.prefers_beef %}Beef{% else %}Mutton{% endif %} and 
+        {% if existing.prefers_fish %}Fish{% else %}Egg{% endif %}
+        </p>
+   {% endif %}
+
+   <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Update Preference</button>
+   </form>
+
+</div>
+
+{% endblock %}

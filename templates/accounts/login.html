@@ -1,0 +1,233 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Boral | Log in</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{% static 'plugins/fontawesome-free/css/all.min.css' %}">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="{% static 'https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css' %}">
+    <!-- icheck bootstrap -->
+    <link rel="stylesheet" href="{% static 'plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{% static 'dist/css/adminlte.min.css' %}">
+    <!-- Google Font: Source Sans Pro -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    <!-- Google Recaptcha     -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+
+    <style>
+        .login-page {
+            background: url("{% static 'images/hall_room.jpg' %}") no-repeat center center fixed !important;
+            background-size: cover !important;
+        }
+
+
+        body {
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-attachment: fixed;
+        position: relative;
+    }
+
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(2.5px);
+        z-index: 1;
+    }
+
+    .login-card-body {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 15px;
+    color: #333;
+    }
+
+
+    .login-box,
+    .card {
+        position: relative;
+        z-index: 2;
+    }
+
+    .login-box {
+        background: rgba(255, 255, 255, 0.92);
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .login-logo a {
+        color: #fff;
+        text-shadow: 1px 1px 3px #000;
+    }
+
+    .icheck-primary label {
+    font-weight: 400;
+    font-size: 14px;
+    margin-left: 5px;
+    }
+
+    .btn-success {
+    font-weight: 600;
+    font-size: 16px;
+    padding: 6px 0;
+    }
+
+    .form-control:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 3px rgba(40, 167, 69, 0.5);
+    }
+
+        
+    </style>    
+    
+
+</head>
+
+<body class="hold-transition login-page">
+    <div class="login-box">
+        <div class="login-logo">
+            <a href="/"><img src="{% static 'images/bauet_logo.png' %}" alt="Hall Logo" style="height: 60px;"></a>
+            <br>
+            <h1 style="font-size: 24px; color: #333; font-weight: 700;">Boral Hall Meal Management System</h1>
+          </div>
+        <!-- /.login-logo -->
+        <div class="card">
+            <div class="card-body login-card-body">
+                <p class="login-box-msg" style="font-size: 15px; color: #555;">Log in to manage your meal</p>
+                {% if messages %}
+                <div class="col-12">
+                    {% for message in messages %}
+                    {% if message.tags == 'error' %}
+                    <div class="alert alert-danger text-center ">
+                        {{message }}
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger text-center">
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+              {% endif %}
+
+
+                <form action="{% url 'login' %}" method="post">
+                    {% csrf_token %}
+                    <div class="input-group mb-3 {% if form.login.errors %}border border-danger rounded p-2{% endif %}">
+                      <input type="text" name="login" class="form-control" placeholder="Email or Username" value="{{ form.data.login }}" required autofocus>
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-user"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% for error in form.login.errors %}
+                    <div class="text-danger small mt-1"><em>{{ error }}</em></div>
+                    {% endfor %}
+
+
+                    <div class="input-group mb-3 {% if form.password.errors %}border border-danger rounded p-2{% endif %}">
+                        <input id="password" required type="password" name='password' class="form-control" placeholder="Password" required>
+                        <div class="input-group-append">
+                            <div class="input-group-append">
+                               <button type="button" class="btn btn-outline-secondary p-0 px-2" id="togglePassword" aria-label="Toggle password visibility">
+                                  <i class="fas fa-eye-slash"></i>
+                               </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% for error in form.password.errors %}
+                    <div class="text-danger small mt-1"><em>{{ error }}</em></div>
+                    {% endfor %}
+
+                    <div class="form-group mb-3 {% if form.captcha.errors %}border border-danger rounded p-2{% endif %}">
+                        {{ form.captcha }}
+                        {% for error in form.captcha.errors %}
+                          <div class="text-danger mt-2">{{ error }}</div>
+                        {% endfor %}
+
+                    </div>
+                    <div class="row">
+                        <div class="col-8">
+                            <div class="icheck-primary">
+                                <input type="checkbox" id="remember">
+                                <label for="remember">
+                                    Remember Me
+                                </label>
+                            </div>
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-4">
+                            <button type="submit" class="btn btn-success btn-block">Log In</button>
+                        </div>
+
+
+                        <!-- /.col -->
+                    </div>
+                </form>
+
+
+                <p class="mb-0 mt-3 text-center">
+                    <a href="{% url 'login' %}" class="text-muted">Forgot password?</a>
+                  </p>
+                  
+
+            </div>
+            <!-- /.login-card-body -->
+        </div>
+    </div>
+    <!-- /.login-box -->
+
+    <!-- jQuery -->
+    <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+    <!-- Bootstrap 4 -->
+    <script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <!-- AdminLTE App -->
+    <script src="{% static 'dist/js/adminlte.min.js' %}"></script>
+    <!--render the reCAPTCHA widget-->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+    <!--Toggle Password Visibility-->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          const togglePassword = document.querySelector("#togglePassword");
+          const password = document.querySelector("#password");
+          const icon = togglePassword.querySelector("i");
+  
+          togglePassword.addEventListener("click", function () {
+              const type = password.getAttribute("type") === "password" ? "text" : "password";
+              password.setAttribute("type", type);
+  
+              icon.classList.toggle("fa-eye");
+              icon.classList.toggle("fa-eye-slash");
+          });
+      });
+    </script>
+  
+
+
+</body>
+
+</html>

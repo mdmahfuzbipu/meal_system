@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block page_title %}
+  <h1 class="text-white text-3xl font-bold">Dashboard</h1>
+{% endblock page_title %}
+
+{% block content %}
+<div class="min-h-screen p-6">
+  <div class="max-w-4xl mx-auto">
+
+    <div class="bg-white shadow-md rounded-xl p-6 mb-6 text-center ">
+      <h2 class="text-2xl font-bold mb-2 text-gray-800">Welcome, {{ user.username }}! 🎉</h2>
+      <p class="text-gray-600">You're logged into the <strong>Boral Meal Management System</strong>.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+      {% if user.role == 'student' %}
+      <!-- Student Card -->
+      <div class="bg-blue-500 text-white p-6 rounded-xl shadow-md flex justify-between items-center">
+        <div>
+          <h3 class="text-xl font-semibold">Student Dashboard</h3>
+          <p class="text-sm">Manage your meals and view your status.</p>
+          <a href="{% url 'student-dashboard' %}" class="mt-3 inline-block bg-white text-blue-600 px-4 py-2 rounded hover:bg-blue-100 transition">
+            Go to Dashboard
+          </a>
+        </div>
+        <div class="text-4xl">
+          <i class="fas fa-user-graduate"></i>
+        </div>
+      </div>
+
+      {% elif user.role == 'manager' %}
+      <!-- Manager Card -->
+      <div class="bg-green-500 text-white p-6 rounded-xl shadow-md flex justify-between items-center">
+        <div>
+          <h3 class="text-xl font-semibold">Manager Dashboard</h3>
+          <p class="text-sm">Issue tokens and manage student meals.</p>
+          <a href="{% url 'manager-dashboard' %}" class="mt-3 inline-block bg-white text-green-600 px-4 py-2 rounded hover:bg-green-100 transition">
+            Go to Dashboard
+          </a>
+        </div>
+        <div class="text-4xl">
+          <i class="fas fa-user-cog"></i>
+        </div>
+      </div>
+
+      {% elif user.is_superuser or user.role == 'admin' %}
+      <!-- Admin Card -->
+      <div class="bg-purple-600 text-white p-6 rounded-xl shadow-md flex justify-between items-center">
+        <div>
+          <h3 class="text-xl font-semibold">Admin Dashboard</h3>
+          <p class="text-sm">View analytics and manage all records.</p>
+          <a href="{% url 'admin-dashboard' %}" class="mt-3 inline-block bg-white text-purple-600 px-4 py-2 rounded hover:bg-purple-100 transition">
+            Go to Dashboard
+          </a><br>
+          <a href="/admin/" class="mt-2 inline-block underline text-sm hover:text-purple-300">Django Admin Panel</a>
+        </div>
+        <div class="text-4xl">
+          <i class="fas fa-user-shield"></i>
+        </div>
+      </div>
+
+      {% else %}
+      <!-- Error Card -->
+      <div class="bg-red-500 text-white p-6 rounded-xl shadow-md">
+        <h3 class="text-xl font-semibold">⚠ Role Error</h3>
+        <p class="text-sm">Your role is not assigned correctly.</p>
+      </div>
+      {% endif %}
+
+    </div>
+
+    <!-- Coming Soon Boxes -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+
+      <!-- Monthly Report -->
+      <div class="bg-gray-100 text-gray-700 p-6 rounded-xl shadow-md flex justify-between items-center">
+        <div>
+          <h3 class="text-xl font-semibold">Monthly Report</h3>
+          <p class="text-sm">Coming soon: View monthly meal summaries and insights.</p>
+          <span class="mt-3 inline-block bg-gray-300 text-white px-4 py-2 rounded cursor-not-allowed">Coming Soon</span>
+        </div>
+        <div class="text-4xl text-gray-400">
+          <i class="fas fa-chart-line"></i>
+        </div>
+      </div>
+
+      <!-- Meal Menu Planner -->
+      <div class="bg-gray-100 text-gray-700 p-6 rounded-xl shadow-md flex justify-between items-center">
+        <div>
+          <h3 class="text-xl font-semibold">Meal Menu Planner</h3>
+          <p class="text-sm">Coming soon: Plan and customize weekly meals.</p>
+          <span class="mt-3 inline-block bg-gray-300 text-white px-4 py-2 rounded cursor-not-allowed">Coming Soon</span>
+        </div>
+        <div class="text-4xl text-gray-400">
+          <i class="fas fa-utensils"></i>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+{% endblock content %}

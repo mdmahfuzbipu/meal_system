@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+  <!-- Daily Meal Status Header (Consistent with Dashboard) -->
+  <div class="px-4 sm:px-6 lg:px-8">
+    <div class="bg-green-800 p-4 rounded-xl shadow-sm inline-flex items-center space-x-3 w-fit">
+        <div>
+          <h2 class="text-2xl font-bold text-white"><i class="fas fa-calendar-alt text-blue-500 text-3xl"></i> Daily Meal Status Info</h2>
+          <p class="text-sm text-white">Track your current and monthly meal ON/OFF history</p>
+        </div>
+    </div>
+  </div>
+{% endblock page_title %}
+
+
+{% block content %}
+
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Status Sections Side by Side -->
+    <div class="flex flex-col md:flex-row gap-8">
+  
+      <!-- Today's Meal Section -->
+      <div class="w-full md:w-1/2">
+        <!-- Heading -->
+        <div class="mb-8 text-center">
+            <div class="inline-flex items-center gap-3 bg-gradient-to-r from-green-500 to-green-800 px-5 py-3 rounded-2xl shadow-md">
+              <i class="fas fa-calendar-day text-white text-xl animate-pulse"></i>
+              <h2 class="text-white text-lg sm:text-2xl font-semibold tracking-wide">Today's Meal Status</h2>
+            </div>
+            <div class="mt-2">
+              <i class="fas fa-angle-down text-green-600 text-2xl animate-bounce"></i>
+            </div>
+          </div>
+  
+        <!-- Card -->
+        <div class="rounded-xl shadow-lg overflow-hidden">
+          <div class="text-white px-5 py-4 transition-all duration-300"
+               {% if today_status == True %}
+                 style="background-image: linear-gradient(to right, #34d399, #059669);"
+               {% elif today_status == False %}
+                 style="background-image: linear-gradient(to right, #d62e2e, #b60b0b);"
+               {% else %}
+                 style="background-image: linear-gradient(to right, #d1d5db, #9ca3af);"
+               {% endif %}>
+            <div class="flex items-center space-x-3">
+              {% if today_status == True %}
+                <i class="fas fa-check-circle text-lg animate-pulse"></i>
+                <h3 class="text-lg font-semibold">Meal ON</h3>
+              {% elif today_status == False %}
+                <i class="fas fa-times-circle text-lg animate-pulse"></i>
+                <h3 class="text-lg font-semibold">Meal OFF</h3>
+              {% else %}
+                <i class="fas fa-exclamation-circle text-lg animate-pulse"></i>
+                <h3 class="text-lg font-semibold">Meal Not Set</h3>
+              {% endif %}
+            </div>
+            <p class="text-md text-white/80 mt-1">{{ today_date|date:"F j, Y (l)" }}</p>
+          </div>
+  
+          <div class="bg-white px-6 py-4 text-center">
+            {% if today_status == True %}
+              <p class="text-green-800 font-medium text-sm">You are scheduled to receive a meal today.</p>
+            {% elif today_status == False %}
+              <p class="text-red-700 font-medium text-sm">You've turned your meal OFF for today.</p>
+            {% else %}
+              <p class="text-gray-700 font-medium text-sm">You haven't updated your meal status yet.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+  
+      <!-- Tomorrow's Meal Section -->
+      <div class="w-full md:w-1/2">
+        <!-- Heading -->
+        <div class="mb-8 text-center">
+            <div class="inline-flex items-center gap-3 bg-gradient-to-r from-blue-700 to-blue-800 px-5 py-3 rounded-2xl shadow-md">
+              <i class="fas fa-calendar-plus text-white text-xl animate-pulse"></i>
+              <h2 class="text-white text-lg sm:text-2xl font-semibold tracking-wide">Tomorrow's Meal Status</h2>
+            </div>
+            <div class="mt-2">
+              <i class="fas fa-angle-down text-blue-400 text-2xl animate-bounce"></i>
+            </div>
+          </div>
+  
+        <!-- Card -->
+        <div class="rounded-xl shadow-lg overflow-hidden">
+          <div class="text-white px-5 py-4 transition-all duration-300"
+               {% if tomorrow_status == True %}
+                 style="background-image: linear-gradient(to right, #0071a5, #06098d);"
+               {% elif tomorrow_status == False %}
+                 style="background-image: linear-gradient(to right, #ce2c2c, #9c061f);"
+               {% else %}
+                 style="background-image: linear-gradient(to right, #d1d5db, #9ca3af);"
+               {% endif %}>
+            <div class="flex items-center space-x-3">
+              {% if tomorrow_status == True %}
+                <i class="fas fa-check-circle text-lg animate-pulse"></i>
+                <h3 class="text-lg font-semibold">Meal ON</h3>
+              {% elif tomorrow_status == False %}
+                <i class="fas fa-times-circle text-lg animate-pulse"></i>
+                <h3 class="text-lg font-semibold">Meal OFF</h3>
+              {% else %}
+                <i class="fas fa-exclamation-circle text-lg animate-pulse"></i>
+                <h3 class="text-lg font-semibold">Meal Not Set</h3>
+              {% endif %}
+            </div>
+            <p class="text-md text-white/80 mt-1">{{ tomorrow|date:"F j, Y (l)" }}</p>
+          </div>
+          
+
+          <div class="bg-white px-6 py-4 text-center">
+            {% if tomorrow_status is not None %}
+              <form method="post" action="{% url 'update_tomorrow_status' %}">
+                {% csrf_token %}
+                {% if tomorrow_status %}
+                  <button type="submit" class="text-sm bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full transition-all duration-300">
+                    Turn Meal OFF
+                  </button>
+                {% else %}
+                  <button type="submit" class="text-sm bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full transition-all duration-300">
+                    Turn Meal ON
+                  </button>
+                {% endif %}
+              </form>
+            {% else %}
+              <p class="text-sm text-gray-600 font-medium">No meal status found for tomorrow.</p>
+            {% endif %}
+          </div>
+
+            
+        </div>
+      </div>
+  
+    </div>
+  </div>  
+
+
+
+
+
+  <!-- Table Section Title -->
+  <div class="mb-4 text-center">
+    <h2 class="text-xl inline-block bg-green-800 font-bold text-white px-2 py-2 rounded-lg">This Month's Meal History</h2>
+    <p class="text-sm text-green-800 bg-white font-bold px-2 py-2 rounded-lg">Below is your daily meal status for the current month.</p>
+  </div>
+
+
+  <!-- Meal Status Table -->
+  <div class="overflow-x-auto rounded-lg shadow border border-gray-200">
+    <table class="min-w-full bg-white text-sm">
+      <thead>
+        <tr class="bg-green-200 text-green-900 text-center uppercase text-xs tracking-wider">
+          <th class="px-6 py-3 border-b">Date</th>
+          <th class="px-6 py-3 border-b">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entry in statuses %}
+          <tr class="hover:bg-green-50 transition-colors duration-150 text-center">
+            <td class="px-6 py-3 border-b">{{ entry.date }}</td>
+            <td class="px-6 py-3 border-b">
+              {% if entry.status %}
+                <span class="inline-block bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full">ON</span>
+              {% else %}
+                <span class="inline-block bg-red-100 text-red-800 text-xs font-semibold px-3 py-1 rounded-full">OFF</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="2" class="px-6 py-4 text-center text-gray-500">No records found for this month.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

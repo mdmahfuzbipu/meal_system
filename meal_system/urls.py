@@ -16,8 +16,26 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
+from django.conf import settings 
+from django.conf.urls.static import static
+
+
+from django.urls import path,include
+from accounts.views import role_aware_home
+
+
+handler403 = "meal_system.views.custom_permission_denied_view"
+
 
 urlpatterns = [
+    path("", role_aware_home, name="home"),
     path("admin/", admin.site.urls),
+    path("accounts/", include("accounts.urls")),
+    path("students/", include("students.urls")),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(
+        settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0]
+    )
