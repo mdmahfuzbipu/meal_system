@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+<div class="px-4 sm:px-6 lg:px-8">
+<div class="bg-green-800 p-4 rounded-xl shadow-sm inline-flex items-center space-x-3 w-fit">
+    <div>
+        <h2 class="text-2xl font-bold text-white">
+        <i class="fas fa-history text-yellow-300 text-3xl"></i>
+        Monthly Meal History
+        </h2>
+        <p class="text-sm text-white">Your daily ON/OFF status for {{ current_month }}</p>
+    </div>
+</div>
+</div>
+{% endblock page_title %}
+
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+
+  <!-- Back Button -->
+  <div>
+    <a href="{% url 'my_meal_status' %}" 
+    class="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-green-800 text-white px-4 py-2 rounded-full text-sm font-semibold shadow hover:from-green-700 hover:to-green-900 transition">
+    <i class="fas fa-arrow-left text-white"></i>
+    Back to Meal Status
+    </a>
+  </div>
+
+  <!-- Table -->
+  <div class="overflow-x-auto rounded-lg shadow border border-gray-200">
+    <table class="min-w-full bg-white text-sm">
+      <thead>
+        <tr class="bg-green-200 text-green-900 text-center uppercase text-xs tracking-wider">
+          <th class="px-6 py-3 border-b">Date</th>
+          <th class="px-6 py-3 border-b">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entry in statuses %}
+          <tr class="hover:bg-green-50 transition-colors duration-150 text-center">
+            <td class="px-6 py-3 border-b">{{ entry.date|date:"F j, Y (l)" }}</td>
+            <td class="px-6 py-3 border-b">
+              {% if entry.status %}
+                <span class="inline-block bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full">ON</span>
+              {% else %}
+                <span class="inline-block bg-red-100 text-red-800 text-xs font-semibold px-3 py-1 rounded-full">OFF</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="2" class="px-6 py-4 text-center text-gray-500">No records found for this month.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

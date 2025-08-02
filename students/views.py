@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.utils.timezone import now, localtime
+from django.utils import timezone
+from django.utils.timezone import now, localtime, make_aware
+from django.utils.dateformat import DateFormat
 
-
-from datetime import date, timedelta, time
-
+from datetime import date, timedelta, time, datetime
+from calendar import monthrange
 
 from .models import (
     DailyMealStatus, 
@@ -13,7 +14,7 @@ from .models import (
     StudentMealPreference
 )
 
-from .forms import StudentMealPrefereceForm
+from .forms import StudentMealPreferenceForm
 
 from calendar import monthrange
 
@@ -108,8 +109,6 @@ def update_tomorrow_meal_status(request):
     return redirect("my_meal_status")
 
 
-
-
 # get monthly meal preference
 def get_month_str(dt):
     return dt.strftime("%Y-%m")
@@ -146,52 +145,99 @@ def get_or_create_meal_pref(student, month_str):
     )
 
 
+@login_required
+def my_meal_preference(request):
+    student = Student.objects.get(user=request.user)
+    current_dt = localtime(now())
+    today = current_dt.date()
 
+    current_month_str = get_month_str(today)
+    next_month_date = (today.replace(day=1) + timedelta(days=32)).replace(day=1)
+    next_month_str = get_month_str(next_month_date)
 
+    current_month_display = DateFormat(today).format("F Y")
+    next_month_display = DateFormat(next_month_date).format("F Y")
 
+    cutoff_passed = today>=next_month_date
+
+    current_pref = get_or_create_meal_pref(student, current_month_str)
+    next_pref = get_or_create_meal_pref(student, next_month_str)
+
+    context = {
+        "page_title": "My Meal Preference",
+        "current_month": current_month_display,
+        "next_month": next_month_display,
+        "current_pref": current_pref,
+        "next_pref": next_pref,
+        "cutoff_passed": cutoff_passed,
+    }
+
+    return render(request, "students/my_meal_preference.html", context)
 
 
 @login_required
 def update_meal_preference(request):
     student = Student.objects.get(user=request.user)
     current_date = now().date()
-    next_month = (current_date.replace(day=1) + timedelta(days=32)).replace(day=1)
-    month_str = next_month.strftime("%Y-%m") # "2025-06"
-    
+    current_dt = localtime(now())
+    cutoff_dt = current_dt.replace(hour=18, minute=0, second=0, microsecond=0)
+
+    next_month_date = (current_date.replace(day=1) + timedelta(days=32)).replace(day=1)
+    month_str = get_month_str(next_month_date) # "2025-06"
+    month_display = DateFormat(next_month_date).format('F Y') # July 2025
+
+    # Get last day of current month
+    last_day = monthrange(current_date.year, current_date.month)[1]
+    cutoff_dt = current_date.replace(day=last_day)
+    cutoff_dt = datetime.combine(cutoff_dt, time(18, 0))  # 6:00 PM
+    cutoff_dt = timezone.make_aware(cutoff_dt)
+
     try:
         existing = StudentMealPreference.objects.get(student=student, month=month_str)
     except StudentMealPreference.DoesNotExist:
         existing = None
-        
-    
+
     if request.method == "POST":
-        form = StudentMealPrefereceForm(request.POST)
+        form = StudentMealPreferenceForm(request.POST, instance=existing)
         if form.is_valid():
-            if current_date >= next_month:
-                messages.error(request, "You can not change meal type after the month starts.")
+            if current_dt >= cutoff_dt:
+                messages.error(
+                    request, "You cannot change meal preference after the month starts and after 6:00 PM of the last day."
+                )
                 return redirect("update_meal_preference")
-            
-            prefers_beef = form.cleaned_data["prefers_beef"]
-            prefers_fish = form.cleaned_data["prefers_fish"]  
-            
-            StudentMealPreference.objects.update_or_create(
-                student=student,
-                month=month_str,
-                defaults={"prefers_beef": prefers_beef, "prefers_fish":prefers_fish}
-            )
-            messages.success(request, f"Meal preferences for {month_str} updated.")
-            return redirect("update_meal_preference")
+
+            meal_pref = form.save(commit=False)
+            meal_pref.student = student
+            meal_pref.month = month_str
+            meal_pref.save()
+
+            messages.success(request, f"Your Meal preferences for {month_display} updated.")
+            return redirect("my_meal_preference")
     else:
-        form = StudentMealPrefereceForm(initial={
-            "prefers_beef": existing.prefers_beef if existing else True,
-            "prefers_fish": existing.prefers_fish if existing else True
-        })
-        
+        form = StudentMealPreferenceForm(instance=existing)
+
     context = {
         "page_title":"Update Meal Preference",
         "form": form,
-        "month": month_str,
+        "month": month_display,
         "existing": existing,
     }
-    
+
     return render(request, "students/update_meal_preference.html", context)
+
+
+@login_required
+def meal_history(request):
+    student = request.user.student
+    current_month = now().strftime("%B %Y")  
+
+    statuses = DailyMealStatus.objects.filter(
+        student=student, date__year=now().year, date__month=now().month
+    ).order_by("date")
+
+    context = {
+        "page_title": "Monthly Meal History",
+        "statuses": statuses,
+        "current_month": current_month,
+    }
+    return render(request, "students/meal_history.html", context)

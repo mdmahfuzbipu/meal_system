@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+  <!-- Meal Preference Header -->
+  <div class="px-4 sm:px-6 lg:px-8">
+    <div class="bg-green-800 p-4 rounded-xl shadow-sm inline-flex items-center space-x-3 w-fit">
+        <div>
+          <h2 class="text-2xl font-bold text-white"><i class="fas fa-calendar-alt text-blue-500 text-3xl"></i> Monthly Meal Preference</h2>
+          <br>
+          <p class="text-lg text-white">Track your current and monthly meal preference</p>
+        </div>
+    </div>
+  </div>
+{% endblock page_title %}
+
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+
+  <!-- Preference Cards Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+    <!-- Current Month Preference -->
+    <div class="rounded-2xl shadow-md bg-white overflow-hidden flex flex-col">
+
+      <!-- Header -->
+      <div class="flex items-center justify-between bg-gradient-to-r from-green-500 to-green-800 px-5 py-4 text-white">
+        <div class="flex items-center gap-3">
+          <i class="fas fa-calendar-check text-xl animate-pulse"></i>
+          <h2 class="text-lg sm:text-2xl font-semibold">Current Month</h2>
+        </div>
+        <span class="bg-white text-green-800 font-bold text-sm px-3 py-1 rounded-full shadow">
+          {{ current_month }}
+        </span>
+      </div>
+
+      <!-- Body -->
+      <div class="p-5 space-y-4">
+        <!-- Beef -->
+        <div class="flex items-center gap-3">
+          <i class="fas fa-drumstick-bite text-xl text-green-700"></i>
+          <strong class="w-20">Beef:</strong>
+          <span class="inline-block px-3 py-1 rounded-full text-xs font-bold 
+            {% if current_pref.prefers_beef %}
+              bg-green-100 text-green-800
+            {% else %}
+              bg-red-100 text-red-800
+            {% endif %}">
+            {{ current_pref.prefers_beef|yesno:"ON,OFF" }}
+          </span>
+        </div>
+
+        <!-- Fish -->
+        <div class="flex items-center gap-3">
+          <i class="fas fa-fish text-xl text-blue-700"></i>
+          <strong class="w-20">Fish:</strong>
+          <span class="inline-block px-3 py-1 rounded-full text-xs font-bold 
+            {% if current_pref.prefers_fish %}
+              bg-green-100 text-green-800
+            {% else %}
+              bg-red-100 text-red-800
+            {% endif %}">
+            {{ current_pref.prefers_fish|yesno:"ON,OFF" }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Next Month Preference -->
+    <div class="rounded-2xl shadow-md bg-white overflow-hidden flex flex-col">
+
+      <!-- Header -->
+      <div class="flex items-center justify-between bg-gradient-to-r from-blue-600 to-blue-900 px-5 py-4 text-white">
+        <div class="flex items-center gap-3">
+          <i class="fas fa-calendar-plus text-xl animate-pulse"></i>
+          <h2 class="text-lg sm:text-2xl font-semibold">Next Month</h2>
+        </div>
+        <span class="bg-white text-blue-800 font-bold text-sm px-3 py-1 rounded-full shadow">
+          {{ next_month }}
+        </span>
+      </div>
+
+      <!-- Body -->
+      <div class="p-5 space-y-4 flex-grow">
+        <!-- Beef -->
+        <div class="flex items-center gap-3">
+          <i class="fas fa-drumstick-bite text-xl text-green-700"></i>
+          <strong class="w-20">Beef:</strong>
+          <span class="inline-block px-3 py-1 rounded-full text-xs font-bold 
+            {% if next_pref.prefers_beef %}
+              bg-green-100 text-green-800
+            {% else %}
+              bg-red-100 text-red-800
+            {% endif %}">
+            {{ next_pref.prefers_beef|yesno:"ON,OFF" }}
+          </span>
+        </div>
+
+        <!-- Fish -->
+        <div class="flex items-center gap-3">
+          <i class="fas fa-fish text-xl text-blue-700"></i>
+          <strong class="w-20">Fish:</strong>
+          <span class="inline-block px-3 py-1 rounded-full text-xs font-bold 
+            {% if next_pref.prefers_fish %}
+              bg-green-100 text-green-800
+            {% else %}
+              bg-red-100 text-red-800
+            {% endif %}">
+            {{ next_pref.prefers_fish|yesno:"ON,OFF" }}
+          </span>
+        </div>
+
+        <!-- Change Button or Warning -->
+        {% if cutoff_passed %}
+          <div class="mt-4 flex items-center gap-2 text-yellow-800 bg-yellow-100 px-4 py-2 rounded-lg shadow">
+            <i class="fas fa-exclamation-triangle text-lg"></i>
+            <span class="text-sm font-medium">You can no longer change your preference for next month.</span>
+          </div>
+        {% else %}
+          <div class="mt-4">
+            <a href="{% url 'update_meal_preference' %}" class="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-md shadow transition">
+              <i class="fas fa-edit mr-1"></i> Change Preference
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Info Box -->
+  <div class="bg-blue-100 text-blue-900 rounded-xl px-5 py-4 text-sm font-medium shadow flex items-center gap-3">
+    <i class="fas fa-info-circle text-lg text-blue-700"></i>
+    If you choose <strong>"OFF"</strong> for Beef or Fish, you will receive Mutton or Egg instead.
+  </div>
+
+</div>
+
+
+{% endblock %}

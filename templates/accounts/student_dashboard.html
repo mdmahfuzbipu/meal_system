@@ -1,85 +1,93 @@
 {% extends 'base.html' %}
 
 {% block page_title %}
-  <!-- Header -->
-  <div class="px-4 sm:px-6 lg:px-8">
-    <div class="bg-green-800 p-4 rounded-xl shadow-sm inline-flex items-center space-x-3 w-fit">
-      <div>
-        <h2 class="text-2xl font-bold text-white"><i class="fas fa-user-graduate text-blue-600 text-3xl"></i>  Student Dashboard</h2>
-        <p class="text-sm text-white">Quickly view your meal plans and update your preferences easily</p>
-      </div>
-    </div> 
-  </div>
+<!-- Header -->
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="bg-green-800 p-4 rounded-xl shadow-sm inline-flex items-center space-x-3 w-fit">
+    <div>
+      <h2 class="text-2xl font-bold text-white">
+        <i class="fas fa-user-graduate text-blue-400 text-3xl mr-2"></i>
+        Student Dashboard
+      </h2>
+      <p class="text-sm text-white">Quickly view your meal plans and update your preferences easily</p>
+    </div>
+  </div> 
+</div>
 {% endblock page_title %}
 
 {% block content %}
-<div class="p-6 sm:p-8">  
-  
-  <!-- Cards Grid -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+<div class="px-4 sm:px-6 lg:px-8 py-8">
 
-    <!-- Toggle Tomorrow Meal -->
-    <div class="bg-yellow-500 text-white rounded-2xl shadow-md p-5 flex justify-between items-center">
+  <!-- Cards Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+    <!-- Tomorrow's Meal Toggle -->
+    <div class="rounded-2xl shadow-md p-5 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white flex justify-between items-center">
       <div>
         <h3 class="text-lg font-semibold mb-2">Update Tomorrow's Meal</h3>
-          <a href="{% url 'my_meal_status' %}" class="bg-white text-yellow-600 font-semibold px-4 py-2 rounded-md hover:bg-yellow-100 transition inline-block">
-            Go to Meal Status Page
-          </a>
+        <a href="{% url 'my_meal_status' %}"
+           class="bg-white text-yellow-800 font-bold px-4 py-2 rounded-md hover:bg-yellow-100 transition inline-block text-sm">
+          Go to Meal Status
+        </a>
       </div>
-      <div class="text-white text-4xl">
+      <div class="text-4xl">
         <i class="fas fa-utensils"></i>
       </div>
     </div>
 
-    <!-- View My Meal Status -->
-    <a href="{% url 'my_meal_status' %}" class="bg-blue-500 text-white rounded-2xl shadow-md p-5 flex justify-between items-center hover:bg-blue-600 transition">
+    <!-- Daily Meal Status -->
+    <a href="{% url 'my_meal_status' %}"
+       class="rounded-2xl shadow-md p-5 bg-gradient-to-r from-blue-500 to-blue-700 text-white flex justify-between items-center hover:from-blue-600 hover:to-blue-800 transition">
       <div>
-        <h3 class="text-lg font-semibold mb-1">My Meal Status</h3>
-        <p class="text-sm text-white/90">Check your daily ON/OFF meal records</p>
+        <h3 class="text-lg font-semibold mb-1">View Daily Meal Status</h3>
+        <p class="text-sm text-white/90">Check your daily ON/OFF history</p>
       </div>
-      <div class="text-white text-4xl">
-        <i class="fas fa-table"></i>
+      <div class="text-4xl">
+        <i class="fas fa-calendar-day"></i>
       </div>
     </a>
 
-    <!-- View Monthly Meal Type -->
-    <a href="{% url 'update_meal_preference' %}" class="bg-indigo-500 text-white rounded-2xl shadow-md p-5 flex justify-between items-center hover:bg-indigo-600 transition">
+    <!-- Monthly Meal Preference -->
+    <a href="{% url 'my_meal_preference' %}"
+       class="rounded-2xl shadow-md p-5 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white flex justify-between items-center hover:from-indigo-600 hover:to-indigo-800 transition">
       <div>
-        <h3 class="text-lg font-semibold mb-1">Update Meal Type</h3>
-        <p class="text-sm text-white/90">View & update your selected monthly meal type</p>
+        <h3 class="text-lg font-semibold mb-1">Change Meal Preferences</h3>
+        <p class="text-sm text-white/90">View & update monthly meal types</p>
       </div>
-      <div class="text-white text-4xl">
+      <div class="text-4xl">
         <i class="fas fa-drumstick-bite"></i>
       </div>
     </a>
 
     <!-- Monthly Summary -->
-    <a href="{% url 'login' %}" class="bg-green-500 text-white rounded-2xl shadow-md p-5 flex justify-between items-center hover:bg-green-600 transition">
+    <a href="{% url 'home' %}" 
+       class="rounded-2xl shadow-md p-5 bg-gradient-to-r from-green-500 to-green-700 text-white flex justify-between items-center hover:from-green-600 hover:to-green-800 transition">
       <div>
         <h3 class="text-lg font-semibold mb-1">Monthly Summary</h3>
-        <p class="text-sm text-white/90">Track total ON/OFF days & costs</p>
+        <p class="text-sm text-white/90">Track your costs and ON/OFF days</p>
       </div>
-      <div class="text-white text-4xl">
-        <i class="fas fa-chart-bar"></i>
+      <div class="text-4xl">
+        <i class="fas fa-chart-line"></i>
       </div>
     </a>
 
-    <!-- Request Token (if applicable) -->
-    <a href="{% url 'login' %}" class="bg-purple-500 text-white rounded-2xl shadow-md p-5 flex justify-between items-center hover:bg-purple-600 transition">
+    <!-- Request Token -->
+    <a href="{% url 'home' %}"
+       class="rounded-2xl shadow-md p-5 bg-gradient-to-r from-purple-500 to-purple-700 text-white flex justify-between items-center hover:from-purple-600 hover:to-purple-800 transition">
       <div>
-        <h3 class="text-lg font-semibold mb-1">Request Meal Token</h3>
-        <p class="text-sm text-white/90">Get your token if meal is ON</p>
+        <h3 class="text-lg font-semibold mb-1">Request Token</h3>
+        <p class="text-sm text-white/90">Collect token if today's meal is ON</p>
       </div>
-      <div class="text-white text-4xl">
+      <div class="text-4xl">
         <i class="fas fa-ticket-alt"></i>
       </div>
     </a>
 
-    <!-- Coming Soon Placeholder -->
-    <div class="bg-gray-300 text-gray-700 rounded-2xl shadow-md p-5 flex justify-between items-center cursor-not-allowed">
+    <!-- Coming Soon -->
+    <div class="rounded-2xl shadow-md p-5 bg-gradient-to-r from-gray-300 to-gray-400 text-gray-700 flex justify-between items-center cursor-not-allowed">
       <div>
         <h3 class="text-lg font-semibold mb-1">Coming Soon</h3>
-        <p class="text-sm">More features are on the way!</p>
+        <p class="text-sm">More features on the way!</p>
       </div>
       <div class="text-4xl">
         <i class="fas fa-tools"></i>

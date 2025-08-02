@@ -139,42 +139,15 @@
 
 
 
-  <!-- Table Section Title -->
-  <div class="mb-4 text-center">
-    <h2 class="text-xl inline-block bg-green-800 font-bold text-white px-2 py-2 rounded-lg">This Month's Meal History</h2>
-    <p class="text-sm text-green-800 bg-white font-bold px-2 py-2 rounded-lg">Below is your daily meal status for the current month.</p>
-  </div>
+    <!-- History Link -->
+    <div class="mt-10 text-center">
+      <a href="{% url 'meal_history' %}" class="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg shadow transition">
+        <i class="fas fa-list-alt mr-1"></i> View Full Monthly Meal History
+      </a>
+    </div>
 
 
-  <!-- Meal Status Table -->
-  <div class="overflow-x-auto rounded-lg shadow border border-gray-200">
-    <table class="min-w-full bg-white text-sm">
-      <thead>
-        <tr class="bg-green-200 text-green-900 text-center uppercase text-xs tracking-wider">
-          <th class="px-6 py-3 border-b">Date</th>
-          <th class="px-6 py-3 border-b">Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for entry in statuses %}
-          <tr class="hover:bg-green-50 transition-colors duration-150 text-center">
-            <td class="px-6 py-3 border-b">{{ entry.date }}</td>
-            <td class="px-6 py-3 border-b">
-              {% if entry.status %}
-                <span class="inline-block bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full">ON</span>
-              {% else %}
-                <span class="inline-block bg-red-100 text-red-800 text-xs font-semibold px-3 py-1 rounded-full">OFF</span>
-              {% endif %}
-            </td>
-          </tr>
-        {% empty %}
-          <tr>
-            <td colspan="2" class="px-6 py-4 text-center text-gray-500">No records found for this month.</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+
 </div>
 
 {% endblock %}

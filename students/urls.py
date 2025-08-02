@@ -8,5 +8,11 @@ urlpatterns = [
         views.update_tomorrow_meal_status,
         name="update_tomorrow_status",
     ),
-    path("update-meal-preference", views.update_meal_preference, name="update_meal_preference"),
+    path(
+        "update-meal-preference",
+        views.update_meal_preference,
+        name="update_meal_preference",
+    ),
+    path("my-meal-preference", views.my_meal_preference, name="my_meal_preference"),
+    path("meal-history/", views.meal_history, name="meal_history"),
 ]

@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+import calendar
 
 # Create your models here.
 
@@ -79,6 +80,9 @@ class StudentMealPreference(models.Model):
             models.UniqueConstraint(fields=['student', 'month'], name='unique_student_month_preference')
         ]
     
+    def get_month_display_name(self):
+        return f"{calendar.month_name[self.month]}"
+
 
 class WeeklyMenu(models.Model):
     day_of_week = models.CharField(max_length=10, choices=WEEKDAY_CHOICES, unique=True)
@@ -124,7 +128,6 @@ class DailyMealCost(models.Model):
 
     def __str__(self):
         return f"{self.student.name} - {self.date} - {self.total_cost} Taka"
-
 
 
 class MonthlyMealSummary(models.Model):

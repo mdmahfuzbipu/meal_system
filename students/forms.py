@@ -1,5 +1,12 @@
 from django import forms
+from .models import StudentMealPreference
 
-class StudentMealPrefereceForm(forms.Form):
-    prefers_beef = forms.BooleanField(required=False, label="I prefer Beef")
-    prefers_fish = forms.BooleanField(required=False, label="I prefer Fish")
+class StudentMealPreferenceForm(forms.ModelForm):
+    class Meta:
+        model = StudentMealPreference
+        fields = ['prefers_beef', 'prefers_fish']
+        labels = {
+            'prefers_beef': 'Do you prefer Beef?',
+            'prefers_fish': 'Do you prefer Fish?',
+        }
+        
