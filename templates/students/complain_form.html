@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block page_title %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="bg-red-700 p-4 rounded-xl shadow-sm inline-flex items-center space-x-3 w-fit">
+    <div>
+      <h2 class="text-2xl font-bold text-white">
+        <i class="fas fa-exclamation-circle text-white-300 text-3xl mr-2"></i>
+        Submit a Complaint
+      </h2>
+      <p class="text-md text-white mt-1">Let us know any issue you're facing — we'll resolve it as soon as possible.</p>
+    </div>
+  </div> 
+</div>
+{% endblock page_title %}
+
+
+{% block content %}
+<div class="max-w-3xl mx-auto mt-10 bg-white p-8 rounded-2xl shadow-md">
+  <form method="post" class="space-y-6">
+    {% csrf_token %}
+
+    <!-- Name -->
+    <div>
+      <label class="block font-semibold text-gray-700 mb-1">Your Name</label>
+      {{ form.name|add_class:"w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-400" }}
+    </div>
+
+    <!-- Room Number -->
+    <div>
+      <label class="block font-semibold text-gray-700 mb-1">Room Number</label>
+      {{ form.room_number|add_class:"w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-400" }}
+    </div>
+
+    <!-- Phone -->
+    <div>
+      <label class="block font-semibold text-gray-700 mb-1">Phone Number</label>
+      {{ form.phone|add_class:"w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-400" }}
+    </div>
+
+    <!-- Description -->
+    <div>
+      <label class="block font-semibold text-gray-700 mb-1">Complaint Description</label>
+      {{ form.description|add_class:"w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-400" }}
+    </div>
+
+    <!-- Submit Button -->
+    <div class="text-right">
+      <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded-md font-bold hover:bg-red-700 transition">
+        Submit Complaint
+      </button>
+    </div>
+
+  </form>
+</div>
+{% endblock %}

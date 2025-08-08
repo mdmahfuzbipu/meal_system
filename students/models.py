@@ -86,7 +86,11 @@ class StudentMealPreference(models.Model):
 
 class WeeklyMenu(models.Model):
     day_of_week = models.CharField(max_length=10, choices=WEEKDAY_CHOICES, unique=True)
-    meal_items = models.TextField()
+    meal_items = models.TextField() # short - bread,chicken,egg
+    
+    breakfast = models.CharField(max_length=100, blank=True) # details
+    lunch = models.CharField(max_length=100, blank=True)
+    dinner = models.CharField(max_length=100, blank=True)
     
     includes_beef = models.BooleanField(default=False)
     includes_fish = models.BooleanField(default=True)
@@ -136,7 +140,7 @@ class MonthlyMealSummary(models.Model):
     total_cost = models.DecimalField(max_digits=8, decimal_places=2)
     total_on_days = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['student', 'month'], name='unique_monthly_summary')
@@ -144,3 +148,17 @@ class MonthlyMealSummary(models.Model):
 
     def __str__(self):
         return f"{self.student.name} - {self.month} - Total: {self.total_cost} Taka"
+
+
+class Complain(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    room_number = models.CharField(max_length=20)
+    phone = models.CharField(max_length=20)
+    description = models.TextField()
+    is_resolved = models.BooleanField(default=False)
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+
+    def __str__(self):
+        return f"Complaint: {self.description[:30]}... - Room {self.room_number}"

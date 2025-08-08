@@ -7,6 +7,7 @@ from .models import (
     DailyMealStatus,
     DailyMealCost,
     MonthlyMealSummary,
+    Complain,
 )
 
 
@@ -63,3 +64,10 @@ class MonthlyMealSummaryAdmin(admin.ModelAdmin):
     list_display = ("student", "month", "total_on_days", "total_cost")
     list_filter = ("month",)
     search_fields = ("student__name",)
+
+
+@admin.register(Complain)
+class ComplainAdmin(admin.ModelAdmin):
+    list_display = ("name", "room_number", "phone", "is_resolved", "submitted_at")
+    list_filter = ("is_resolved",)
+    search_fields = ("name", "room_number", "phone", "description")

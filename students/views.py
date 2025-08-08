@@ -11,10 +11,11 @@ from calendar import monthrange
 from .models import (
     DailyMealStatus, 
     Student,
-    StudentMealPreference
+    StudentMealPreference,
+    WeeklyMenu
 )
 
-from .forms import StudentMealPreferenceForm
+from .forms import StudentMealPreferenceForm, ComplainForm
 
 from calendar import monthrange
 
@@ -241,3 +242,33 @@ def meal_history(request):
         "current_month": current_month,
     }
     return render(request, "students/meal_history.html", context)
+
+@login_required
+def weekly_menu_view(request):
+    weekly_menu = WeeklyMenu.objects.order_by(
+        "id"
+    )  
+    return render(
+        request,
+        "students/weekly_menu.html",
+        {"page_title": "Weekly Menu", "weekly_menu": weekly_menu},
+    )
+
+
+@login_required
+def complain_create(request):
+    if request.method == "POST":
+        form = ComplainForm(request.POST)
+        if form.is_valid():
+            complain = form.save(commit=False)
+            complain.user = request.user
+            complain.save()
+            messages.success(request, "Your complaint has been submitted successfully.")
+            return redirect("home")  
+    else:
+        form = ComplainForm()
+    return render(
+        request,
+        "students/complain_form.html",
+        {"page_title": "Complain Box", "form": form},
+    )

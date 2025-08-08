@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block page_title %}
+<div class="px-4 sm:px-6 lg:px-8">
+<div class="bg-gradient-to-r from-yellow-600 to-yellow-800 text-white p-4 rounded-xl shadow-sm inline-flex items-center space-x-3 w-fit hover:from-yellow-700 hover:to-yellow-900 transition">
+  <div>
+    <h2 class="text-2xl font-bold text-white">
+      <i class="fas fa-bullhorn text-white text-3xl mr-2"></i>
+      Notice Board
+    </h2>
+    <p class="text-md text-white mt-1">Stay updated with the latest notices of Boral Hall</p>
+  </div>
+</div>
+</div>
+{% endblock page_title %}
+
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+  {% for notice in notices %}
+    <div class="bg-white shadow-md rounded-xl p-6 border-l-4 border-green-600 space-y-2">
+      <h2 class="text-xl font-bold text-green-800">
+        <i class="fas fa-circle-info text-green-600 mr-2"></i> {{ notice.title }}
+      </h2>
+
+      {% if notice.image %}
+        <img src="{{ notice.image.url }}" alt="Notice" class="w-full rounded-md shadow mt-2">
+      {% endif %}
+
+      {% if notice.content %}
+        <p class="text-gray-700 whitespace-pre-line mt-2">{{ notice.content }}</p>
+      {% endif %}
+
+      <p class="text-right text-xs text-gray-500 mt-3">
+        <i class="far fa-clock"></i> {{ notice.created_at|date:"F j, Y, g:i A" }}
+      </p>
+    </div>
+  {% empty %}
+    <p class="text-center text-gray-600 font-medium">No notices available right now.</p>
+  {% endfor %}
+
+</div>
+{% endblock %}

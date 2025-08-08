@@ -2,12 +2,14 @@
 
 {% block page_title %}
 <div class="px-4 sm:px-6 lg:px-8">
-  <!-- Welcome Header Centered -->
-  <div class="bg-green-800 p-6 rounded-xl shadow-md text-center text-white max-w-3xl mx-auto">
-    <h1 class="text-2xl sm:text-3xl font-bold">
-      <i class="fas fa-home text-white mr-2"></i> Welcome, {{ user.first_name|default:user.username }}
-    </h1>
-    <p class="text-sm mt-1">You're logged into the <strong>Boral Meal Management System</strong>.</p>
+  <div class="bg-blue-800 p-4 rounded-xl shadow-sm inline-flex items-center space-x-3 w-fit">
+    <div>
+      <h2 class="text-2xl font-bold text-white">
+        <i class="fas fa-home text-white text-3xl mr-2"></i>
+        Welcome, {{ user.first_name|default:user.username }}
+      </h2>
+      <p class="text-lg text-white mt-1">You're logged into the Boral Meal Management System</p>
+    </div>
   </div>
 </div>
 {% endblock page_title %}
@@ -23,7 +25,7 @@
     <div class="bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-2xl shadow-md p-6 flex justify-between items-center hover:from-blue-600 hover:to-blue-800 transition">
       <div>
         <h3 class="text-xl font-semibold mb-1">Student Dashboard</h3>
-        <p class="text-sm text-white/90">Manage your meals and view preferences</p>
+        <p class="text-md text-white/90">Manage your meals and view preferences</p>
         <a href="{% url 'student-dashboard' %}" class="mt-4 inline-block bg-white text-blue-700 px-4 py-2 rounded-md font-bold hover:bg-blue-100 transition text-sm">
           Go to Dashboard
         </a>
@@ -64,53 +66,56 @@
     </div>
     {% endif %}
 
-    <!-- Notice Board -->
-    <div class="bg-yellow-100 border-l-4 border-yellow-500 p-6 rounded-2xl shadow-md text-yellow-800">
-      <div class="flex items-start gap-3">
-        <i class="fas fa-bullhorn text-xl mt-1"></i>
-        <div>
-          <h3 class="text-lg font-bold mb-1">Notice Board</h3>
-          <ul class="text-sm space-y-1 list-disc list-inside">
-            <li>Update next month's meal preference before 6:00 PM on the last day of this month.</li>
-            <li>Tomorrow's meal must be turned ON/OFF before 6:00 PM today.</li>
-            <li>Token not received? Contact your hall manager before dinner hours.</li>
-          </ul>
-        </div>
+
+    <!-- Notice Board Card -->
+    <div class="bg-gradient-to-r from-yellow-500 to-yellow-700 text-white rounded-2xl shadow-md p-6 flex justify-between items-center hover:from-yellow-600 hover:to-yellow-800 transition">
+      <div>
+        <h3 class="text-xl font-semibold mb-1">Notice Board</h3>
+        <p class="text-md text-white/90">View all recent announcements and updates</p>
+        <a href="{% url 'notice_list' %}" class="mt-4 inline-block bg-white text-yellow-700 px-4 py-2 rounded-md font-bold hover:bg-yellow-100 transition text-sm">
+          Go to Notice Board
+        </a>
+      </div>
+      <div class="text-4xl">
+        <i class="fas fa-bullhorn"></i>
       </div>
     </div>
-  </div>
 
-  <!-- Coming Soon Features -->
-  <div class="mt-10">
-    <h2 class="text-lg font-semibold mb-4 text-gray-700">Upcoming Features</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-
-      <!-- Monthly Summary -->
-      <div class="bg-gray-200 text-gray-800 p-6 rounded-2xl shadow-md flex justify-between items-center">
-        <div>
-          <h3 class="text-lg font-bold">Monthly Summary</h3>
-          <p class="text-sm mb-2">View ON/OFF days and cost breakdown</p>
-          <span class="bg-gray-400 text-white text-xs px-3 py-1 rounded-full cursor-not-allowed">Coming Soon</span>
-        </div>
-        <div class="text-3xl text-gray-500">
-          <i class="fas fa-chart-line"></i>
-        </div>
+    <!-- Weekly Menu Card -->
+    <div class="bg-gradient-to-r from-indigo-500 to-indigo-700 text-white rounded-2xl shadow-md p-6 flex justify-between items-center hover:from-indigo-600 hover:to-indigo-800 transition">
+      <div>
+        <h3 class="text-xl font-semibold mb-1">Weekly Menu</h3>
+        <p class="text-sm text-white/90">View daily meals and cost details</p>
+        <a href="{% url 'weekly_menu' %}" class="mt-4 inline-block bg-white text-indigo-700 px-4 py-2 rounded-md font-bold hover:bg-indigo-100 transition text-sm">
+          View Menu
+        </a>
       </div>
-
-      <!-- Weekly Menu Planner -->
-      <div class="bg-gray-200 text-gray-800 p-6 rounded-2xl shadow-md flex justify-between items-center">
-        <div>
-          <h3 class="text-lg font-bold">Weekly Menu Planner</h3>
-          <p class="text-sm mb-2">Customize meals based on your preference</p>
-          <span class="bg-gray-400 text-white text-xs px-3 py-1 rounded-full cursor-not-allowed">Coming Soon</span>
-        </div>
-        <div class="text-3xl text-gray-500">
-          <i class="fas fa-utensils"></i>
-        </div>
+      <div class="text-4xl">
+        <i class="fas fa-utensils"></i>
       </div>
-
     </div>
+
+
+
+    <!-- Complain Box Card -->
+    <div class="bg-gradient-to-r from-red-500 to-red-700 text-white rounded-2xl shadow-md p-6 flex justify-between items-center hover:from-red-600 hover:to-red-800 transition">
+      <div>
+        <h3 class="text-xl font-semibold mb-1">Complain Box</h3>
+        <p class="text-sm text-white/90">Report issues or problems you’re facing</p>
+        <a href="{% url 'complain_create' %}" class="mt-4 inline-block bg-white text-red-700 px-4 py-2 rounded-md font-bold hover:bg-red-100 transition text-sm">
+          Submit a Complaint
+        </a>
+      </div>
+      <div class="text-4xl">
+        <i class="fas fa-comment-dots"></i>
+      </div>
+    </div>
+
+
+
   </div>
+
+
 
 </div>
 {% endblock %}

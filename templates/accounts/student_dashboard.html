@@ -3,13 +3,13 @@
 {% block page_title %}
 <!-- Header -->
 <div class="px-4 sm:px-6 lg:px-8">
-  <div class="bg-green-800 p-4 rounded-xl shadow-sm inline-flex items-center space-x-3 w-fit">
+  <div class="bg-blue-800 p-4 rounded-xl shadow-sm inline-flex items-center space-x-3 w-fit">
     <div>
       <h2 class="text-2xl font-bold text-white">
-        <i class="fas fa-user-graduate text-blue-400 text-3xl mr-2"></i>
+        <i class="fas fa-user-graduate text-3xl mr-2"></i>
         Student Dashboard
       </h2>
-      <p class="text-sm text-white">Quickly view your meal plans and update your preferences easily</p>
+      <p class="text-lg text-white">Quickly view your meal plans and update your preferences easily</p>
     </div>
   </div> 
 </div>
@@ -22,7 +22,7 @@
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
     <!-- Tomorrow's Meal Toggle -->
-    <div class="rounded-2xl shadow-md p-5 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white flex justify-between items-center">
+    <div class="rounded-2xl shadow-md p-5 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white flex justify-between items-center hover:from-yellow-500 hover:to-yellow-700 transition">
       <div>
         <h3 class="text-lg font-semibold mb-2">Update Tomorrow's Meal</h3>
         <a href="{% url 'my_meal_status' %}"

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block page_title %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="bg-indigo-700 p-4 rounded-xl shadow-sm inline-flex items-center space-x-3 w-fit">
+    <div>
+      <h2 class="text-2xl font-bold text-white">
+        <i class="fas fa-utensils text-white text-3xl mr-2"></i>
+        Weekly Menu
+      </h2>
+      <p class="text-md text-white mt-1">Detailed meal plan and costs for each day</p>
+    </div>
+  </div> 
+</div>
+{% endblock page_title %}
+
+
+{% block content %}
+<div class="max-w-5xl mx-auto p-6 sm:p-8">
+  <div class="overflow-x-auto shadow rounded-lg border border-gray-200">
+    <table class="min-w-full text-sm bg-white">
+      <thead>
+        <tr class="bg-green-200 text-green-900 uppercase text-xs text-center">
+          <th class="py-3 px-4 border-b">Day</th>
+          <th class="py-3 px-4 border-b">Breakfast</th>
+          <th class="py-3 px-4 border-b">Lunch</th>
+          <th class="py-3 px-4 border-b">Dinner</th>
+          <th class="py-3 px-4 border-b">Base Cost</th>
+          <th class="py-3 px-4 border-b">Alternate Cost</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for day in weekly_menu %}
+        <tr class="text-center hover:bg-green-50 transition">
+          <td class="py-3 px-4 border-b font-bold">{{ day.day_of_week }}</td>
+          <td class="py-3 px-4 border-b">{{ day.breakfast }}</td>
+          <td class="py-3 px-4 border-b">{{ day.lunch }}</td>
+          <td class="py-3 px-4 border-b">{{ day.dinner }}</td>
+          <td class="py-3 px-4 border-b text-gray-700">৳{{ day.base_cost }}</td>
+          <td class="py-3 px-4 border-b text-gray-700">৳{{ day.alternate_cost }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

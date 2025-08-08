@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "notices.apps.NoticesConfig",
     # add
     "django_recaptcha",
+    "widget_tweaks",
 ]
 
 
