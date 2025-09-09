@@ -20,41 +20,77 @@
 
   <!-- Back Button -->
   <div class="text-center">
-    <a href="{% url 'my_meal_status' %}" 
-    class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-2 rounded-full text-md font-semibold shadow hover:from-blue-700 hover:to-blue-900 transition">
-    <i class="fas fa-arrow-left text-white"></i>
-    Back to Meal Status
+    <a href="{% url 'my_meal_status' %}"
+      class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-2 rounded-full text-md font-semibold shadow hover:from-blue-700 hover:to-blue-900 transition">
+      <i class="fas fa-arrow-left text-white"></i>
+      Back to Meal Status
     </a>
   </div>
 
-  <!-- Table -->
-  <div class="overflow-x-auto rounded-lg shadow border border-gray-200">
-    <table class="min-w-full bg-white text-sm">
-      <thead>
-        <tr class="bg-green-200 text-green-900 text-center uppercase text-xs tracking-wider">
-          <th class="px-6 py-3 border-b">Date</th>
-          <th class="px-6 py-3 border-b">Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for entry in statuses %}
-          <tr class="hover:bg-green-50 transition-colors duration-150 text-center">
-            <td class="px-6 py-3 border-b">{{ entry.date|date:"F j, Y (l)" }}</td>
-            <td class="px-6 py-3 border-b">
-              {% if entry.status %}
-                <span class="inline-block bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full">ON</span>
-              {% else %}
-                <span class="inline-block bg-red-100 text-red-800 text-xs font-semibold px-3 py-1 rounded-full">OFF</span>
-              {% endif %}
-            </td>
-          </tr>
-        {% empty %}
-          <tr>
-            <td colspan="2" class="px-6 py-4 text-center text-gray-500">No records found for this month.</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+<!-- Table -->
+<div class="overflow-x-auto rounded-lg shadow border border-gray-200">
+  <table class="min-w-full bg-white text-sm">
+    <thead>
+      <tr class="bg-green-200 text-green-900 text-center uppercase text-xs tracking-wider">
+        <th class="px-6 py-3 border-b">Date</th>
+        <th class="px-6 py-3 border-b">Breakfast</th>
+        <th class="px-6 py-3 border-b">Lunch</th>
+        <th class="px-6 py-3 border-b">Dinner</th>
+        <th class="px-6 py-3 border-b">Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for entry in statuses %}
+      <tr class="hover:bg-green-50 transition-colors duration-150 text-center">
+        
+        <!-- Date -->
+        <td class="px-6 py-3 border-b">{{ entry.date|date:"F j, Y (l)" }}</td>
+        
+        <!-- Breakfast -->
+        <td class="px-4 py-3 border-b">
+          {% if entry.breakfast_on %}
+            <i class="fa-solid fa-circle-check text-green-500 text-xl"></i>
+          {% else %}
+            <i class="fa-solid fa-circle-xmark text-red-500 text-xl"></i>
+          {% endif %}
+        </td>
+
+        <!-- Lunch -->
+        <td class="px-4 py-3 border-b">
+          {% if entry.lunch_on %}
+            <i class="fa-solid fa-circle-check text-green-500 text-xl"></i>
+          {% else %}
+            <i class="fa-solid fa-circle-xmark text-red-500 text-xl"></i>
+          {% endif %}
+        </td>
+
+        <!-- Dinner -->
+        <td class="px-4 py-3 border-b">
+          {% if entry.dinner_on %}
+            <i class="fa-solid fa-circle-check text-green-500 text-xl"></i>
+          {% else %}
+            <i class="fa-solid fa-circle-xmark text-red-500 text-xl"></i>
+          {% endif %}
+        </td>
+
+        <!-- Total ON Meals -->
+        <td class="px-4 py-3 border-b font-semibold text-gray-700">
+          {{ entry.total_on }}/3
+        </td>
+
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+          No records found for this month.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
+
 </div>
 {% endblock %}

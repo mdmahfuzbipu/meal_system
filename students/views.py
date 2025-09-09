@@ -16,10 +16,26 @@ from .models import (
 )
 
 from .forms import StudentMealPreferenceForm, ComplainForm
+from .utils import calculate_monthly_cost
 
 from calendar import monthrange
 
 # Create your views here.
+
+@login_required
+def monthly_summary(request):
+    student = request.user.student
+    today = date.today()
+
+    monthly_cost = calculate_monthly_cost(student, today.year, today.month)
+
+    context = {
+        "student": student,
+        "today": today,
+        "monthly_cost": monthly_cost,
+    }
+    return render(request, "students/monthly_summary.html", context)
+
 
 @login_required
 def my_daily_meal_status(request):
@@ -34,23 +50,26 @@ def my_daily_meal_status(request):
     today_status, _ = DailyMealStatus.objects.get_or_create(
         student=student,
         date=today,
-        defaults={'status': True}  # Default is ON
+        defaults={
+            "breakfast_on": True,
+            "lunch_on": True,
+            "dinner_on": True,
+        },  
     )
 
-    try:
-        tomorrow_status = DailyMealStatus.objects.get(student=student, date=tomorrow)
-    except DailyMealStatus.DoesNotExist:
-        tomorrow_status = None  # We'll use fallback in template
+    # Tomorrow's meal status
+    tomorrow_status, _ = DailyMealStatus.objects.get_or_create(
+        student=student,
+        date=tomorrow,
+        defaults={"breakfast_on": True, "lunch_on": True, "dinner_on": True},
+    )
 
-    if request.method == 'POST':
-        status_value = request.POST.get("status")
-        new_status = True if status_value == "on" else False
-        DailyMealStatus.objects.update_or_create(
-            student=student,
-            date=tomorrow,
-            defaults={'status': new_status}
-        )
-        return redirect('my_meal_status')
+    if request.method == "POST":
+        tomorrow_status.breakfast_on = bool(request.POST.get("breakfast_on"))
+        tomorrow_status.lunch_on = bool(request.POST.get("lunch_on"))
+        tomorrow_status.dinner_on = bool(request.POST.get("dinner_on"))
+        tomorrow_status.save()
+        return redirect("my_meal_status")
 
     first_day = date(current_year, current_month, 1)
     last_day = date(
@@ -66,12 +85,10 @@ def my_daily_meal_status(request):
         "page_title": "Daily Meal Status",
         "today": today,
         "tomorrow": tomorrow,
-        "today_status": today_status.status,
-        "tomorrow_status": (
-            tomorrow_status.status if tomorrow_status else today_status.status
-        ),
+        "today_status": today_status,
+        "tomorrow_status": tomorrow_status,
         "tomorrow_status_exists": bool(tomorrow_status),
-        "today_date":today,
+        "today_date": today,
         "statuses": statuses,
     }
 
@@ -79,7 +96,7 @@ def my_daily_meal_status(request):
 
 
 @login_required
-def update_tomorrow_meal_status(request):
+def update_tomorrow_meal_status(request, meal_type):
     student = Student.objects.get(user=request.user)
     current_dt = localtime(now())
 
@@ -99,14 +116,25 @@ def update_tomorrow_meal_status(request):
     meal_status, _ = DailyMealStatus.objects.get_or_create(
         student=student,
         date=tomorrow,
-        defaults={"status": False},  # Default to OFF if newly created
+        defaults={
+            "breakfast_on": True,
+            "lunch_on": True,
+            "dinner_on": True,
+        },  
     )
+    # Toggle the selected meal
+    if meal_type == "breakfast":
+        meal_status.breakfast_on = not meal_status.breakfast_on
+    elif meal_type == "lunch":
+        meal_status.lunch_on = not meal_status.lunch_on
+    elif meal_type == "dinner":
+        meal_status.dinner_on = not meal_status.dinner_on
 
-    meal_status.status = not meal_status.status
     meal_status.save()
 
-    status_text = "ON" if meal_status.status else "OFF"
-    messages.success(request, f"Meal status for {tomorrow} is now {status_text}.")
+    messages.success(
+        request, f"{meal_type.capitalize()} status updated for {tomorrow}."
+    )
     return redirect("my_meal_status")
 
 
@@ -230,18 +258,39 @@ def update_meal_preference(request):
 @login_required
 def meal_history(request):
     student = request.user.student
-    current_month = now().strftime("%B %Y")  
+    current_month = now().strftime("%B %Y")
 
     statuses = DailyMealStatus.objects.filter(
         student=student, date__year=now().year, date__month=now().month
     ).order_by("date")
 
+    # Prepare list with total_on
+    updated_statuses = []
+    for status in statuses:
+        total_on = sum(
+            [
+                1 if status.breakfast_on else 0,
+                1 if status.lunch_on else 0,
+                1 if status.dinner_on else 0,
+            ]
+        )
+        updated_statuses.append(
+            {
+                "date": status.date,
+                "breakfast_on": status.breakfast_on,
+                "lunch_on": status.lunch_on,
+                "dinner_on": status.dinner_on,
+                "total_on": total_on,
+            }
+        )
+
     context = {
         "page_title": "Monthly Meal History",
-        "statuses": statuses,
+        "statuses": updated_statuses,
         "current_month": current_month,
     }
     return render(request, "students/meal_history.html", context)
+
 
 @login_required
 def weekly_menu_view(request):

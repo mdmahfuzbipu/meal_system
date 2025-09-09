@@ -79,34 +79,80 @@ class StudentMealPreference(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['student', 'month'], name='unique_student_month_preference')
         ]
-    
+
     def get_month_display_name(self):
         return f"{calendar.month_name[self.month]}"
 
 
+# class WeeklyMenu(models.Model):
+#     day_of_week = models.CharField(max_length=10, choices=WEEKDAY_CHOICES, unique=True)
+#     meal_items = models.TextField() # short - bread,chicken,egg
+
+#     breakfast = models.CharField(max_length=100, blank=True) # details
+#     lunch = models.CharField(max_length=100, blank=True)
+#     dinner = models.CharField(max_length=100, blank=True)
+
+#     includes_beef = models.BooleanField(default=False)
+#     includes_fish = models.BooleanField(default=True)
+
+#     base_cost = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+#     alternate_cost = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+
+#     def __str__(self):
+#         return f"{self.day_of_week} Item -{self.meal_items} - Cost {self.base_cost}Taka/{self.alternate_cost}Taka"
+
+
 class WeeklyMenu(models.Model):
     day_of_week = models.CharField(max_length=10, choices=WEEKDAY_CHOICES, unique=True)
-    meal_items = models.TextField() # short - bread,chicken,egg
-    
-    breakfast = models.CharField(max_length=100, blank=True) # details
-    lunch = models.CharField(max_length=100, blank=True)
-    dinner = models.CharField(max_length=100, blank=True)
-    
-    includes_beef = models.BooleanField(default=False)
-    includes_fish = models.BooleanField(default=True)
 
-    base_cost = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-    alternate_cost = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    # Breakfast
+    breakfast_main = models.CharField(max_length=100, blank=True)
+    breakfast_cost = models.DecimalField(max_digits=6, decimal_places=2, default=0.00)
+    
+    # breakfast_alternate = models.CharField(max_length=100, blank=True)
+    # breakfast_cost_alternate = models.DecimalField(
+    #     max_digits=6, decimal_places=2, default=0.00
+    # )
+
+
+    # Lunch
+    lunch_main = models.CharField(max_length=100, blank=True)
+    lunch_cost = models.DecimalField(max_digits=6, decimal_places=2, default=0.00)
+    lunch_contains_beef = models.BooleanField(default=False)
+    lunch_contains_fish = models.BooleanField(default=False)
+
+    lunch_alternate = models.CharField(max_length=100, blank=True)
+    lunch_cost_alternate = models.DecimalField(
+        max_digits=6, decimal_places=2, default=0.00
+    )
+    
+
+    # Dinner
+    dinner_main = models.CharField(max_length=100, blank=True)
+    dinner_cost = models.DecimalField(max_digits=6, decimal_places=2, default=0.00)
+    dinner_contains_beef = models.BooleanField(default=False)
+    dinner_contains_fish = models.BooleanField(default=False)
+
+    dinner_alternate = models.CharField(max_length=100, blank=True)
+    dinner_cost_alternate = models.DecimalField(
+        max_digits=6, decimal_places=2, default=0.00
+    )
+    
 
     def __str__(self):
-        return f"{self.day_of_week} Item -{self.meal_items} - Cost {self.base_cost}Taka/{self.alternate_cost}Taka"
+        return self.day_of_week
+
 
 
 class DailyMealStatus(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    student = models.ForeignKey("Student", on_delete=models.CASCADE)
     date = models.DateField()
-    status = models.BooleanField(default=True)  
-    created_at = models.DateTimeField(auto_now_add=True)
+    
+    breakfast_on = models.BooleanField(default=True)
+    lunch_on = models.BooleanField(default=True)
+    dinner_on = models.BooleanField(default=True)
+
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         constraints = [

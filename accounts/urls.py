@@ -14,7 +14,7 @@ urlpatterns = [
     path("", role_aware_home, name="home"),
     path("login/", RoleBasedLoginView.as_view(), name="login"),
     path("logout/", auth_views.LogoutView.as_view(next_page="login"), name="logout"),
-    path("student/dashboard/", student_dashboard, name="student-dashboard"),
-    path("manager/dashboard/", manager_dashboard, name="manager-dashboard"),
-    path("admin/dashboard/", admin_dashboard, name="admin-dashboard"),
+    path("student-dashboard/", student_dashboard, name="student_dashboard"),
+    path("manager-dashboard/", manager_dashboard, name="manager_dashboard"),
+    path("admin-dashboard/", admin_dashboard, name="admin_dashboard"),
 ]

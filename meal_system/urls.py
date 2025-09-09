@@ -30,6 +30,7 @@ handler403 = "meal_system.views.custom_permission_denied_view"
 urlpatterns = [
     path("", role_aware_home, name="home"),
     path("admin/", admin.site.urls),
+    path("admins/", include("admins.urls", namespace="admins")),
     path("accounts/", include("accounts.urls")),
     path("students/", include("students.urls")),
     path("notices/", include("notices.urls")),

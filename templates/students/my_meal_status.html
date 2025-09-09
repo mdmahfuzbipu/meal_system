@@ -20,55 +20,53 @@
     <!-- Status Sections Side by Side -->
     <div class="flex flex-col md:flex-row gap-8">
   
-      <!-- Today's Meal Section -->
-      <div class="w-full md:w-1/2">
-        <!-- Heading -->
-        <div class="mb-8 text-center">
-            <div class="inline-flex items-center gap-3 bg-gradient-to-r from-green-500 to-green-800 px-5 py-3 rounded-2xl shadow-md">
-              <i class="fas fa-calendar-day text-white text-xl animate-pulse"></i>
-              <h2 class="text-white text-lg sm:text-2xl font-semibold tracking-wide">Today's Meal Status</h2>
-            </div>
-            <div class="mt-2">
-              <i class="fas fa-angle-down text-green-600 text-2xl animate-bounce"></i>
-            </div>
+    <!-- Today's Meal Section -->
+    <div class="w-full md:w-1/2">
+      <!-- Heading -->
+      <div class="mb-8 text-center">
+          <div class="inline-flex items-center gap-3 bg-gradient-to-r from-green-500 to-green-800 px-5 py-3 rounded-2xl shadow-md">
+            <i class="fas fa-calendar-day text-white text-xl animate-pulse"></i>
+            <h2 class="text-white text-lg sm:text-2xl font-semibold tracking-wide">Today's Meal Status</h2>
           </div>
-  
-        <!-- Card -->
-        <div class="rounded-xl shadow-lg overflow-hidden">
-          <div class="text-white px-5 py-4 transition-all duration-300"
-               {% if today_status == True %}
-                 style="background-image: linear-gradient(to right, #34d399, #059669);"
-               {% elif today_status == False %}
-                 style="background-image: linear-gradient(to right, #d62e2e, #b60b0b);"
-               {% else %}
-                 style="background-image: linear-gradient(to right, #d1d5db, #9ca3af);"
-               {% endif %}>
-            <div class="flex items-center space-x-3">
-              {% if today_status == True %}
-                <i class="fas fa-check-circle text-lg animate-pulse"></i>
-                <h3 class="text-lg font-semibold">Meal ON</h3>
-              {% elif today_status == False %}
-                <i class="fas fa-times-circle text-lg animate-pulse"></i>
-                <h3 class="text-lg font-semibold">Meal OFF</h3>
+          <div class="mt-2">
+            <i class="fas fa-angle-down text-green-600 text-2xl animate-bounce"></i>
+          </div>
+      </div>
+
+      <!-- Card -->
+      <div class="rounded-xl shadow-lg overflow-hidden bg-white">
+        <div class="px-5 py-4">
+          <h3 class="text-lg font-bold text-gray-800 mb-3">{{ today|date:"F j, Y (l)" }}</h3>
+          <ul class="space-y-2">
+            <li>
+              <span class="font-semibold">Breakfast:</span>
+              {% if today_status.breakfast_on %}
+                <span class="text-green-600"><i class="fas fa-check-circle"></i> ON</span>
               {% else %}
-                <i class="fas fa-exclamation-circle text-lg animate-pulse"></i>
-                <h3 class="text-lg font-semibold">Meal Not Set</h3>
+                <span class="text-red-600"><i class="fas fa-times-circle"></i> OFF</span>
               {% endif %}
-            </div>
-            <p class="text-md text-white/80 mt-1">{{ today_date|date:"F j, Y (l)" }}</p>
-          </div>
-  
-          <div class="bg-white px-6 py-4 text-center">
-            {% if today_status == True %}
-              <p class="text-green-800 font-medium text-sm">You are scheduled to receive a meal today.</p>
-            {% elif today_status == False %}
-              <p class="text-red-700 font-medium text-sm">You've turned your meal OFF for today.</p>
-            {% else %}
-              <p class="text-gray-700 font-medium text-sm">You haven't updated your meal status yet.</p>
-            {% endif %}
-          </div>
+            </li>
+            <li>
+              <span class="font-semibold">Lunch:</span>
+              {% if today_status.lunch_on %}
+                <span class="text-green-600"><i class="fas fa-check-circle"></i> ON</span>
+              {% else %}
+                <span class="text-red-600"><i class="fas fa-times-circle"></i> OFF</span>
+              {% endif %}
+            </li>
+            <li>
+              <span class="font-semibold">Dinner:</span>
+              {% if today_status.dinner_on %}
+                <span class="text-green-600"><i class="fas fa-check-circle"></i> ON</span>
+              {% else %}
+                <span class="text-red-600"><i class="fas fa-times-circle"></i> OFF</span>
+              {% endif %}
+            </li>
+          </ul>
         </div>
       </div>
+    </div>
+
   
       <!-- Tomorrow's Meal Section -->
       <div class="w-full md:w-1/2">
@@ -81,56 +79,54 @@
             <div class="mt-2">
               <i class="fas fa-angle-down text-blue-400 text-2xl animate-bounce"></i>
             </div>
-          </div>
-  
+        </div>
+
         <!-- Card -->
-        <div class="rounded-xl shadow-lg overflow-hidden">
-          <div class="text-white px-5 py-4 transition-all duration-300"
-               {% if tomorrow_status == True %}
-                 style="background-image: linear-gradient(to right, #0071a5, #06098d);"
-               {% elif tomorrow_status == False %}
-                 style="background-image: linear-gradient(to right, #ce2c2c, #9c061f);"
-               {% else %}
-                 style="background-image: linear-gradient(to right, #d1d5db, #9ca3af);"
-               {% endif %}>
-            <div class="flex items-center space-x-3">
-              {% if tomorrow_status == True %}
-                <i class="fas fa-check-circle text-lg animate-pulse"></i>
-                <h3 class="text-lg font-semibold">Meal ON</h3>
-              {% elif tomorrow_status == False %}
-                <i class="fas fa-times-circle text-lg animate-pulse"></i>
-                <h3 class="text-lg font-semibold">Meal OFF</h3>
-              {% else %}
-                <i class="fas fa-exclamation-circle text-lg animate-pulse"></i>
-                <h3 class="text-lg font-semibold">Meal Not Set</h3>
-              {% endif %}
-            </div>
-            <p class="text-md text-white/80 mt-1">{{ tomorrow|date:"F j, Y (l)" }}</p>
+        <div class="rounded-xl shadow-lg overflow-hidden bg-white">
+          <div class="px-5 py-4">
+            <h3 class="text-lg font-bold text-gray-800 mb-3">{{ tomorrow|date:"F j, Y (l)" }}</h3>
+            <ul class="space-y-4">
+              <li class="flex justify-between items-center">
+                <span class="font-semibold">Breakfast:</span>
+                <span>
+                  {% if tomorrow_status.breakfast_on %}
+                    <span class="text-green-600"><i class="fas fa-check-circle"></i> ON</span>
+                    <a href="{% url 'update_tomorrow_status' 'breakfast' %}" class="ml-3 bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1 px-3 rounded-full">Turn OFF</a>
+                  {% else %}
+                    <span class="text-red-600"><i class="fas fa-times-circle"></i> OFF</span>
+                    <a href="{% url 'update_tomorrow_status' 'breakfast' %}" class="ml-3 bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-1 px-3 rounded-full">Turn ON</a>
+                  {% endif %}
+                </span>
+              </li>
+              <li class="flex justify-between items-center">
+                <span class="font-semibold">Lunch:</span>
+                <span>
+                  {% if tomorrow_status.lunch_on %}
+                    <span class="text-green-600"><i class="fas fa-check-circle"></i> ON</span>
+                    <a href="{% url 'update_tomorrow_status' 'lunch' %}" class="ml-3 bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1 px-3 rounded-full">Turn OFF</a>
+                  {% else %}
+                    <span class="text-red-600"><i class="fas fa-times-circle"></i> OFF</span>
+                    <a href="{% url 'update_tomorrow_status' 'lunch' %}" class="ml-3 bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-1 px-3 rounded-full">Turn ON</a>
+                  {% endif %}
+                </span>
+              </li>
+              <li class="flex justify-between items-center">
+                <span class="font-semibold">Dinner:</span>
+                <span>
+                  {% if tomorrow_status.dinner_on %}
+                    <span class="text-green-600"><i class="fas fa-check-circle"></i> ON</span>
+                    <a href="{% url 'update_tomorrow_status' 'dinner' %}" class="ml-3 bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1 px-3 rounded-full">Turn OFF</a>
+                  {% else %}
+                    <span class="text-red-600"><i class="fas fa-times-circle"></i> OFF</span>
+                    <a href="{% url 'update_tomorrow_status' 'dinner' %}" class="ml-3 bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-1 px-3 rounded-full">Turn ON</a>
+                  {% endif %}
+                </span>
+              </li>
+            </ul>
           </div>
-          
-
-          <div class="bg-white px-6 py-4 text-center">
-            {% if tomorrow_status is not None %}
-              <form method="post" action="{% url 'update_tomorrow_status' %}">
-                {% csrf_token %}
-                {% if tomorrow_status %}
-                  <button type="submit" class="text-sm bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full transition-all duration-300">
-                    Turn Meal OFF
-                  </button>
-                {% else %}
-                  <button type="submit" class="text-sm bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full transition-all duration-300">
-                    Turn Meal ON
-                  </button>
-                {% endif %}
-              </form>
-            {% else %}
-              <p class="text-sm text-gray-600 font-medium">No meal status found for tomorrow.</p>
-            {% endif %}
-          </div>
-
-            
         </div>
       </div>
+
   
     </div>
   </div>  

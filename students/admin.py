@@ -32,23 +32,37 @@ class StudentMealPreferenceAdmin(admin.ModelAdmin):
     search_fields = ("student__name",)
 
 
+# @admin.register(WeeklyMenu)
+# class WeeklyMenuAdmin(admin.ModelAdmin):
+#     list_display = (
+#         "day_of_week",
+#         "includes_beef",
+#         "includes_fish",
+#         "base_cost",
+#         "alternate_cost",
+#     )
+#     list_filter = ("includes_beef", "includes_fish")
+#     ordering = ("day_of_week",)
+
+
 @admin.register(WeeklyMenu)
 class WeeklyMenuAdmin(admin.ModelAdmin):
     list_display = (
         "day_of_week",
-        "includes_beef",
-        "includes_fish",
-        "base_cost",
-        "alternate_cost",
+        "breakfast_main",
+        "breakfast_cost",
+        "lunch_main",
+        "lunch_cost",
+        "dinner_main",
+        "dinner_cost",
     )
-    list_filter = ("includes_beef", "includes_fish")
-    ordering = ("day_of_week",)
+    list_filter = ("day_of_week",)
 
 
 @admin.register(DailyMealStatus)
 class DailyMealStatusAdmin(admin.ModelAdmin):
-    list_display = ("student", "date", "status")
-    list_filter = ("date", "status")
+    list_display = ("student", "date", "breakfast_on", "lunch_on", "dinner_on")
+    list_filter = ("date", "breakfast_on", "lunch_on", "dinner_on")
     search_fields = ("student__name",)
 
 

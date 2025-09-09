@@ -1,5 +1,141 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% block page_title %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="bg-blue-800 p-4 rounded-xl shadow-sm inline-flex items-center space-x-3 w-fit">
+    <div>
+      <h2 class="text-2xl font-bold text-white">
+        <i class="fas fa-gauge-high text-3xl mr-2"></i>
+        Admin Dashboard
+      </h2>
+      <p class="text-md text-white mt-1">Overview & controls for the meal system</p>
+    </div>
+  </div>
+</div>
+{% endblock page_title %}
+
 {% block content %}
-  <h2>🛠️ Admin Dashboard</h2>
-  <p>Full system overview.</p>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+
+  <!-- Summary cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-white rounded-xl shadow p-6">
+      <div class="flex items-center justify-between">
+        <h3 class="text-gray-600 font-semibold">Total Students</h3>
+        <i class="fas fa-user-graduate text-2xl text-blue-600"></i>
+      </div>
+      <p class="mt-3 text-4xl font-bold text-gray-800">{{ total_students }}</p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow p-6">
+      <div class="flex items-center justify-between">
+        <h3 class="text-gray-600 font-semibold">Total Staff</h3>
+        <i class="fas fa-user-tie text-2xl text-emerald-600"></i>
+      </div>
+      <p class="mt-3 text-4xl font-bold text-gray-800">{{ total_staff }}</p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow p-6">
+      <div class="flex items-center justify-between">
+        <h3 class="text-gray-600 font-semibold">Today ({{ today|date:"M j" }})</h3>
+        <i class="fas fa-bowl-food text-2xl text-orange-600"></i>
+      </div>
+      <div class="mt-4 grid grid-cols-3 text-center">
+        <div>
+          <div class="text-sm text-gray-500">Breakfast</div>
+          <div class="text-2xl font-bold text-gray-800">{{ breakfast_on }}</div>
+        </div>
+        <div>
+          <div class="text-sm text-gray-500">Lunch</div>
+          <div class="text-2xl font-bold text-gray-800">{{ lunch_on }}</div>
+        </div>
+        <div>
+          <div class="text-sm text-gray-500">Dinner</div>
+          <div class="text-2xl font-bold text-gray-800">{{ dinner_on }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick actions / navigation -->
+  <div>
+    <h3 class="text-xl font-semibold text-gray-800 mb-4">Quick Actions</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      <a href="{% url 'admins:manage_students' %}" class="group block bg-white rounded-xl shadow p-6 hover:shadow-md transition">
+        <div class="flex items-center gap-4">
+          <div class="rounded-2xl bg-blue-50 p-3">
+            <i class="fas fa-users text-blue-600 text-xl"></i>
+          </div>
+          <div>
+            <div class="font-semibold">Manage Students</div>
+            <div class="text-sm text-gray-500">Add, edit, deactivate students</div>
+          </div>
+        </div>
+      </a>
+
+      <a href="{% url 'admins:manage_staff' %}" class="group block bg-white rounded-xl shadow p-6 hover:shadow-md transition">
+        <div class="flex items-center gap-4">
+          <div class="rounded-2xl bg-emerald-50 p-3">
+            <i class="fas fa-user-gear text-emerald-600 text-xl"></i>
+          </div>
+          <div>
+            <div class="font-semibold">Manage Staff</div>
+            <div class="text-sm text-gray-500">Register managers / hall staff</div>
+          </div>
+        </div>
+      </a>
+
+      <a href="{% url 'admins:approvals' %}" class="group block bg-white rounded-xl shadow p-6 hover:shadow-md transition">
+        <div class="flex items-center gap-4">
+          <div class="rounded-2xl bg-yellow-50 p-3">
+            <i class="fas fa-clipboard-check text-yellow-600 text-xl"></i>
+          </div>
+          <div>
+            <div class="font-semibold">Approvals</div>
+            <div class="text-sm text-gray-500">Approve registrations & requests</div>
+          </div>
+        </div>
+      </a>
+
+      <a href="{% url 'admins:weekly_menu' %}" class="group block bg-white rounded-xl shadow p-6 hover:shadow-md transition">
+        <div class="flex items-center gap-4">
+          <div class="rounded-2xl bg-purple-50 p-3">
+            <i class="fas fa-utensils text-purple-600 text-xl"></i>
+          </div>
+          <div>
+            <div class="font-semibold">Weekly Menu</div>
+            <div class="text-sm text-gray-500">View & update daily menu</div>
+          </div>
+        </div>
+      </a>
+
+      <a href="{% url 'admins:meal_costs' %}" class="group block bg-white rounded-xl shadow p-6 hover:shadow-md transition">
+        <div class="flex items-center gap-4">
+          <div class="rounded-2xl bg-rose-50 p-3">
+            <i class="fas fa-tags text-rose-600 text-xl"></i>
+          </div>
+          <div>
+            <div class="font-semibold">Meal Costs</div>
+            <div class="text-sm text-gray-500">Set breakfast/lunch/dinner pricing</div>
+          </div>
+        </div>
+      </a>
+
+      <a href="{% url 'admins:analytics' %}" class="group block bg-white rounded-xl shadow p-6 hover:shadow-md transition">
+        <div class="flex items-center gap-4">
+          <div class="rounded-2xl bg-indigo-50 p-3">
+            <i class="fas fa-chart-line text-indigo-600 text-xl"></i>
+          </div>
+          <div>
+            <div class="font-semibold">Analytics</div>
+            <div class="text-sm text-gray-500">Trends & revenue (charts)</div>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+</div>
 {% endblock %}
