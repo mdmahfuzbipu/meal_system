@@ -54,7 +54,7 @@
       <div>
         <h3 class="text-xl font-semibold mb-1">Admin Dashboard</h3>
         <p class="text-sm text-white/90">System analytics and settings</p>
-        <a href="{% url 'admin_dashboard' %}" class="mt-4 inline-block bg-white text-purple-700 px-4 py-2 rounded-md font-bold hover:bg-purple-100 transition text-sm">
+        <a href="{% url 'accounts:admin_dashboard' %}" class="mt-4 inline-block bg-white text-purple-700 px-4 py-2 rounded-md font-bold hover:bg-purple-100 transition text-sm">
           Go to Dashboard
         </a>
         <br>
@@ -86,7 +86,7 @@
       <div>
         <h3 class="text-xl font-semibold mb-1">Weekly Menu</h3>
         <p class="text-sm text-white/90">View daily meals and cost details</p>
-        <a href="{% url 'weekly_menu' %}" class="mt-4 inline-block bg-white text-indigo-700 px-4 py-2 rounded-md font-bold hover:bg-indigo-100 transition text-sm">
+        <a href="{% url 'students:weekly_menu' %}" class="mt-4 inline-block bg-white text-indigo-700 px-4 py-2 rounded-md font-bold hover:bg-indigo-100 transition text-sm">
           View Menu
         </a>
       </div>
@@ -102,7 +102,7 @@
       <div>
         <h3 class="text-xl font-semibold mb-1">Complain Box</h3>
         <p class="text-sm text-white/90">Report issues or problems you’re facing</p>
-        <a href="{% url 'complain_create' %}" class="mt-4 inline-block bg-white text-red-700 px-4 py-2 rounded-md font-bold hover:bg-red-100 transition text-sm">
+        <a href="{% url 'students:complain_create' %}" class="mt-4 inline-block bg-white text-red-700 px-4 py-2 rounded-md font-bold hover:bg-red-100 transition text-sm">
           Submit a Complaint
         </a>
       </div>

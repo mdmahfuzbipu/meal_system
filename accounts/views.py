@@ -6,6 +6,8 @@ from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils.decorators import method_decorator
 from django.utils.timezone import now
+from django.contrib import messages
+
 
 from students.models import Student, DailyMealStatus
 from .forms import EmailOrUsernameAuthenticationForm
@@ -65,10 +67,9 @@ def is_admin(user):
 def admin_dashboard(request):
     today = now().date()
 
-
     total_students = Student.objects.count()
 
-    # Staff count 
+    # Staff count
     if hasattr(CustomUser, "role"):
         total_staff = CustomUser.objects.filter(
             role__in=["manager", "staff", "admin"]

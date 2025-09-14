@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="text-xl font-bold mb-4">Pending Weekly Menu Proposals</h1>
+
+<table class="table-auto w-full border border-gray-300">
+  <thead>
+    <tr class="bg-gray-100">
+      <th class="px-4 py-2">Day</th>
+      <th class="px-4 py-2">Breakfast</th>
+      <th class="px-4 py-2">Lunch</th>
+      <th class="px-4 py-2">Dinner</th>
+      <th class="px-4 py-2">Manager</th>
+      <th class="px-4 py-2">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for proposal in proposals %}
+    <tr class="border-t">
+      <td class="px-4 py-2">{{ proposal.day_of_week }}</td>
+      <td class="px-4 py-2">{{ proposal.breakfast_main }} ({{ proposal.breakfast_cost }})</td>
+      <td class="px-4 py-2">
+        {{ proposal.lunch_main }} ({{ proposal.lunch_cost }})
+        {% if proposal.lunch_contains_beef %} 🥩 {% endif %}
+        {% if proposal.lunch_contains_fish %} 🐟 {% endif %}
+      </td>
+      <td class="px-4 py-2">
+        {{ proposal.dinner_main }} ({{ proposal.dinner_cost }})
+        {% if proposal.dinner_contains_beef %} 🥩 {% endif %}
+        {% if proposal.dinner_contains_fish %} 🐟 {% endif %}
+      </td>
+      <td class="px-4 py-2">{{ proposal.created_by.get_full_name }}</td>
+      <td class="px-4 py-2">
+        <a href="{% url 'approve_menu' proposal.id %}" class="bg-green-500 text-white px-3 py-1 rounded">Approve</a>
+        <a href="{% url 'reject_menu' proposal.id %}" class="bg-red-500 text-white px-3 py-1 rounded">Reject</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6" class="text-center py-2">No pending proposals</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

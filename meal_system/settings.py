@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "admins.apps.AdminsConfig",
     "students.apps.StudentsConfig",
     "notices.apps.NoticesConfig",
+    "managers.apps.ManagersConfig",
     # add
     "django_recaptcha",
     "widget_tweaks",

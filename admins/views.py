@@ -1,11 +1,12 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.shortcuts import render,redirect
+from django.shortcuts import get_object_or_404, render,redirect
 from django.core.paginator import Paginator
 from django.contrib import messages
 
-from students.models import Student
+from managers.models import WeeklyMenuProposal
+from students.models import Student, WeeklyMenu
 from accounts.models import CustomUser
-
+from .forms import StudentRegistrationForm
 
 def is_admin(user):
     role = getattr(user, "role", None)
@@ -65,7 +66,7 @@ def manage_students(request):
     page_number = request.GET.get("page")
     students_page = paginator.get_page(page_number)
 
-    # Add New Student 
+    # Add New Student
     if request.method == "POST":
         name = request.POST.get("name")
         username = request.POST.get("username")
@@ -89,4 +90,75 @@ def manage_students(request):
         request,
         "admins/manage_students.html",
         {"students": students_page, "query": query},
+    )
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_menu_list(request):
+    proposals = WeeklyMenuProposal.objects.filter(status="pending")
+    return render(request, "admins/admin_menu_list.html", {"proposals": proposals})
+
+
+@login_required
+@user_passes_test(is_admin)
+def approve_menu(request, proposal_id):
+    proposal = get_object_or_404(WeeklyMenuProposal, id=proposal_id)
+    proposal.status = "approved"
+    proposal.save()
+
+    # Copy to students.models.WeeklyMenu
+    WeeklyMenu.objects.update_or_create(
+        day_of_week=proposal.day_of_week,
+        defaults={
+            "breakfast_main": proposal.breakfast_main,
+            "breakfast_cost": proposal.breakfast_cost,
+            "lunch_main": proposal.lunch_main,
+            "lunch_cost": proposal.lunch_cost,
+            "lunch_contains_beef": proposal.lunch_contains_beef,
+            "lunch_contains_fish": proposal.lunch_contains_fish,
+            "dinner_main": proposal.dinner_main,
+            "dinner_cost": proposal.dinner_cost,
+            "dinner_contains_beef": proposal.dinner_contains_beef,
+            "dinner_contains_fish": proposal.dinner_contains_fish,
+        },
+    )
+
+    messages.success(request, "Menu approved and copied to final menu!")
+    return redirect("admin_menu_list")
+
+
+@login_required
+@user_passes_test(is_admin)
+def reject_menu(request, proposal_id):
+    proposal = get_object_or_404(WeeklyMenuProposal, id=proposal_id)
+    proposal.status = "rejected"
+    proposal.save()
+    messages.error(request, "Menu proposal rejected.")
+    return redirect("admin_menu_list")
+
+
+def is_superuser(user):
+    return user.is_active and user.is_superuser
+
+
+@user_passes_test(is_superuser)
+def register_student(request):
+    if request.method == "POST":
+        form = StudentRegistrationForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Student account created successfully.")
+            return redirect("admins:register_student")
+        else:
+            messages.error(request, "Please fix the errors below.")
+    else:
+        form = StudentRegistrationForm()
+    return render(
+        request,
+        "admins/register_student.html",
+        {
+            "form": form,
+            "page_title": "Register New Student",
+        },
     )

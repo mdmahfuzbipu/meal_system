@@ -2,7 +2,7 @@
 <aside class="main-sidebar sidebar-light-white bg-blue-500 elevation-2">
 {% if request.user.is_authenticated %}
     {% if request.user.role == 'admin' or request.user.is_superuser %}
-    <a href="{% url 'admin_dashboard' %}" class="brand-link bg-primary text-white">
+    <a href="{% url 'accounts:admin_dashboard' %}" class="brand-link bg-primary text-white">
     <img src="{% static 'images/bauet_logo.png' %}" class="brand-image img-circle elevation-3" style="opacity: .9">
     <span class="brand-text font-weight-bold ml-2">Admin Panel</span>
     </a>
@@ -40,7 +40,7 @@
 
         <li class="nav-header">Hall Management</li>
         <li class="nav-item">
-            <a href="{% url 'admins:manage_staff' %}" class="nav-link">
+            <a href="{% url 'admins:register_student' %}" class="nav-link">
             <i class="nav-icon fas fa-user-plus"></i>
             <p>Add Student</p>
             </a>
@@ -92,7 +92,7 @@
 
         <li class="nav-header">Account</li>
         <li class="nav-item">
-            <form method="post" action="{% url 'logout' %}" onsubmit="return confirm('Your session would be terminated.\n\nProceed?')">
+            <form method="post" action="{% url 'accounts:logout' %}" onsubmit="return confirm('Your session would be terminated.\n\nProceed?')">
             {% csrf_token %}
             <button type="submit" class="btn btn-danger nav-link text-left text-white">
                 <i class="nav-icon fas fa-sign-out-alt"></i>

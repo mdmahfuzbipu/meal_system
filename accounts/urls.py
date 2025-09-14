@@ -9,6 +9,7 @@ from .views import (
     )
 from . import views
 
+app_name = "accounts"
 
 urlpatterns = [
     path("", role_aware_home, name="home"),

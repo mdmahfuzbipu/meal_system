@@ -1,7 +1,10 @@
-from .models import DailyMealStatus, WeeklyMenu, StudentMealPreference
+from .models import DailyMealStatus, WeeklyMenu, StudentMealPreference, MonthlyMealSummary, Student
+
 from datetime import date, timedelta
 from calendar import monthrange
 from decimal import Decimal
+from django.db import transaction
+from django.db.models import Q
 
 def _get_meal_cost(contains_beef, contains_fish, prefers_beef, prefers_fish, cost, cost_alternate):
     if contains_beef and not prefers_beef:
@@ -66,3 +69,36 @@ def calculate_monthly_cost(student, year, month):
         total_cost += calculate_daily_cost(student, current_date)
 
     return total_cost
+
+
+def save_monthly_summary(student, year, month):
+    total_cost = calculate_monthly_cost(student, year, month)
+
+    start_date = date(year, month, 1)
+    end_date = date(year, month, monthrange(year, month)[1])
+    on_days = (
+        DailyMealStatus.objects.filter(
+            student=student, date__range=(start_date, end_date)
+        ).filter(
+            Q(breakfast_on=True)
+            | Q(lunch_on=True)
+            | Q(dinner_on=True)
+            | Q(dinner_on=True)
+        ).count()
+    )
+
+    # Save or update summary
+    with transaction.atomic():
+        summary, _ = MonthlyMealSummary.objects.update_or_create(
+            student=student,
+            month=f"{year}-{str(month).zfill(2)}",
+            defaults={"total_cost": total_cost, "total_on_days": on_days},
+        )
+
+    return summary
+
+
+def generate_monthly_summary_for_all(year, month):
+    students = Student.objects.all()
+    for student in students:
+        save_monthly_summary(student, year, month)

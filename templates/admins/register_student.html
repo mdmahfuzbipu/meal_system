@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block page_title %}
+<!--  Header -->
+<div class="text-center my-4">
+    <div class="card shadow-sm mx-auto" style="max-width: 600px; background: linear-gradient(90deg, #1E40AF, #3B82F6);">
+        <div class="card-body text-white">
+            <i class="fas fa-user-plus fa-3x mb-2"></i>
+            <h2 class="h4 mb-1 fw-bold">Register New Student</h2>
+            <p class="mb-0">Create a new student profile with full details</p>
+        </div>
+    </div>
+</div>
+{% endblock page_title %}
+
+{% block content %}
+<div class="container">
+
+    <!-- Messages -->
+    {% if messages %}
+        {% for msg in messages %}
+            <div class="alert alert-dismissible fade show
+                {% if msg.tags == 'success' %}alert-success
+                {% elif msg.tags == 'error' %}alert-danger
+                {% else %}alert-info{% endif %} mt-2" role="alert">
+                <i class="fas fa-info-circle me-2"></i>{{ msg }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Form Card -->
+    <div class="card shadow-sm mt-4">
+        <div class="card-header bg-primary text-white">
+            <i class="fas fa-user-circle me-2"></i> Student Details
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+
+                <div class="row g-3">
+                    <!-- Account Info -->
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-user"></i> Username</label>
+                        {{ form.username|add_class:"form-control" }}
+                        {{ form.username.errors }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-envelope"></i> Email</label>
+                        {{ form.email|add_class:"form-control" }}
+                        {{ form.email.errors }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-lock"></i> Password</label>
+                        {{ form.password1|add_class:"form-control" }}
+                        {{ form.password1.errors }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-lock"></i> Confirm Password</label>
+                        {{ form.password2|add_class:"form-control" }}
+                        {{ form.password2.errors }}
+                    </div>
+
+                    <!-- Personal Info -->
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-id-card"></i> Full Name</label>
+                        {{ form.name|add_class:"form-control" }}
+                        {{ form.name.errors }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-door-closed"></i> Room Number</label>
+                        {{ form.room_number|add_class:"form-control" }}
+                        {{ form.room_number.errors }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-university"></i> University ID</label>
+                        {{ form.university_id|add_class:"form-control" }}
+                        {{ form.university_id.errors }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-building"></i> Department</label>
+                        {{ form.department|add_class:"form-control" }}
+                        {{ form.department.errors }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-calendar-alt"></i> Batch</label>
+                        {{ form.batch|add_class:"form-control" }}
+                        {{ form.batch.errors }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-birthday-cake"></i> Date of Birth</label>
+                        {{ form.date_of_birth|add_class:"form-control" }}
+                        {{ form.date_of_birth.errors }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-id-badge"></i> National ID</label>
+                        {{ form.national_id|add_class:"form-control" }}
+                        {{ form.national_id.errors }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-tint"></i> Blood Group</label>
+                        {{ form.blood_group|add_class:"form-control" }}
+                        {{ form.blood_group.errors }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-phone"></i> Phone</label>
+                        {{ form.phone_number|add_class:"form-control" }}
+                        {{ form.phone_number.errors }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-user-friends"></i> Guardian Name</label>
+                        {{ form.guardian_name|add_class:"form-control" }}
+                        {{ form.guardian_name.errors }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-phone-square-alt"></i> Guardian Phone</label>
+                        {{ form.guardian_phone|add_class:"form-control" }}
+                        {{ form.guardian_phone.errors }}
+                    </div>
+                    <!-- Meal Preferences -->
+                    <div class="col-6">
+                        <label class="form-label"><i class="fas fa-utensils"></i> Meal Preferences</label>
+                        <div class="form-check">
+                            {{ form.default_prefers_beef|add_class:"form-check-input" }}
+                            <label class="form-check-label ms-2">Prefers Beef</label>
+                        </div>
+                        <div class="form-check">
+                            {{ form.default_prefers_fish|add_class:"form-check-input" }}
+                            <label class="form-check-label ms-2">Prefers Fish</label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label"><i class="fas fa-image"></i> Profile Picture (Optional)</label>
+                        {{ form.profile_picture|add_class:"form-control" }}
+                        {{ form.profile_picture.errors }}
+                    </div>
+
+
+
+                </div>
+
+                <!-- Submit Button -->
+                <div class="mt-4 text-center">
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="fas fa-user-plus me-2"></i> Register Student
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

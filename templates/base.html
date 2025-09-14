@@ -130,7 +130,7 @@
             <!-- Right navbar: Logout button -->
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <form method="post" action="{% url 'logout' %}" onsubmit="return confirm('Your session would be terminated.\n\nProceed?')">
+                    <form method="post" action="{% url 'accounts:logout' %}" onsubmit="return confirm('Your session would be terminated.\n\nProceed?')">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger nav-link" style="color: white; border: none;">
                             <i class="nav-icon fas fa-sign-out-alt"></i>

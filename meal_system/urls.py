@@ -31,8 +31,8 @@ urlpatterns = [
     path("", role_aware_home, name="home"),
     path("admin/", admin.site.urls),
     path("admins/", include("admins.urls", namespace="admins")),
-    path("accounts/", include("accounts.urls")),
-    path("students/", include("students.urls")),
+    path("accounts/", include("accounts.urls", namespace="accounts")),
+    path("students/", include("students.urls", namespace="students")),
     path("notices/", include("notices.urls")),
 ]
 
