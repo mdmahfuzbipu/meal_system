@@ -69,7 +69,7 @@ def my_daily_meal_status(request):
         tomorrow_status.lunch_on = bool(request.POST.get("lunch_on"))
         tomorrow_status.dinner_on = bool(request.POST.get("dinner_on"))
         tomorrow_status.save()
-        return redirect("my_meal_status")
+        return redirect("students:my_meal_status")
 
     first_day = date(current_year, current_month, 1)
     last_day = date(
@@ -109,7 +109,7 @@ def update_tomorrow_meal_status(request, meal_type):
             request,
             "You can no longer change meal status for tomorrow. Deadline is 6:00 PM.",
         )
-        return redirect("my_meal_status")
+        return redirect("students:my_meal_status")
 
     tomorrow = current_dt.date() + timedelta(days=1)
 
@@ -135,7 +135,7 @@ def update_tomorrow_meal_status(request, meal_type):
     messages.success(
         request, f"{meal_type.capitalize()} status updated for {tomorrow}."
     )
-    return redirect("my_meal_status")
+    return redirect("students:my_meal_status")
 
 
 # get monthly meal preference
@@ -233,7 +233,7 @@ def update_meal_preference(request):
                 messages.error(
                     request, "You cannot change meal preference after the month starts and after 6:00 PM of the last day."
                 )
-                return redirect("update_meal_preference")
+                return redirect("students:update_meal_preference")
 
             meal_pref = form.save(commit=False)
             meal_pref.student = student
@@ -241,7 +241,7 @@ def update_meal_preference(request):
             meal_pref.save()
 
             messages.success(request, f"Your Meal preferences for {month_display} updated.")
-            return redirect("my_meal_preference")
+            return redirect("students:my_meal_preference")
     else:
         form = StudentMealPreferenceForm(instance=existing)
 

@@ -4,7 +4,7 @@ from django.core.paginator import Paginator
 from django.contrib import messages
 
 from managers.models import WeeklyMenuProposal
-from students.models import Student, WeeklyMenu
+from students.models import Student, WeeklyMenu, StudentDetails
 from accounts.models import CustomUser
 from .forms import StudentRegistrationForm
 
@@ -53,20 +53,17 @@ def analytics(request):
 
 @login_required
 @user_passes_test(is_admin)
-@login_required
 def manage_students(request):
-    # Search
+
     query = request.GET.get("q", "")
     students = Student.objects.select_related("user").all()
     if query:
         students = students.filter(user__full_name__icontains=query)  # or username/roll
 
-    # Pagination
     paginator = Paginator(students, 10)
     page_number = request.GET.get("page")
     students_page = paginator.get_page(page_number)
 
-    # Add New Student
     if request.method == "POST":
         name = request.POST.get("name")
         username = request.POST.get("username")
@@ -75,7 +72,6 @@ def manage_students(request):
         room = request.POST.get("room")
         phone = request.POST.get("phone")
 
-        # Validate
         if CustomUser.objects.filter(username=username).exists():
             messages.error(request, "Username already exists!")
         else:
@@ -95,6 +91,69 @@ def manage_students(request):
 
 @login_required
 @user_passes_test(is_admin)
+def edit_student(request, student_id):
+    student = get_object_or_404(Student, id=student_id)
+    details = getattr(student, "studentdetails", None)
+
+    if request.method == "POST":
+        # Student basic info
+        student.name = request.POST.get("name")
+        student.room_number = request.POST.get("room")
+        student.save()
+
+        # StudentDetails fields
+        roll = request.POST.get("roll")
+        dept = request.POST.get("department")
+        batch = request.POST.get("batch")
+        dob = request.POST.get("dob")
+        nid = request.POST.get("nid")
+        address = request.POST.get("address")
+        phone = request.POST.get("phone")
+        blood = request.POST.get("blood_group")
+        guardian_name = request.POST.get("guardian_name")
+        guardian_phone = request.POST.get("guardian_phone")
+        profile_pic = request.FILES.get("profile_picture")
+
+        if details:
+            details.university_id = roll
+            details.department = dept
+            details.batch = batch
+            details.date_of_birth = dob
+            details.national_id = nid
+            details.address = address
+            details.phone_number = phone
+            details.blood_group = blood
+            details.guardian_name = guardian_name
+            details.guardian_phone = guardian_phone
+            if profile_pic:
+                details.profile_picture = profile_pic
+            details.save()
+        else:
+            StudentDetails.objects.create(
+                student=student,
+                university_id=roll,
+                department=dept,
+                batch=batch,
+                date_of_birth=dob,
+                national_id=nid,
+                address=address,
+                phone_number=phone,
+                blood_group=blood,
+                guardian_name=guardian_name,
+                guardian_phone=guardian_phone,
+                profile_picture=profile_pic,
+            )
+
+        messages.success(request, "Student information updated successfully!")
+        return redirect("admins:manage_students")
+
+    return render(
+        request, "admins/edit_student.html", {"student": student, "details": details}
+    )
+
+
+@login_required
+@user_passes_test(is_admin)
 def admin_menu_list(request):
     proposals = WeeklyMenuProposal.objects.filter(status="pending")
     return render(request, "admins/admin_menu_list.html", {"proposals": proposals})
@@ -107,7 +166,6 @@ def approve_menu(request, proposal_id):
     proposal.status = "approved"
     proposal.save()
 
-    # Copy to students.models.WeeklyMenu
     WeeklyMenu.objects.update_or_create(
         day_of_week=proposal.day_of_week,
         defaults={

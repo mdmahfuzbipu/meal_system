@@ -25,7 +25,7 @@
     <div class="rounded-2xl shadow-md p-5 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white flex justify-between items-center hover:from-yellow-500 hover:to-yellow-700 transition">
       <div>
         <h3 class="text-lg font-semibold mb-2">Update Tomorrow's Meal</h3>
-        <a href="{% url 'my_meal_status' %}"
+        <a href="{% url 'students:my_meal_status' %}"
            class="bg-white text-yellow-800 font-bold px-4 py-2 rounded-md hover:bg-yellow-100 transition inline-block text-sm">
           Go to Meal Status
         </a>
@@ -36,7 +36,7 @@
     </div>
 
     <!-- Daily Meal Status -->
-    <a href="{% url 'my_meal_status' %}"
+    <a href="{% url 'students:my_meal_status' %}"
        class="rounded-2xl shadow-md p-5 bg-gradient-to-r from-blue-500 to-blue-700 text-white flex justify-between items-center hover:from-blue-600 hover:to-blue-800 transition">
       <div>
         <h3 class="text-lg font-semibold mb-1">View Daily Meal Status</h3>
@@ -48,7 +48,7 @@
     </a>
 
     <!-- Monthly Meal Preference -->
-    <a href="{% url 'my_meal_preference' %}"
+    <a href="{% url 'students:my_meal_preference' %}"
        class="rounded-2xl shadow-md p-5 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white flex justify-between items-center hover:from-indigo-600 hover:to-indigo-800 transition">
       <div>
         <h3 class="text-lg font-semibold mb-1">Change Meal Preferences</h3>
@@ -60,7 +60,7 @@
     </a>
 
     <!-- Monthly Summary -->
-    <a href="{% url 'monthly_summary' %}"
+    <a href="{% url 'students:monthly_summary' %}"
        class="rounded-2xl shadow-md p-5 bg-gradient-to-r from-green-500 to-green-700 text-white flex justify-between items-center hover:from-green-600 hover:to-green-800 transition">
       <div>
         <h3 class="text-lg font-semibold mb-1">Monthly Summary</h3>

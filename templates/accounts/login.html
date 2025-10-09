@@ -131,7 +131,7 @@
               {% endif %}
 
 
-                <form action="{% url 'login' %}" method="post">
+                <form action="{% url 'accounts:login' %}" method="post">
                     {% csrf_token %}
                     <div class="input-group mb-3 {% if form.login.errors %}border border-danger rounded p-2{% endif %}">
                       <input type="text" name="login" class="form-control" placeholder="Email or Username" value="{{ form.data.login }}" required autofocus>
@@ -190,7 +190,7 @@
 
 
                 <p class="mb-0 mt-3 text-center">
-                    <a href="{% url 'login' %}" class="text-muted">Forgot password?</a>
+                    <a href="{% url 'accounts:login' %}" class="text-muted">Forgot password?</a>
                   </p>
                   
 

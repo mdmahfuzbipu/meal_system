@@ -198,19 +198,19 @@
 
             <li class="nav-header text-white">Meals</li>
             <li class="nav-item">
-                <a href="{% url 'my_meal_status' %}" class="nav-link">
+                <a href="{% url 'students:my_meal_status' %}" class="nav-link">
                 <i class="nav-icon fas fa-toggle-on"></i>
                 <p>Change Daily Meal Status</p>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{% url 'my_meal_preference' %}" class="nav-link">
+                <a href="{% url 'students:my_meal_preference' %}" class="nav-link">
                 <i class="nav-icon fas fa-exchange-alt"></i>
                 <p>Change Monthly Meal Type</p>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{% url 'monthly_summary' %}" class="nav-link">
+                <a href="{% url 'students:monthly_summary' %}" class="nav-link">
                 <i class="nav-icon fas fa-wallet"></i>
                 <p>Meal Cost Summary</p>
                 </a>
@@ -218,7 +218,7 @@
 
             <li class="nav-header text-white">Support</li>
             <li class="nav-item">
-                <a href="{% url 'complain_create' %}" class="nav-link">
+                <a href="{% url 'students:complain_create' %}" class="nav-link">
                 <i class="nav-icon fas fa-comment-dots"></i>
                 <p>Submit a Complaint</p>
                 </a>
@@ -233,7 +233,7 @@
             </li>
             <br>
             <li class="nav-item">
-                <form method="post" action="{% url 'logout' %}" onsubmit="return confirm('Your session would be terminated.\n\nProceed?')">
+                <form method="post" action="{% url 'accounts:logout' %}" onsubmit="return confirm('Your session would be terminated.\n\nProceed?')">
                 {% csrf_token %}
                 <button type="submit" 
                     class="nav-link d-flex justify-content-start align-items-center bg-danger text-white w-100" 

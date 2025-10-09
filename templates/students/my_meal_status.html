@@ -91,10 +91,10 @@
                 <span>
                   {% if tomorrow_status.breakfast_on %}
                     <span class="text-green-600"><i class="fas fa-check-circle"></i> ON</span>
-                    <a href="{% url 'update_tomorrow_status' 'breakfast' %}" class="ml-3 bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1 px-3 rounded-full">Turn OFF</a>
+                    <a href="{% url 'students:update_tomorrow_status' 'breakfast' %}" class="ml-3 bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1 px-3 rounded-full">Turn OFF</a>
                   {% else %}
                     <span class="text-red-600"><i class="fas fa-times-circle"></i> OFF</span>
-                    <a href="{% url 'update_tomorrow_status' 'breakfast' %}" class="ml-3 bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-1 px-3 rounded-full">Turn ON</a>
+                    <a href="{% url 'students:update_tomorrow_status' 'breakfast' %}" class="ml-3 bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-1 px-3 rounded-full">Turn ON</a>
                   {% endif %}
                 </span>
               </li>
@@ -103,10 +103,10 @@
                 <span>
                   {% if tomorrow_status.lunch_on %}
                     <span class="text-green-600"><i class="fas fa-check-circle"></i> ON</span>
-                    <a href="{% url 'update_tomorrow_status' 'lunch' %}" class="ml-3 bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1 px-3 rounded-full">Turn OFF</a>
+                    <a href="{% url 'students:update_tomorrow_status' 'lunch' %}" class="ml-3 bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1 px-3 rounded-full">Turn OFF</a>
                   {% else %}
                     <span class="text-red-600"><i class="fas fa-times-circle"></i> OFF</span>
-                    <a href="{% url 'update_tomorrow_status' 'lunch' %}" class="ml-3 bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-1 px-3 rounded-full">Turn ON</a>
+                    <a href="{% url 'students:update_tomorrow_status' 'lunch' %}" class="ml-3 bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-1 px-3 rounded-full">Turn ON</a>
                   {% endif %}
                 </span>
               </li>
@@ -115,10 +115,10 @@
                 <span>
                   {% if tomorrow_status.dinner_on %}
                     <span class="text-green-600"><i class="fas fa-check-circle"></i> ON</span>
-                    <a href="{% url 'update_tomorrow_status' 'dinner' %}" class="ml-3 bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1 px-3 rounded-full">Turn OFF</a>
+                    <a href="{% url 'students:update_tomorrow_status' 'dinner' %}" class="ml-3 bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1 px-3 rounded-full">Turn OFF</a>
                   {% else %}
                     <span class="text-red-600"><i class="fas fa-times-circle"></i> OFF</span>
-                    <a href="{% url 'update_tomorrow_status' 'dinner' %}" class="ml-3 bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-1 px-3 rounded-full">Turn ON</a>
+                    <a href="{% url 'students:update_tomorrow_status' 'dinner' %}" class="ml-3 bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-1 px-3 rounded-full">Turn ON</a>
                   {% endif %}
                 </span>
               </li>
@@ -137,7 +137,7 @@
 
     <!-- History Link -->
     <div class="mt-10 text-center">
-      <a href="{% url 'meal_history' %}" class="inline-block bg-blue-700 hover:bg-blue-800 text-white font-semibold px-6 py-2 rounded-lg shadow transition">
+      <a href="{% url 'students:meal_history' %}" class="inline-block bg-blue-700 hover:bg-blue-800 text-white font-semibold px-6 py-2 rounded-lg shadow transition">
         <i class="fas fa-list-alt mr-1"></i> View Full Monthly Meal History
       </a>
     </div>

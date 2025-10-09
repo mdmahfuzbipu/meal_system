@@ -14,7 +14,6 @@ WEEKDAY_CHOICES = [
 ]
 
 
-# Create your models here.
 class WeeklyMenuProposal(models.Model):
     STATUS_CHOICES = [
         ("pending", "Pending"),
@@ -22,18 +21,15 @@ class WeeklyMenuProposal(models.Model):
         ("rejected", "Rejected"),
     ]
 
-    day_of_week = models.CharField(max_length=10, choices=WEEKDAY_CHOICES, unique=False)
-    # Breakfast
+    day_of_week = models.CharField(max_length=10, choices=WEEKDAY_CHOICES)
     breakfast_main = models.CharField(max_length=100, blank=True)
     breakfast_cost = models.DecimalField(max_digits=6, decimal_places=2, default=0.00)
 
-    # Lunch
     lunch_main = models.CharField(max_length=100, blank=True)
     lunch_cost = models.DecimalField(max_digits=6, decimal_places=2, default=0.00)
     lunch_contains_beef = models.BooleanField(default=False)
     lunch_contains_fish = models.BooleanField(default=False)
 
-    # Dinner
     dinner_main = models.CharField(max_length=100, blank=True)
     dinner_cost = models.DecimalField(max_digits=6, decimal_places=2, default=0.00)
     dinner_contains_beef = models.BooleanField(default=False)
@@ -42,6 +38,14 @@ class WeeklyMenuProposal(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
     created_at = models.DateTimeField(auto_now_add=True)
+
+    linked_menu = models.ForeignKey(
+        "students.WeeklyMenu",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="proposals",
+    )
 
     def __str__(self):
         return f"{self.day_of_week} ({self.status})"

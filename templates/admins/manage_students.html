@@ -33,11 +33,11 @@
                 {% for student in students %}
                 <tr class="border-b hover:bg-gray-50">
                     <td class="px-4 py-2">{{ student.name }}</td>
-                    <td class="px-4 py-2">{{ student.student.university_id }}</td>
+                    <td class="px-4 py-2">{{ student.studentdetails.university_id }}</td>
                     <td class="px-4 py-2">{{ student.room_number }}</td>
-                    <td class="px-4 py-2">{{ student.phone }}</td>
+                    <td class="px-4 py-2">{{ student.studentdetails.phone_number }}</td>
                     <td class="px-4 py-2 text-center">
-                        <a href="#" class="text-blue-500 hover:underline">Edit</a> |
+                        <a href="{% url 'admins:edit_student' student.id %}" class="text-blue-500 hover:underline">Edit</a> |
                         <a href="#" class="text-red-500 hover:underline">Deactivate</a>
                     </td>
                 </tr>
