@@ -101,13 +101,13 @@ def update_tomorrow_meal_status(request, meal_type):
     current_dt = localtime(now())
 
     cutoff_dt = current_dt.replace(
-        hour=18, minute=0, second=0, microsecond=0
+        hour=20, minute=0, second=0, microsecond=0
     )  # 18:00 or 6:00 PM
 
     if current_dt >= cutoff_dt:
         messages.error(
             request,
-            "You can no longer change meal status for tomorrow. Deadline is 6:00 PM.",
+            "You can no longer change meal status for tomorrow. Deadline is 8:00 PM.",
         )
         return redirect("students:my_meal_status")
 
@@ -294,9 +294,18 @@ def meal_history(request):
 
 @login_required
 def weekly_menu_view(request):
-    weekly_menu = WeeklyMenu.objects.order_by(
-        "id"
-    )  
+    days_order = [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+    ]
+    weekly_menu = list(WeeklyMenu.objects.all())
+    weekly_menu.sort(key=lambda x: days_order.index(x.day_of_week))
+
     return render(
         request,
         "students/weekly_menu.html",

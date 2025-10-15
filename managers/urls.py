@@ -1,8 +1,10 @@
 from django.urls import path
 from . import views
 
+app_name = "managers"
+
 urlpatterns = [
-    # Manager
+
     path("menus/", views.manager_menu_list, name="manager_menu_list"),
-    path("menus/create/", views.create_weekly_menu, name="create_weekly_menu"),
+    path("propose-weekly-menu/", views.propose_weekly_menu, name="propose_weekly_menu"),
 ]

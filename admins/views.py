@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import get_object_or_404, render,redirect
 from django.core.paginator import Paginator
 from django.contrib import messages
+from django.db import transaction
 
 from managers.models import WeeklyMenuProposal
 from students.models import Student, WeeklyMenu, StudentDetails
@@ -219,4 +220,71 @@ def register_student(request):
             "form": form,
             "page_title": "Register New Student",
         },
+    )
+
+
+@login_required
+@user_passes_test(lambda u: u.role == "admin")
+@transaction.atomic
+def review_weekly_proposals(request):
+    # Get all available week start dates (distinct)
+    weeks = (
+        WeeklyMenuProposal.objects.order_by("-week_start_date")
+        .values_list("week_start_date", flat=True)
+        .distinct()
+    )
+
+    # Get selected week from dropdown default:latest
+    selected_week = request.GET.get("week")
+    if not selected_week and weeks:
+        selected_week = weeks[0].strftime("%Y-%m-%d")
+
+  
+    proposals = WeeklyMenuProposal.objects.filter(
+        status="pending", week_start_date=selected_week
+    ).order_by("day_of_week")
+
+    # Handle Approve/Reject
+    if request.method == "POST":
+        proposal_id = request.POST.get("proposal_id")
+        action = request.POST.get("action")
+        proposal = WeeklyMenuProposal.objects.get(id=proposal_id)
+
+        if action == "approve":
+            weekly_menu, created = WeeklyMenu.objects.update_or_create(
+                day_of_week=proposal.day_of_week,
+                defaults={
+                    "breakfast_main": proposal.breakfast_main,
+                    "breakfast_cost": proposal.breakfast_cost,
+                    "lunch_main": proposal.lunch_main,
+                    "lunch_cost": proposal.lunch_cost,
+                    "lunch_contains_beef": proposal.lunch_contains_beef,
+                    "lunch_contains_fish": proposal.lunch_contains_fish,
+                    "lunch_alternate": proposal.lunch_alternate,
+                    "lunch_cost_alternate": proposal.lunch_cost_alternate,
+                    "dinner_main": proposal.dinner_main,
+                    "dinner_cost": proposal.dinner_cost,
+                    "dinner_contains_beef": proposal.dinner_contains_beef,
+                    "dinner_contains_fish": proposal.dinner_contains_fish,
+                    "dinner_alternate": proposal.dinner_alternate,
+                    "dinner_cost_alternate": proposal.dinner_cost_alternate,
+                },
+            )
+            proposal.status = "approved"
+            proposal.linked_menu = weekly_menu
+            proposal.save()
+            messages.success(request, f"✅ Approved {proposal.day_of_week}.")
+        elif action == "reject":
+            proposal.status = "rejected"
+            proposal.save()
+            messages.warning(
+                request, f"❌ Rejected proposal for {proposal.day_of_week}."
+            )
+
+        return redirect(f"{request.path}?week={selected_week}")
+
+    return render(
+        request,
+        "admins/review_weekly_proposals.html",
+        {"proposals": proposals, "weeks": weeks, "selected_week": selected_week},
     )

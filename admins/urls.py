@@ -13,6 +13,11 @@ urlpatterns = [
     path("meal-costs/", views.meal_costs, name="meal_costs"),
     path("analytics/", views.analytics, name="analytics"),
     # menu options
+    path(
+        "review-weekly-proposals/",
+        views.review_weekly_proposals,
+        name="review_weekly_proposals",
+    ),
     path("menus/pending/", views.admin_menu_list, name="admin_menu_list"),
     path("menus/<int:proposal_id>/approve/", views.approve_menu, name="approve_menu"),
     path("menus/<int:proposal_id>/reject/", views.reject_menu, name="reject_menu"),

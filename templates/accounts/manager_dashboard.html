@@ -2,4 +2,17 @@
 {% block content %}
   <h2>🧑‍💼 Manager Dashboard</h2>
   <p>Here you manage token issuance and meal reports.</p>
+
+  <a href="{% url 'managers:propose_weekly_menu' %}" class="group block bg-white rounded-xl shadow p-6 hover:shadow-md transition">
+  <div class="flex items-center gap-4">
+    <div class="rounded-2xl bg-purple-50 p-3">
+      <i class="fas fa-utensils text-purple-600 text-xl"></i>
+    </div>
+    <div>
+      <div class="font-semibold">Propose Weekly Menu</div>
+      <div class="text-sm text-gray-500">Submit menus for admin approval</div>
+    </div>
+  </div>
+</a>
+
 {% endblock %}

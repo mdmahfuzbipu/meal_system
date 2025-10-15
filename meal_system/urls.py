@@ -33,6 +33,7 @@ urlpatterns = [
     path("admins/", include("admins.urls", namespace="admins")),
     path("accounts/", include("accounts.urls", namespace="accounts")),
     path("students/", include("students.urls", namespace="students")),
+    path("managers/", include("managers.urls", namespace="managers")),
     path("notices/", include("notices.urls")),
 ]
 

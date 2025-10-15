@@ -33,7 +33,7 @@ class RoleBasedLoginView(LoginView):
         elif user.is_superuser or user.role == "admin":
             return reverse_lazy("home")
         logger.warning(f"User {user.username} has unknown role: {user.role}")
-        return reverse_lazy("login")
+        return reverse_lazy("accounts:login")
 
 @login_required
 def role_aware_home(request):

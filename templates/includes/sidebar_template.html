@@ -107,7 +107,7 @@
                     
     {% elif request.user.role == 'manager' %}
         <!-- Brand Logo -->
-        <a href="{% url 'staff_home' %}" class="brand-link bg-primary text-white">
+        <a href="{% url 'home' %}" class="brand-link bg-primary text-white">
         <img src="{% static 'images/bauet_logo.png' %}" class="brand-image img-circle elevation-3" style="opacity: .9">
         <span class="brand-text font-weight-bold ml-2">Manager Panel</span>
         </a>
@@ -115,7 +115,7 @@
         <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
-            <img src="{{ request.user.profile_pic }}" class="img-circle elevation-2" alt="User Image">
+            <img src="{{ request.user.student.studentdetails.profile_picture }}" class="img-circle elevation-2" alt="User Image">
             </div>
             <div class="info">
             <a href="#" class="d-block">{{ request.user.get_full_name|default:request.user.username }}</a>
@@ -127,7 +127,7 @@
 
             <li class="nav-header">Dashboard</li>
             <li class="nav-item">
-                <a href="{% url 'staff_home' %}" class="nav-link">
+                <a href="{% url 'home' %}" class="nav-link">
                 <i class="nav-icon fas fa-home"></i>
                 <p>Manager Dashboard</p>
                 </a>
@@ -135,13 +135,13 @@
 
             <li class="nav-header">Actions</li>
             <li class="nav-item">
-                <a href="{% url 'issue_token' %}" class="nav-link">
+                <a href="{% url 'home' %}" class="nav-link">
                 <i class="nav-icon fas fa-ticket-alt"></i>
                 <p>Issue Meal Token</p>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{% url 'view_daily_token_summary' %}" class="nav-link">
+                <a href="{% url 'home' %}" class="nav-link">
                 <i class="nav-icon fas fa-list"></i>
                 <p>Token Summary</p>
                 </a>
@@ -149,13 +149,13 @@
 
             <li class="nav-header">Account</li>
             <li class="nav-item">
-                <a href="{% url 'staff_view_profile' %}" class="nav-link">
+                <a href="{% url 'home' %}" class="nav-link">
                 <i class="nav-icon fas fa-user-cog"></i>
                 <p>View/Edit Profile</p>
                 </a>
             </li>
             <li class="nav-item">
-                <form method="post" action="{% url 'logout' %}" onsubmit="return confirm('Your session would be terminated.\n\nProceed?')">
+                <form method="post" action="{% url 'accounts:logout' %}" onsubmit="return confirm('Your session would be terminated.\n\nProceed?')">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-danger nav-link text-left text-white">
                     <i class="nav-icon fas fa-sign-out-alt"></i>
@@ -172,13 +172,23 @@
         <!-- Student Sidebar -->
         <a href="{% url 'home' %}" class="brand-link bg-blue-800 text-white">
         <img src="{% static 'images/bauet_logo.png' %}" class="brand-image img-circle bg-green-800 elevation-3" style="opacity: .9">
-        <span class="brand-text font-weight-bold ml-2">Student Panel</span>
+        <span class="brand-text font-weight-bold ml-2">STUDENT PANEL</span>
         </a>
 
         <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
-            <img src="{{ request.user.profile_pic }}" class="img-circle elevation-2 text-white" alt="User Image">
+            
+                {% if request.user.student.studentdetails.profile_picture %}
+                <img src="{{ request.user.student.studentdetails.profile_picture.url }}"
+                        class="img-circle elevation-2"
+                        alt="Student Image">
+                {% else %}
+                    <img src="{% static 'images/default_user.png' %}"
+                        class="img-circle elevation-2"
+                        alt="Default Image">
+                {% endif %}
+
             </div>
             <div class="info">
             <a href="#" class="d-block text-white font-bold">{{ request.user.get_full_name|default:request.user.username }}</a>
@@ -239,7 +249,7 @@
                     class="nav-link d-flex justify-content-start align-items-center bg-danger text-white w-100" 
                     style="border: none; padding-left: 55px;">
                     <i class="nav-icon fas fa-sign-out-alt mr-2"></i>
-                    <span>Logout</span>
+                    <span>Log Out</span>
                 </button>
 
                 </form>
@@ -258,7 +268,7 @@
     {% endif %}
 
 {% else %}
-    <p>Please <a href="{% url 'login' %}">log in</a> to access this page.</p>
+    <p>Please <a href="{% url 'accounts:login' %}">log in</a> to access this page.</p>
 
 {% endif %}
 

@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mx-auto mt-8 px-4">
+  <div class="bg-gray-50 border border-gray-200 rounded-2xl shadow-md p-6">
+    <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">
+      Review Weekly Menu Proposals
+    </h2>
+
+
+    <!-- Week Filter -->
+    <form method="GET" class="mb-4 text-center">
+    <label for="week" class="font-medium text-gray-700 mr-2">Select Week:</label>
+    <select name="week" id="week" class="border border-gray-300 rounded-lg px-3 py-1"
+            onchange="this.form.submit()">
+        {% for week in weeks %}
+        <option value="{{ week|date:'Y-m-d' }}">{{ week|date:'M. d, Y' }}</option>
+            Week of {{ week }}
+        </option>
+        {% endfor %}
+    </select>
+    </form>
+
+
+    <div class="overflow-x-auto">
+      <table class="w-full border-collapse rounded-lg overflow-hidden shadow-sm">
+        <thead class="bg-gray-200 text-gray-700">
+          <tr>
+            <th class="p-3 text-left">Day</th>
+            <th class="p-3 text-left">Breakfast</th>
+            <th class="p-3 text-left">Lunch</th>
+            <th class="p-3 text-left">Dinner</th>
+            <th class="p-3 text-center">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody class="bg-white">
+          {% for p in proposals %}
+          <tr class="hover:bg-gray-100 border-b">
+            <td class="p-3 font-semibold text-gray-800">{{ p.day_of_week }}</td>
+
+            <!-- Breakfast -->
+            <td class="p-3 text-gray-700">
+              <div>
+                <span class="font-medium">Main:</span> {{ p.breakfast_main }}
+                <span class="text-sm text-gray-500">({{ p.breakfast_cost }})</span>
+              </div>
+            </td>
+
+            <!-- Lunch -->
+            <td class="p-3 text-gray-700">
+              <div>
+                <span class="font-medium">Main:</span> {{ p.lunch_main }}
+                <span class="text-sm text-gray-500">({{ p.lunch_cost }})</span>
+                {% if p.lunch_contains_beef %}
+                  <i class="fa-solid fa-drumstick-bite text-red-600 ml-1"></i>
+                {% endif %}
+                {% if p.lunch_contains_fish %}
+                  <i class="fa-solid fa-fish text-blue-600 ml-1"></i>
+                {% endif %}
+              </div>
+              {% if p.lunch_alternate %}
+              <div class="text-sm text-gray-600 ml-4">
+                <span class="font-medium">Alt:</span> {{ p.lunch_alternate }}
+                <span class="text-xs text-gray-500">({{ p.lunch_cost_alternate }})</span>
+              </div>
+              {% endif %}
+            </td>
+
+            <!-- Dinner -->
+            <td class="p-3 text-gray-700">
+              <div>
+                <span class="font-medium">Main:</span> {{ p.dinner_main }}
+                <span class="text-sm text-gray-500">({{ p.dinner_cost }})</span>
+                {% if p.dinner_contains_beef %}
+                  <i class="fa-solid fa-drumstick-bite text-red-600 ml-1"></i>
+                {% endif %}
+                {% if p.dinner_contains_fish %}
+                  <i class="fa-solid fa-fish text-blue-600 ml-1"></i>
+                {% endif %}
+              </div>
+              {% if p.dinner_alternate %}
+              <div class="text-sm text-gray-600 ml-4">
+                <span class="font-medium">Alt:</span> {{ p.dinner_alternate }}
+                <span class="text-xs text-gray-500">({{ p.dinner_cost_alternate }})</span>
+              </div>
+              {% endif %}
+            </td>
+
+            <!-- Actions -->
+            <td class="p-3 text-center">
+              <form method="POST" class="inline">
+                {% csrf_token %}
+                <input type="hidden" name="proposal_id" value="{{ p.id }}">
+                <button name="action" value="approve"
+                        class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg shadow-sm transition">
+                  Approve
+                </button>
+                <button name="action" value="reject"
+                        class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg shadow-sm transition">
+                  Reject
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" class="p-4 text-center text-gray-500">No pending proposals.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+{% endblock %}
