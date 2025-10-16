@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_title %}
+<div class="text-center my-4">
+    <div class="card shadow-sm mx-auto" style="max-width: 700px; background: linear-gradient(90deg, #0D47A1, #42A5F5);">
+        <div class="card-body text-white">
+            <i class="fas fa-users-cog fa-3x mb-2"></i>
+            <h2 class="h4 mb-1 fw-bold">Manage Managers</h2>
+            <p class="mb-0">View and update all registered managers</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if messages %}
+        {% for msg in messages %}
+            <div class="alert alert-{{ msg.tags }} mt-2">
+                <i class="fas fa-info-circle me-2"></i>{{ msg }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+<div class="card shadow-sm mt-4">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center" style="height: 60px;">
+
+        <!-- Centered Text -->
+        <div class="position-relative w-100 d-flex justify-content-center">
+            <h2 class="fw-bold mb-0" style="font-size: 2rem; line-height: 1.2;">
+                <i class="fas fa-user-shield me-2" style="font-size: 2.2rem;"></i> Manager List
+            </h2>
+        </div>
+
+        <!-- Add Manager Button on far right -->
+        <div>
+            <a href="{% url 'admins:register_manager' %}" class="btn btn-success btn-sm font-bold">
+                <i class="fas fa-plus"></i> Add Manager
+            </a>
+        </div>
+
+    </div>
+
+    <div class="card-body table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-primary">
+                <tr>
+                    <th>#</th>
+                    <th>Username</th>
+                    <th>Full Name</th>
+                    <th>NID</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Joined</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in managers %}
+                <tr class="{% if not m.user.is_active %}table-danger{% endif %}">
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ m.user.username }}</td>
+                    <td>{{ m.full_name }}</td>
+                    <td>{{ m.nid }}</td>
+                    <td>{{ m.phone_number }}</td>
+                    <td>{{ m.user.email }}</td>
+                    <td>{{ m.created_at|date:"M d, Y" }}</td>
+                    <td>
+                        {% if m.user.is_active %}
+                            <span class="badge bg-success">Active</span>
+                        {% else %}
+                            <span class="badge bg-danger">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'admins:edit_manager' m.id %}" class="btn btn-sm btn-warning">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        {% if m.user.is_active %}
+                            <a href="{% url 'admins:toggle_manager_status' m.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to deactivate this manager?');">
+                                <i class="fas fa-ban"></i> Deactivate
+                            </a>
+                        {% else %}
+                            <a href="{% url 'admins:toggle_manager_status' m.id %}" class="btn btn-sm btn-success" onclick="return confirm('Activate this manager again?');">
+                                <i class="fas fa-check-circle"></i> Activate
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9" class="text-center text-muted">No managers found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</div>
+{% endblock %}

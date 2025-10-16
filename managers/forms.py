@@ -8,14 +8,26 @@ User = get_user_model()
 
 
 class ManagerRegistrationForm(forms.ModelForm):
-    
+    username = forms.CharField(max_length=150, required=True)
     email = forms.EmailField(required=True)
     password = forms.CharField(widget=forms.PasswordInput)
     confirm_password = forms.CharField(widget=forms.PasswordInput)
+    full_name = forms.CharField(max_length=100, required=True)
 
     class Meta:
         model = ManagerProfile
-        fields = ["nid", "address", "emergency_phone", "phone_number"]
+        fields = [
+            "username",
+            "email",
+            "password",
+            "confirm_password",
+            "full_name",
+            "nid",
+            "address",
+            "phone_number",
+            "emergency_phone",
+            "profile_picture",
+        ]
 
     def clean_email(self):
         email = self.cleaned_data["email"]
@@ -27,7 +39,6 @@ class ManagerRegistrationForm(forms.ModelForm):
         cleaned_data = super().clean()
         password = cleaned_data.get("password")
         confirm_password = cleaned_data.get("confirm_password")
-
         if password and confirm_password and password != confirm_password:
             self.add_error("confirm_password", "Passwords do not match.")
         return cleaned_data
@@ -41,12 +52,14 @@ class ManagerRegistrationForm(forms.ModelForm):
     def save(self, commit=True):
         cleaned_data = self.cleaned_data
         user = User.objects.create_user(
+            username=cleaned_data["username"],
             email=cleaned_data["email"],
             password=cleaned_data["password"],
             role="manager",
         )
         manager = super().save(commit=False)
         manager.user = user
+        manager.full_name = cleaned_data["full_name"]
         if commit:
             manager.save()
         return manager

@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block page_title %}
+<!-- Header Card -->
+<div class="text-center my-4">
+    <div class="card shadow-sm mx-auto" style="max-width: 600px; background: linear-gradient(90deg, #1E40AF, #3B82F6);">
+        <div class="card-body text-white">
+            <i class="fas fa-user-tie fa-3x mb-2"></i>
+            <h2 class="h4 mb-1 fw-bold">Register New Manager</h2>
+            <p class="mb-0">Add a new manager with complete profile information</p>
+        </div>
+    </div>
+</div>
+{% endblock page_title %}
+
+{% block content %}
+<div class="container">
+
+    <!-- Messages -->
+    {% if messages %}
+        {% for msg in messages %}
+            <div class="alert alert-dismissible fade show
+                {% if msg.tags == 'success' %}alert-success
+                {% elif msg.tags == 'error' %}alert-danger
+                {% else %}alert-info{% endif %} mt-2" role="alert">
+                <i class="fas fa-info-circle me-2"></i>{{ msg }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Form Card -->
+    <div class="card shadow-sm mt-4">
+        <div class="card-header bg-primary text-white">
+            <i class="fas fa-user-circle me-2"></i> Manager Details
+        </div>
+
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+
+                <div class="row g-3">
+
+                    <!-- Login Info -->
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-user"></i> Username</label>
+                        {{ form.username|add_class:"form-control" }}
+                        {{ form.username.errors }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-envelope"></i> Email</label>
+                        {{ form.email|add_class:"form-control" }}
+                        {{ form.email.errors }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-lock"></i> Password</label>
+                        {{ form.password|add_class:"form-control" }}
+                        {{ form.password.errors }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-lock"></i> Confirm Password</label>
+                        {{ form.confirm_password|add_class:"form-control" }}
+                        {{ form.confirm_password.errors }}
+                    </div>
+
+                    <!-- Personal Info -->
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-id-card"></i> Full Name</label>
+                        {{ form.full_name|add_class:"form-control" }}
+                        {{ form.full_name.errors }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-id-badge"></i> National ID (NID)</label>
+                        {{ form.nid|add_class:"form-control" }}
+                        {{ form.nid.errors }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-map-marker-alt"></i> Address</label>
+                        {{ form.address|add_class:"form-control" }}
+                        {{ form.address.errors }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-phone"></i> Phone Number</label>
+                        {{ form.phone_number|add_class:"form-control" }}
+                        {{ form.phone_number.errors }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-phone-alt"></i> Emergency Phone</label>
+                        {{ form.emergency_phone|add_class:"form-control" }}
+                        {{ form.emergency_phone.errors }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fas fa-image"></i> Profile Picture (Optional)</label>
+                        {{ form.profile_picture|add_class:"form-control" }}
+                        {{ form.profile_picture.errors }}
+                    </div>
+
+                </div>
+
+                <!-- Submit -->
+                <div class="mt-4 text-center">
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="fas fa-user-plus me-2"></i> Register Manager
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

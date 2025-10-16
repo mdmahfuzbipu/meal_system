@@ -3,10 +3,13 @@ from django.shortcuts import get_object_or_404, render,redirect
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.db import transaction
+from django.db.models import Q
 
-from managers.models import WeeklyMenuProposal
+from managers.forms import ManagerRegistrationForm
+from managers.models import ManagerProfile, WeeklyMenuProposal
 from students.models import Student, WeeklyMenu, StudentDetails
 from accounts.models import CustomUser
+from accounts.decorators import admin_required
 from .forms import StudentRegistrationForm
 
 def is_admin(user):
@@ -51,6 +54,70 @@ def meal_costs(request):
 def analytics(request):
     return render(request, "admins/analytics.html")
 
+@admin_required
+def register_manager(request):
+    if request.method == "POST":
+        form = ManagerRegistrationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Manager registered successfully!")
+            return redirect("admins:register_manager")
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = ManagerRegistrationForm()
+
+    return render(request, "admins/register_manager.html", {"form": form})
+
+
+@admin_required
+def manage_managers(request):
+    managers = ManagerProfile.objects.select_related("user").order_by("-created_at")
+    return render(request, "admins/manage_managers.html", {"managers": managers})
+
+
+@admin_required
+def edit_manager(request, manager_id):
+    manager = get_object_or_404(ManagerProfile, id=manager_id)
+    if request.method == "POST":
+        form = ManagerRegistrationForm(request.POST, request.FILES, instance=manager)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Manager information updated successfully.")
+            return redirect("admins:manage_managers")
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        initial_data = {
+            "username": manager.user.username,
+            "email": manager.user.email,
+            "full_name": manager.full_name,
+        }
+        form = ManagerRegistrationForm(instance=manager, initial=initial_data)
+
+    return render(
+        request, "admins/edit_manager.html", {"form": form, "manager": manager}
+    )
+
+
+@login_required
+@user_passes_test(is_admin)
+def toggle_manager_status(request, manager_id):
+    manager = get_object_or_404(ManagerProfile, id=manager_id)
+    user = manager.user
+
+    user.is_active = not user.is_active 
+    user.save()
+
+    if user.is_active:
+        messages.success(request, f"Manager '{manager.full_name}' has been activated.")
+    else:
+        messages.warning(
+            request, f"Manager '{manager.full_name}' has been deactivated."
+        )
+
+    return redirect("admins:manage_managers")
+
 
 @login_required
 @user_passes_test(is_admin)
@@ -59,8 +126,11 @@ def manage_students(request):
     query = request.GET.get("q", "")
     students = Student.objects.select_related("user").all()
     if query:
-        students = students.filter(user__full_name__icontains=query)  # or username/roll
-
+        students = students.filter(
+            Q(name__icontains=query)
+            | Q(user__username__icontains=query)
+            | Q(room_number__icontains=query)
+        )
     paginator = Paginator(students, 10)
     page_number = request.GET.get("page")
     students_page = paginator.get_page(page_number)
@@ -86,7 +156,11 @@ def manage_students(request):
     return render(
         request,
         "admins/manage_students.html",
-        {"students": students_page, "query": query},
+        {
+            "students": students_page,
+            "query": query,
+            "page_title": "Manage Students",
+        },
     )
 
 
@@ -151,6 +225,23 @@ def edit_student(request, student_id):
     return render(
         request, "admins/edit_student.html", {"student": student, "details": details}
     )
+
+
+@login_required
+@user_passes_test(is_admin)
+def toggle_student_status(request, student_id):
+    student = get_object_or_404(Student, id=student_id)
+    user = student.user
+
+    user.is_active = not user.is_active
+    user.save()
+
+    if user.is_active:
+        messages.success(request, f"Student '{student.name}' has been activated.")
+    else:
+        messages.warning(request, f"Student '{student.name}' has been deactivated.")
+
+    return redirect("admins:manage_students")
 
 
 @login_required

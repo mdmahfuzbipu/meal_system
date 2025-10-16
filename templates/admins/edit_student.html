@@ -7,13 +7,34 @@
     {% csrf_token %}
     
     <h3 class="font-semibold text-gray-700 mb-2 mt-2">Basic Information</h3>
+
     <label class="block mb-2">Full Name</label>
-    <input type="text" name="name" value="{{ student.name }}" class="w-full border px-3 py-2 mb-3 rounded">
+    <input 
+      type="text" 
+      name="name" 
+      value="{{ student.name }}" 
+      class="w-full border px-3 py-2 mb-3 rounded"
+    >
+
+    <!-- Username (read-only and not editable) -->
+    <label class="block mb-2">Username</label>
+    <input 
+      type="text" 
+      value="{{ student.user.username }}" 
+      class="w-full bg-gray-100 text-gray-700 border border-gray-300 px-3 py-2 mb-3 rounded cursor-not-allowed"
+      readonly
+    >
 
     <label class="block mb-2">Room Number</label>
-    <input type="text" name="room" value="{{ student.room_number }}" class="w-full border px-3 py-2 mb-3 rounded">
+    <input 
+      type="text" 
+      name="room" 
+      value="{{ student.room_number }}" 
+      class="w-full border px-3 py-2 mb-3 rounded"
+    >
 
     <h3 class="font-semibold text-gray-700 mb-2 mt-4">University Details</h3>
+
     <label class="block mb-2">University ID (Roll)</label>
     <input type="text" name="roll" value="{{ details.university_id }}" class="w-full border px-3 py-2 mb-3 rounded">
 
@@ -51,7 +72,7 @@
     <input type="file" name="profile_picture" class="w-full border px-3 py-2 mb-3 rounded">
 
     <div class="flex justify-end mt-4">
-      <a href="{% url 'admins:manage_students' %}" class="bg-gray-300 px-4 py-2 rounded mr-2">Cancel</a>
+      <a href="{% url 'admins:manage_students' %}" class="bg-gray-300 px-4 py-2 rounded mr-2 hover:bg-gray-400">Cancel</a>
       <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
         Save Changes
       </button>

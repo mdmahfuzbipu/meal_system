@@ -1,71 +1,115 @@
-{% extends 'base.html' %}
-{% block content %}
+{% extends "base.html" %}
+{% load static %}
 
-<div class="max-w-6xl mx-auto mt-8 bg-white p-6 shadow-lg rounded-lg">
-    <h2 class="text-2xl font-bold mb-6">Manage Students</h2>
-
-    <!-- Search Bar -->
-    <form method="get" class="mb-4 flex">
-        <input type="text" name="q" value="{{ query }}" placeholder="Search by name..."
-               class="border rounded-l px-4 py-2 w-full focus:outline-none">
-        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-r hover:bg-blue-600">Search</button>
-    </form>
-
-    <!-- Add New Student Button -->
-    <button onclick="document.getElementById('addModal').classList.remove('hidden')"
-            class="bg-green-500 text-white px-4 py-2 rounded mb-4 hover:bg-green-600">
-        + Register New Student
-    </button>
-
-    <!-- Student Table -->
-    <div class="overflow-x-auto rounded border border-gray-200">
-        <table class="min-w-full text-sm">
-            <thead class="bg-gray-100 text-gray-700 uppercase text-xs">
-                <tr>
-                    <th class="px-4 py-2 text-left">Name</th>
-                    <th class="px-4 py-2 text-left">Roll</th>
-                    <th class="px-4 py-2 text-left">Room</th>
-                    <th class="px-4 py-2 text-left">Phone</th>
-                    <th class="px-4 py-2 text-center">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for student in students %}
-                <tr class="border-b hover:bg-gray-50">
-                    <td class="px-4 py-2">{{ student.name }}</td>
-                    <td class="px-4 py-2">{{ student.studentdetails.university_id }}</td>
-                    <td class="px-4 py-2">{{ student.room_number }}</td>
-                    <td class="px-4 py-2">{{ student.studentdetails.phone_number }}</td>
-                    <td class="px-4 py-2 text-center">
-                        <a href="{% url 'admins:edit_student' student.id %}" class="text-blue-500 hover:underline">Edit</a> |
-                        <a href="#" class="text-red-500 hover:underline">Deactivate</a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="5" class="text-center text-gray-500 py-4">No students found.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+{% block page_title %}
+<div class="text-center my-4">
+    <div class="card shadow-sm mx-auto" style="max-width: 700px; background: linear-gradient(90deg, #0D47A1, #42A5F5);">
+        <div class="card-body text-white">
+            <i class="fas fa-users fa-3x mb-2"></i>
+            <h2 class="h4 mb-1 fw-bold">Manage Students</h2>
+            <p class="mb-0">View and update all registered students</p>
+        </div>
     </div>
+</div>
+{% endblock %}
 
-    <!-- Pagination -->
-    <div class="mt-4 flex justify-center">
-        {% if students.has_previous %}
-            <a href="?page={{ students.previous_page_number }}&q={{ query }}" class="px-3 py-1 bg-gray-200 rounded">Prev</a>
-        {% endif %}
-        <span class="mx-2">Page {{ students.number }} of {{ students.paginator.num_pages }}</span>
-        {% if students.has_next %}
-            <a href="?page={{ students.next_page_number }}&q={{ query }}" class="px-3 py-1 bg-gray-200 rounded">Next</a>
-        {% endif %}
+{% block content %}
+<div class="container">
+    {% if messages %}
+        {% for msg in messages %}
+            <div class="alert alert-{{ msg.tags }} mt-2">
+                <i class="fas fa-info-circle me-2"></i>{{ msg }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="card shadow-sm mt-4">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center" style="height: 60px;">
+
+            <!-- Centered Text using flex + absolute trick -->
+            <div class="position-relative w-100 d-flex justify-content-center">
+                <h2 class="fw-bold mb-0" style="font-size: 2rem; line-height: 1.2;">
+                    <i class="fas fa-user-graduate me-2" style="font-size: 2.2rem;"></i> Student List
+                </h2>
+            </div>
+
+            <!-- Register Button on far right -->
+            <div>
+                <a href="{% url 'admins:register_student' %}" class="btn btn-success btn-sm font-bold">
+                    <i class="fas fa-plus"></i> Register Student
+                </a>
+            </div>
+
+        </div>
+
+
+
+
+
+        <div class="card-body table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-primary">
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Roll</th>
+                        <th>Room</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr class="{% if not student.user.is_active %}table-danger{% endif %}">
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ student.name }}</td>
+                        <td>{{ student.studentdetails.university_id }}</td>
+                        <td>{{ student.room_number }}</td>
+                        <td>{{ student.studentdetails.phone_number }}</td>
+                        <td>
+                            {% if student.user.is_active %}
+                                <span class="badge bg-success">Active</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'admins:edit_student' student.id %}" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            {% if student.user.is_active %}
+                                <a href="{% url 'admins:toggle_student_status' student.id %}" 
+                                   class="btn btn-sm btn-danger"
+                                   onclick="return confirm('Deactivate this student?');">
+                                   <i class="fas fa-user-slash"></i> Deactivate
+                                </a>
+                            {% else %}
+                                <a href="{% url 'admins:toggle_student_status' student.id %}" 
+                                   class="btn btn-sm btn-success"
+                                   onclick="return confirm('Activate this student?');">
+                                   <i class="fas fa-user-check"></i> Activate
+                                </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted">No students found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <!-- Add Student Modal -->
-<div id="addModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-    <div class="bg-white p-6 rounded-lg w-96">
-        <h3 class="text-xl font-bold mb-4">Register New Student</h3>
+<div id="addModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg w-96 shadow-xl">
+        <h3 class="text-xl font-bold mb-4 text-gray-800 flex items-center">
+            <i class="fas fa-user-plus mr-2"></i> Register New Student
+        </h3>
         <form method="POST">
             {% csrf_token %}
             <input type="text" name="name" placeholder="Full Name" class="w-full mb-3 border rounded px-3 py-2" required>
@@ -73,10 +117,11 @@
             <input type="password" name="password" placeholder="Password" class="w-full mb-3 border rounded px-3 py-2" required>
             <input type="text" name="roll" placeholder="Roll Number" class="w-full mb-3 border rounded px-3 py-2" required>
             <input type="text" name="room" placeholder="Room Number" class="w-full mb-3 border rounded px-3 py-2" required>
-            <input type="text" name="phone" placeholder="Phone" class="w-full mb-3 border rounded px-3 py-2" required>
-            <div class="flex justify-end">
-                <button type="button" onclick="document.getElementById('addModal').classList.add('hidden')" class="px-4 py-2 bg-gray-300 rounded mr-2">Cancel</button>
-                <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded">Add</button>
+            <input type="text" name="phone" placeholder="Phone" class="w-full mb-4 border rounded px-3 py-2" required>
+            <div class="d-flex justify-content-end gap-2">
+                <button type="button" onclick="document.getElementById('addModal').classList.add('hidden')" 
+                        class="btn btn-secondary">Cancel</button>
+                <button type="submit" class="btn btn-success">Add</button>
             </div>
         </form>
     </div>
