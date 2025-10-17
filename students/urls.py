@@ -19,5 +19,11 @@ urlpatterns = [
     path("meal-history/", views.meal_history, name="meal_history"),
     path("weekly-menu/", views.weekly_menu_view, name="weekly_menu"),
     path("complain/", views.complain_create, name="complain_create"),
-    path("monthly-summary/", views.monthly_summary, name="monthly_summary"),
+    #path("monthly-summary/", views.monthly_summary, name="monthly_summary"),
+    path("meal-cost/", views.student_meal_cost_view, name="student_meal_cost"),
+    path(
+        "monthly-summary/",
+        views.student_monthly_summary_view,
+        name="monthly_summary",
+    ),
 ]

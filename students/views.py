@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
+from django.db.models import Sum
 from django.utils.timezone import now, localtime, make_aware
 from django.utils.dateformat import DateFormat
 
@@ -9,7 +10,9 @@ from datetime import date, timedelta, time, datetime
 from calendar import monthrange
 
 from .models import (
-    DailyMealStatus, 
+    DailyMealCost,
+    DailyMealStatus,
+    MonthlyMealSummary, 
     Student,
     StudentMealPreference,
     WeeklyMenu
@@ -253,6 +256,57 @@ def update_meal_preference(request):
     }
 
     return render(request, "students/update_meal_preference.html", context)
+
+
+@login_required
+def student_meal_cost_view(request):
+    """
+    Show student's daily meal status and cost for the current month.
+    """
+    student = request.user.student
+    today = date.today()
+    year, month = today.year, today.month
+
+    # Get all days of this month
+    start_date = date(year, month, 1)
+    end_date = date(year, month, monthrange(year, month)[1])
+
+    # Fetch meal statuses and costs
+    statuses = DailyMealStatus.objects.filter(
+        student=student, date__range=(start_date, end_date)
+    ).order_by("-date")
+    costs = {
+        c.date: c.total_cost
+        for c in DailyMealCost.objects.filter(
+            student=student, date__range=(start_date, end_date)
+        )
+    }
+
+    total_month_cost = sum(costs.values(), 0)
+
+    context = {
+        "page_title": "Daily Meal Cost Overview",
+        "statuses": statuses,
+        "costs": costs,
+        "month": today.strftime("%B %Y"),
+        "total_month_cost": total_month_cost,
+    }
+    return render(request, "students/student_meal_cost.html", context)
+
+
+@login_required
+def student_monthly_summary_view(request):
+    """Show all monthly meal summaries for the logged-in student."""
+    student = request.user.student
+
+    summaries = MonthlyMealSummary.objects.filter(student=student).order_by("-month")
+    total_overall_cost = summaries.aggregate(Sum("total_cost"))["total_cost__sum"] or 0
+
+    context = {
+        "summaries": summaries,
+        "total_overall_cost": total_overall_cost,
+    }
+    return render(request, "students/student_monthly_summary.html", context)
 
 
 @login_required

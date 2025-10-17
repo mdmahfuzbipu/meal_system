@@ -84,24 +84,6 @@ class StudentMealPreference(models.Model):
         return f"{calendar.month_name[self.month]}"
 
 
-# class WeeklyMenu(models.Model):
-#     day_of_week = models.CharField(max_length=10, choices=WEEKDAY_CHOICES, unique=True)
-#     meal_items = models.TextField() # short - bread,chicken,egg
-
-#     breakfast = models.CharField(max_length=100, blank=True) # details
-#     lunch = models.CharField(max_length=100, blank=True)
-#     dinner = models.CharField(max_length=100, blank=True)
-
-#     includes_beef = models.BooleanField(default=False)
-#     includes_fish = models.BooleanField(default=True)
-
-#     base_cost = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-#     alternate_cost = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-
-#     def __str__(self):
-#         return f"{self.day_of_week} Item -{self.meal_items} - Cost {self.base_cost}Taka/{self.alternate_cost}Taka"
-
-
 class WeeklyMenu(models.Model):
     day_of_week = models.CharField(max_length=10, choices=WEEKDAY_CHOICES, unique=True)
 
@@ -141,7 +123,6 @@ class WeeklyMenu(models.Model):
 
     def __str__(self):
         return self.day_of_week
-
 
 
 class DailyMealStatus(models.Model):
@@ -205,6 +186,20 @@ class Complain(models.Model):
     is_resolved = models.BooleanField(default=False)
     submitted_at = models.DateTimeField(auto_now_add=True)
 
-
     def __str__(self):
         return f"Complaint: {self.description[:30]}... - Room {self.room_number}"
+
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from datetime import date
+
+
+from .utils import save_daily_cost
+
+@receiver(post_save, sender=DailyMealStatus)
+def update_daily_cost(sender, instance, **kwargs):
+    """
+    Automatically calculate and save cost when meal status is updated.
+    """
+    save_daily_cost(instance.student, instance.date)

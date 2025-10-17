@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Meal Cost Summary - {{ month }}</h2>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped text-center align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Date</th>
+                    <th>Breakfast</th>
+                    <th>Lunch</th>
+                    <th>Dinner</th>
+                    <th>Daily Cost (৳)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in statuses %}
+                    <tr>
+                        <td>{{ s.date }}</td>
+                        <td>{% if s.breakfast_on %}✅{% else %}❌{% endif %}</td>
+                        <td>{% if s.lunch_on %}✅{% else %}❌{% endif %}</td>
+                        <td>{% if s.dinner_on %}✅{% else %}❌{% endif %}</td>
+                        <td>{{ costs.s.date|default:"0.00" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="5">No meal records found this month.</td></tr>
+                {% endfor %}
+            </tbody>
+            <tfoot class="table-light fw-bold">
+                <tr>
+                    <td colspan="4">Total This Month</td>
+                    <td>{{ total_month_cost }}</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+{% endblock %}

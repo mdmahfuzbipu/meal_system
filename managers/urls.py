@@ -4,7 +4,12 @@ from . import views
 app_name = "managers"
 
 urlpatterns = [
-
     path("menus/", views.manager_menu_list, name="manager_menu_list"),
     path("propose-weekly-menu/", views.propose_weekly_menu, name="propose_weekly_menu"),
+    path("monthly-summary/", views.monthly_summary_view, name="monthly_summary"),
+    path(
+        "export-monthly-summary/",
+        views.export_monthly_summary,
+        name="export_monthly_summary",
+    ),
 ]

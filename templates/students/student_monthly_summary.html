@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2 class="text-center mb-4">Monthly Meal Summary</h2>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped text-center align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>Month</th>
+          <th>Total Days ON</th>
+          <th>Total Cost (৳)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in summaries %}
+          <tr>
+            <td>{{ s.month }}</td>
+            <td>{{ s.total_on_days }}</td>
+            <td>{{ s.total_cost }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="3">No monthly summaries found.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot class="table-light fw-bold">
+        <tr>
+          <td colspan="2">Grand Total</td>
+          <td>{{ total_overall_cost }}</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
+{% endblock %}

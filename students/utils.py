@@ -102,3 +102,21 @@ def generate_monthly_summary_for_all(year, month):
     students = Student.objects.all()
     for student in students:
         save_monthly_summary(student, year, month)
+
+
+def save_daily_cost(student, current_date):
+    """
+    Calculates and saves the student's total meal cost for the given date.
+    Updates the existing record or creates a new one.
+    """
+    from .models import DailyMealCost
+
+    total_cost = calculate_daily_cost(student, current_date)
+
+    DailyMealCost.objects.update_or_create(
+        student=student,
+        date=current_date,
+        defaults={"total_cost": total_cost},
+    )
+
+    return total_cost
