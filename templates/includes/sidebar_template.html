@@ -168,97 +168,103 @@
         </nav>
         </div>
             
-    {% elif request.user.role == 'student' %}
-        <!-- Student Sidebar -->
+        {% elif request.user.role == 'student' %}
+        <!-- ====================== STUDENT SIDEBAR ====================== -->
         <a href="{% url 'home' %}" class="brand-link bg-blue-800 text-white">
-        <img src="{% static 'images/bauet_logo.png' %}" class="brand-image img-circle bg-green-800 elevation-3" style="opacity: .9">
-        <span class="brand-text font-weight-bold ml-2">STUDENT PANEL</span>
+            <img src="{% static 'images/bauet_logo.png' %}" 
+                class="brand-image img-circle bg-green-800 elevation-3" 
+                style="opacity: .9">
+            <span class="brand-text font-weight-bold ml-2">STUDENT PANEL</span>
         </a>
 
         <div class="sidebar">
-        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-            <div class="image">
-            
-                {% if request.user.student.studentdetails.profile_picture %}
-                <img src="{{ request.user.student.studentdetails.profile_picture.url }}"
-                        class="img-circle elevation-2"
-                        alt="Student Image">
-                {% else %}
-                    <img src="{% static 'images/default_user.png' %}"
-                        class="img-circle elevation-2"
-                        alt="Default Image">
-                {% endif %}
-
+            <!-- Student Profile -->
+            <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                <div class="image">
+                    {% if request.user.student.studentdetails.profile_picture %}
+                        <img src="{{ request.user.student.studentdetails.profile_picture.url }}" 
+                            class="img-circle elevation-2 border border-white" 
+                            alt="Student Image">
+                    {% else %}
+                        <img src="{% static 'images/default_user.png' %}" 
+                            class="img-circle elevation-2 border border-white" 
+                            alt="Default Image">
+                    {% endif %}
+                </div>
+                <div class="info">
+                    <a href="#" class="d-block text-white font-bold">{{ request.user.get_full_name|default:request.user.username }}</a>
+                </div>
             </div>
-            <div class="info">
-            <a href="#" class="d-block text-white font-bold">{{ request.user.get_full_name|default:request.user.username }}</a>
-            </div>
+
+            <!-- Sidebar Menu -->
+            <nav class="mt-2">
+                <ul class="nav nav-pills nav-sidebar flex-column text-sm">
+
+                    <li class="nav-header text-white text-uppercase font-semibold">Dashboard</li>
+                    <li class="nav-item">
+                        <a href="{% url 'home' %}" class="nav-link text-white">
+                            <i class="nav-icon fas fa-home"></i>
+                            <p>Home</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-header text-white text-uppercase font-semibold">Meals</li>
+                    <li class="nav-item">
+                        <a href="{% url 'students:my_meal_status' %}" class="nav-link text-white">
+                            <i class="nav-icon fas fa-toggle-on"></i>
+                            <p>Change Daily Meal Status</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'students:my_meal_preference' %}" class="nav-link text-white">
+                            <i class="nav-icon fas fa-exchange-alt"></i>
+                            <p>Change Monthly Meal Type</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'students:meal_history' %}" class="nav-link text-white">
+                            <i class="nav-icon fas fa-wallet"></i>
+                            <p>Meal Cost & History</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'students:weekly_menu' %}" class="nav-link text-white">
+                            <i class="nav-icon fas fa-utensils"></i>
+                            <p>Weekly Menu</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-header text-white text-uppercase font-semibold">Support</li>
+                    <li class="nav-item">
+                        <a href="{% url 'students:complain_create' %}" class="nav-link text-white">
+                            <i class="nav-icon fas fa-comment-dots"></i>
+                            <p>Submit a Complaint</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-header text-white text-uppercase font-semibold">Account</li>
+                    <li class="nav-item">
+                        <a href="{% url 'home' %}" class="nav-link text-white">
+                            <i class="nav-icon fas fa-user-cog"></i>
+                            <p>View/Edit Profile</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item mt-3">
+                        <form method="post" action="{% url 'accounts:logout' %}" 
+                            onsubmit="return confirm('Your session will be terminated.\n\nProceed?')">
+                            {% csrf_token %}
+                            <button type="submit" 
+                                class="nav-link d-flex justify-content-start align-items-center bg-danger text-white w-100" 
+                                style="border: none; padding-left: 55px;">
+                                <i class="nav-icon fas fa-sign-out-alt mr-2"></i>
+                                <span>Log Out</span>
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </nav>
         </div>
-
-        <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar flex-column text-sm">
-
-            <li class="nav-header text-white">Dashboard</li>
-            <li class="nav-item">
-                <a href="{% url 'home' %}" class="nav-link">
-                <i class="nav-icon fas fa-home"></i>
-                <p>Student Dashboard</p>
-                </a>
-            </li>
-
-            <li class="nav-header text-white">Meals</li>
-            <li class="nav-item">
-                <a href="{% url 'students:my_meal_status' %}" class="nav-link">
-                <i class="nav-icon fas fa-toggle-on"></i>
-                <p>Change Daily Meal Status</p>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{% url 'students:my_meal_preference' %}" class="nav-link">
-                <i class="nav-icon fas fa-exchange-alt"></i>
-                <p>Change Monthly Meal Type</p>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{% url 'students:meal_history' %}" class="nav-link">
-                <i class="nav-icon fas fa-wallet"></i>
-                <p>Meal Cost History</p>
-                </a>
-            </li>
-
-            <li class="nav-header text-white">Support</li>
-            <li class="nav-item">
-                <a href="{% url 'students:complain_create' %}" class="nav-link">
-                <i class="nav-icon fas fa-comment-dots"></i>
-                <p>Submit a Complaint</p>
-                </a>
-            </li>
-
-            <li class="nav-header text-white">Account</li>
-            <li class="nav-item">
-                <a href="{% url 'home' %}" class="nav-link">
-                <i class="nav-icon fas fa-user-cog"></i>
-                <p>View/Edit Profile</p>
-                </a>
-            </li>
-            <br>
-            <li class="nav-item">
-                <form method="post" action="{% url 'accounts:logout' %}" onsubmit="return confirm('Your session would be terminated.\n\nProceed?')">
-                {% csrf_token %}
-                <button type="submit" 
-                    class="nav-link d-flex justify-content-start align-items-center bg-danger text-white w-100" 
-                    style="border: none; padding-left: 55px;">
-                    <i class="nav-icon fas fa-sign-out-alt mr-2"></i>
-                    <span>Log Out</span>
-                </button>
-
-                </form>
-            </li>
-
-            </ul>
-        </nav>
-        </div>
-
 
     {% else %}
                     

@@ -58,7 +58,7 @@
     <a href="{% url 'students:meal_history' %}" 
        class="block rounded-2xl shadow-md p-6 bg-gradient-to-r from-green-500 to-green-700 text-white flex justify-between items-center hover:from-green-600 hover:to-green-800 transition">
       <div>
-        <h4 class="text-lg font-semibold mb-2">Monthly Summary</h4>
+        <h4 class="text-lg font-semibold mb-2">Monthly Cost Summary</h4>
         <p class="text-sm text-white/90">Track your costs and ON/OFF days</p>
       </div>
       <div class="text-4xl">
@@ -66,15 +66,15 @@
       </div>
     </a>
 
-    <!-- Request Token -->
-    <a href="{% url 'home' %}" 
+    <!-- Weekly Menu -->
+    <a href="{% url 'students:weekly_menu' %}" 
        class="block rounded-2xl shadow-md p-6 bg-gradient-to-r from-purple-500 to-purple-700 text-white flex justify-between items-center hover:from-purple-600 hover:to-purple-800 transition">
       <div>
-        <h4 class="text-lg font-semibold mb-2">Request Token</h4>
-        <p class="text-sm text-white/90">Collect token if today's meal is ON</p>
+        <h4 class="text-lg font-semibold mb-2">Weekly Menu</h4>
+        <p class="text-sm text-white/90">View the menu planned for each day</p>
       </div>
       <div class="text-4xl">
-        <i class="fas fa-ticket-alt"></i>
+        <i class="fas fa-calendar-week"></i>
       </div>
     </a>
 
