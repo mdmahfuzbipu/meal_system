@@ -9,6 +9,8 @@ from django.utils.dateformat import DateFormat
 from datetime import date, timedelta, time, datetime
 from calendar import monthrange
 
+from accounts.decorators import student_required
+
 from .models import (
     DailyMealCost,
     DailyMealStatus,
@@ -258,91 +260,124 @@ def update_meal_preference(request):
     return render(request, "students/update_meal_preference.html", context)
 
 
-@login_required
-def student_meal_cost_view(request):
-    """
-    Show student's daily meal status and cost for the current month.
-    """
-    student = request.user.student
-    today = date.today()
-    year, month = today.year, today.month
-
-    # Get all days of this month
-    start_date = date(year, month, 1)
-    end_date = date(year, month, monthrange(year, month)[1])
-
-    # Fetch meal statuses and costs
-    statuses = DailyMealStatus.objects.filter(
-        student=student, date__range=(start_date, end_date)
-    ).order_by("-date")
-    costs = {
-        c.date: c.total_cost
-        for c in DailyMealCost.objects.filter(
-            student=student, date__range=(start_date, end_date)
-        )
-    }
-
-    total_month_cost = sum(costs.values(), 0)
-
-    context = {
-        "page_title": "Daily Meal Cost Overview",
-        "statuses": statuses,
-        "costs": costs,
-        "month": today.strftime("%B %Y"),
-        "total_month_cost": total_month_cost,
-    }
-    return render(request, "students/student_meal_cost.html", context)
+def _parse_selected_month(param):
+    if param:
+        y, m = map(int, param.split("-"))
+    else:
+        now_dt = now()
+        y, m = now_dt.year, now_dt.month
+    return y, m
 
 
-@login_required
-def student_monthly_summary_view(request):
-    """Show all monthly meal summaries for the logged-in student."""
-    student = request.user.student
+def _get_month_display(year, month):
+    return datetime(year, month, 1).strftime("%B %Y")
 
-    summaries = MonthlyMealSummary.objects.filter(student=student).order_by("-month")
-    total_overall_cost = summaries.aggregate(Sum("total_cost"))["total_cost__sum"] or 0
 
-    context = {
-        "summaries": summaries,
-        "total_overall_cost": total_overall_cost,
-    }
-    return render(request, "students/student_monthly_summary.html", context)
+def _get_preferences(student_obj, year, month):
+    pref = StudentMealPreference.objects.filter(
+        student=student_obj, month=f"{year}-{month:02d}"
+    ).first()
+    return (
+        pref.prefers_beef if pref else student_obj.default_prefers_beef,
+        pref.prefers_fish if pref else student_obj.default_prefers_fish,
+    )
+
+
+def _get_menu_for_weekday(weekday):
+    return WeeklyMenu.objects.filter(day_of_week=weekday).first()
+
+
+def _compute_daily_cost(menu, status_obj, prefers_beef, prefers_fish):
+    if not menu:
+        return 0
+
+    def _meal_cost(on, contains_beef, contains_fish, base_cost, alt_cost):
+        if not on:
+            return 0
+        if contains_beef and not prefers_beef:
+            return alt_cost
+        if contains_fish and not prefers_fish:
+            return alt_cost
+        return base_cost
+
+    cost = 0
+    # Breakfast has no alternate cost logic, just add if on
+    cost += _meal_cost(
+        status_obj.breakfast_on,
+        False,
+        False,
+        getattr(menu, "breakfast_cost", 0),
+        0,
+    )
+
+    cost += _meal_cost(
+        status_obj.lunch_on,
+        getattr(menu, "lunch_contains_beef", False),
+        getattr(menu, "lunch_contains_fish", False),
+        getattr(menu, "lunch_cost", 0),
+        getattr(menu, "lunch_cost_alternate", 0),
+    )
+
+    cost += _meal_cost(
+        status_obj.dinner_on,
+        getattr(menu, "dinner_contains_beef", False),
+        getattr(menu, "dinner_contains_fish", False),
+        getattr(menu, "dinner_cost", 0),
+        getattr(menu, "dinner_cost_alternate", 0),
+    )
+
+    return cost
 
 
 @login_required
 def meal_history(request):
     student = request.user.student
-    current_month = now().strftime("%B %Y")
 
-    statuses = DailyMealStatus.objects.filter(
-        student=student, date__year=now().year, date__month=now().month
+    selected_month = request.GET.get("month")
+    year, month = _parse_selected_month(selected_month)
+    month_name = _get_month_display(year, month)
+
+    prefers_beef, prefers_fish = _get_preferences(student, year, month)
+
+    statuses_qs = DailyMealStatus.objects.filter(
+        student=student, date__year=year, date__month=month
     ).order_by("date")
 
-    # Prepare list with total_on
     updated_statuses = []
-    for status in statuses:
-        total_on = sum(
-            [
-                1 if status.breakfast_on else 0,
-                1 if status.lunch_on else 0,
-                1 if status.dinner_on else 0,
-            ]
+    total_month_cost = 0
+
+    for status in statuses_qs:
+        weekday = status.date.strftime("%A")
+        menu = _get_menu_for_weekday(weekday)
+        daily_cost = _compute_daily_cost(menu, status, prefers_beef, prefers_fish)
+        total_month_cost += daily_cost
+
+        total_on = (
+            (1 if status.breakfast_on else 0)
+            + (1 if status.lunch_on else 0)
+            + (1 if status.dinner_on else 0)
         )
+
         updated_statuses.append(
             {
                 "date": status.date,
+                "weekday": weekday,
                 "breakfast_on": status.breakfast_on,
                 "lunch_on": status.lunch_on,
                 "dinner_on": status.dinner_on,
                 "total_on": total_on,
+                "daily_cost": daily_cost,
             }
         )
 
     context = {
         "page_title": "Monthly Meal History",
         "statuses": updated_statuses,
-        "current_month": current_month,
+        "current_month": month_name,
+        "selected_month": f"{year}-{month:02d}",
+        "total_month_cost": total_month_cost,
     }
+
     return render(request, "students/meal_history.html", context)
 
 

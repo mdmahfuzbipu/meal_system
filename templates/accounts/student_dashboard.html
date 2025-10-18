@@ -30,27 +30,15 @@
   <!-- Cards Grid -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
-    <!-- Tomorrow's Meal Toggle -->
-    <a href="{% url 'students:my_meal_status' %}" 
-       class="block rounded-2xl shadow-md p-6 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white flex justify-between items-center hover:from-yellow-500 hover:to-yellow-700 transition">
-      <div>
-        <h4 class="text-lg font-semibold mb-2">Update Tomorrow's Meal</h4>
-        <p class="text-sm text-white/90">Toggle your meal for tomorrow</p>
-      </div>
-      <div class="text-4xl">
-        <i class="fas fa-utensils"></i>
-      </div>
-    </a>
-
-    <!-- Daily Meal Status -->
+    <!-- Tomorrow's Meal Change -->
     <a href="{% url 'students:my_meal_status' %}" 
        class="block rounded-2xl shadow-md p-6 bg-gradient-to-r from-blue-500 to-blue-700 text-white flex justify-between items-center hover:from-blue-600 hover:to-blue-800 transition">
       <div>
-        <h4 class="text-lg font-semibold mb-2">View Daily Meal Status</h4>
-        <p class="text-sm text-white/90">Check your daily ON/OFF history</p>
+        <h4 class="text-lg font-semibold mb-2">Update Tomorrow's Meal</h4>
+        <p class="text-sm text-white/90">Change your meal for tomorrow</p>
       </div>
       <div class="text-4xl">
-        <i class="fas fa-calendar-day"></i>
+        <i class="fas fa-utensils"></i>
       </div>
     </a>
 
@@ -67,7 +55,7 @@
     </a>
 
     <!-- Monthly Summary -->
-    <a href="{% url 'students:monthly_summary' %}" 
+    <a href="{% url 'students:meal_history' %}" 
        class="block rounded-2xl shadow-md p-6 bg-gradient-to-r from-green-500 to-green-700 text-white flex justify-between items-center hover:from-green-600 hover:to-green-800 transition">
       <div>
         <h4 class="text-lg font-semibold mb-2">Monthly Summary</h4>
