@@ -36,80 +36,202 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
     
-    {% block custom_css %}
-    <style>
-        body {
-                background-image: url("{% static 'images/hall_room.jpg' %}");
-                background-size: cover;
-                background-repeat: no-repeat;
-                background-position: center center;
-                background-attachment: fixed;
-                position: relative;
-            }
+{% block custom_css %}
+<style>
+
+body {
+    background: radial-gradient(circle at 10% 20%, rgba(210, 235, 255, 0.7), transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(190, 220, 255, 0.6), transparent 60%),
+                linear-gradient(135deg, rgba(230, 245, 255, 0.9), rgba(200, 225, 255, 0.85));
+    background-blend-mode: overlay;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    min-height: 100vh;
+    font-family: 'Source Sans Pro', sans-serif;
+    color: #1f2937;
+    position: relative;
+}
+
     
-            .content-wrapper {
-                background-color: rgba(255, 255, 255, 0.1); /* Light opaque background for main content */
-                backdrop-filter: blur(1px);
-                padding: 20px;
-                border-radius: 8px;
-                margin: 10px;
-            }
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image:
+            radial-gradient(rgba(255, 255, 255, 0.25) 1px, transparent 1px),
+            radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+        background-size: 80px 80px, 120px 120px;
+        background-position: 0 0, 40px 40px;
+        opacity: 0.4;
+        z-index: -1;
+    }
+
+   
+    .content-wrapper {
+        background: rgba(255, 255, 255, 0.35);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.07);
+        margin: 20px;
+    }
+
+    .nav-sidebar .nav-link {
+        background: rgba(6, 59, 117, 0.9);
+        color: white !important;
+        border-radius: 6px;
+        padding: 8px 12px;
+        transition: all 0.3s ease;
+    }
+
+    .nav-sidebar .nav-link:hover {
+        background: rgba(0, 86, 179, 0.95);
+        transform: translateX(2px);
+    }
+
+    .nav-header {
+        font-weight: bold;
+        color: #e0e7ff;
+        padding-left: 6px;
+        margin-top: 10px;
+        text-transform: uppercase;
+    }
+
+  
+    .navbar {
+        background: rgba(6, 59, 117, 0.9) !important;
+        backdrop-filter: blur(4px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
 
 
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); /* 0.5 means 50% dark overlay */
-            backdrop-filter: blur(1.5px);
-            z-index: -1;
-        }
+    .breadcrumb {
+        background: rgba(255, 255, 255, 0.25);
+        border-radius: 8px;
+        backdrop-filter: blur(3px);
+    }
 
-        footer a {
+    .breadcrumb a {
+        background: rgba(6, 59, 117, 0.9);
+        color: white !important;
+    }
+
+    .breadcrumb .active {
+        background: rgba(6, 59, 117, 0.9);
+        color: white !important;
+    }
+
+    .btn-secondary {
+        background: rgba(6, 59, 117, 0.7);  
+        color: white;                       
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(6px);
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+        background: rgba(0, 86, 179, 0.85); 
+        transform: scale(1.02);
+    }
+
+
+    footer a {
         color: #ffffff;
-        }
+    }
 
-        footer a:hover {
-            color: #0613a0;
-        }
+    footer a:hover {
+        color: #dbeafe;
+    }
 
 
-        .nav-sidebar .nav-item {
-            margin-bottom: 1px;
-        }
 
-        .nav-sidebar .nav-link {
-            background-color: #063b75;
-            color: white !important; 
-            border-radius: 1px;
-            padding: 8px 12px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-            transition: all 0.2s ease;
-        }
+    .main-sidebar {
+        background: rgba(6, 59, 117, 0.85);  
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        color: white;
+    }
 
-        .nav-sidebar .nav-link:hover {
-            background-color: #0056b3;  
-            color: white !important;
-        }
+    .main-sidebar .brand-link {
+        background: rgba(6, 59, 117, 0.9);  
+        color: white;
+    }
 
-        .nav-sidebar .nav-link i {
-            margin-right: 10px;
-            color: white !important;
-        }
-        .nav-header {
-            margin-top: 1px;
-            font-weight: bold;
-            color: white;
-            padding-left: 2px;
-            font-size: 2;
-            text-transform: uppercase;
-        }
+    .main-sidebar .brand-link img {
+        opacity: 0.9;
+    }
 
-    </style>
-    {% endblock custom_css %}
+
+    .nav-sidebar .nav-link {
+    background: rgba(6, 59, 117, 0.75); 
+    color: white !important;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-bottom: 4px;
+    transition: all 0.3s ease;
+}
+
+.nav-sidebar .nav-link:hover {
+    background: rgba(0, 86, 179, 0.85);
+    transform: translateX(2px);
+}
+
+.nav-sidebar .nav-link.active {
+    background: rgba(0, 86, 179, 0.95);
+    font-weight: bold;
+}
+
+
+
+.nav-sidebar .nav-header {
+    font-weight: 600;
+    color: #dbeafe; 
+    padding-left: 12px;
+    margin-top: 12px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+
+
+.user-panel .image img {
+    border: 2px solid rgba(255,255,255,0.6);
+}
+
+.user-panel .info a {
+    color: white;
+    font-weight: 600;
+}
+
+
+
+.main-sidebar .btn-danger.nav-link {
+    background: rgba(220, 38, 38, 0.85);
+    color: white;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.main-sidebar .btn-danger.nav-link:hover {
+    background: rgba(220, 38, 38, 0.95);
+    transform: scale(1.02);
+}
+
+
+.main-sidebar .brand-link {
+    background: rgba(6, 59, 117, 0.9) !important;  
+    color: white !important;
+}
+
+
+
+</style>
+{% endblock custom_css %}
     
 </head>
 

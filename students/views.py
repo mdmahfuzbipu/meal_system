@@ -373,6 +373,8 @@ def meal_history(request):
     context = {
         "page_title": "Monthly Meal History",
         "statuses": updated_statuses,
+        "prefers_beef": prefers_beef,
+        "prefers_fish": prefers_fish,
         "current_month": month_name,
         "selected_month": f"{year}-{month:02d}",
         "total_month_cost": total_month_cost,
