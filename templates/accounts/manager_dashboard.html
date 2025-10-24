@@ -10,7 +10,7 @@
         <i class="fas fa-user-tie text-3xl mr-2"></i>
         Manager Dashboard
       </h2>
-      <p class="text-lg text-white">Manage token issuance and weekly meal reports efficiently</p>
+      <p class="text-lg text-white">Manage token issuance, menus, and summaries efficiently</p>
     </div>
   </div> 
 </div>
@@ -19,85 +19,82 @@
 {% block content %}
 <div class="px-4 sm:px-6 lg:px-8 py-8 max-w-6xl mx-auto space-y-10">
 
-  <!-- Section Header -->
-  <div class="flex items-center justify-center mb-8">
-    <div class="flex items-center space-x-3 bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-8 py-3 rounded-2xl shadow-lg">
-      <i class="fas fa-bolt text-yellow-300 text-2xl"></i>
-      <h3 class="text-2xl font-semibold tracking-wide">Quick Actions</h3>
-    </div>
-  </div>
-
   <!-- Cards Grid -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
     <!-- Propose Weekly Menu -->
     <a href="{% url 'managers:propose_weekly_menu' %}" 
-       class="block rounded-2xl shadow-md p-6 bg-gradient-to-r from-purple-500 to-purple-700 text-white flex justify-between items-center hover:from-purple-600 hover:to-purple-800 transition">
+       class="block rounded-2xl shadow-md p-6 bg-gradient-to-r from-blue-600 to-blue-800 text-white flex justify-between items-center 
+              transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:from-blue-700 hover:to-blue-900">
       <div>
         <h4 class="text-lg font-semibold mb-2">Propose Weekly Menu</h4>
         <p class="text-sm text-white/90">Submit weekly menus for admin approval</p>
       </div>
-      <div class="text-4xl">
+      <div class="text-4xl text-yellow-300">
         <i class="fas fa-utensils"></i>
       </div>
     </a>
 
     <!-- Issue Meal Tokens -->
-    <a href="{% url 'managers:propose_weekly_menu' %}" 
-       class="block rounded-2xl shadow-md p-6 bg-gradient-to-r from-blue-500 to-blue-700 text-white flex justify-between items-center hover:from-blue-600 hover:to-blue-800 transition">
+    <a href="{% url 'managers:manager_menu_list' %}" 
+       class="block rounded-2xl shadow-md p-6 bg-gradient-to-r from-blue-600 to-blue-800 text-white flex justify-between items-center 
+              transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:from-blue-700 hover:to-blue-900">
       <div>
         <h4 class="text-lg font-semibold mb-2">Issue Meal Tokens</h4>
         <p class="text-sm text-white/90">Distribute daily meal tokens to students</p>
       </div>
-      <div class="text-4xl">
+      <div class="text-4xl text-green-300">
         <i class="fas fa-ticket-alt"></i>
       </div>
     </a>
 
-    <!-- View Daily Token Summary -->
-    <a href="{% url 'managers:propose_weekly_menu' %}" 
-       class="block rounded-2xl shadow-md p-6 bg-gradient-to-r from-green-500 to-green-700 text-white flex justify-between items-center hover:from-green-600 hover:to-green-800 transition">
+    <!-- Daily Token Summary -->
+    <a href="{% url 'managers:manager_menu_list' %}" 
+       class="block rounded-2xl shadow-md p-6 bg-gradient-to-r from-blue-600 to-blue-800 text-white flex justify-between items-center 
+              transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:from-blue-700 hover:to-blue-900">
       <div>
         <h4 class="text-lg font-semibold mb-2">Daily Token Summary</h4>
         <p class="text-sm text-white/90">View and export daily token report</p>
       </div>
-      <div class="text-4xl">
+      <div class="text-4xl text-pink-300">
         <i class="fas fa-clipboard-list"></i>
       </div>
     </a>
 
-    <!-- View Student Meal Status -->
-    <a href="{% url 'managers:propose_weekly_menu' %}" 
-       class="block rounded-2xl shadow-md p-6 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white flex justify-between items-center hover:from-indigo-600 hover:to-indigo-800 transition">
+    <!-- Student Meal Status -->
+    <a href="{% url 'managers:manager_menu_list' %}" 
+       class="block rounded-2xl shadow-md p-6 bg-gradient-to-r from-blue-600 to-blue-800 text-white flex justify-between items-center 
+              transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:from-blue-700 hover:to-blue-900">
       <div>
         <h4 class="text-lg font-semibold mb-2">Student Meal Status</h4>
         <p class="text-sm text-white/90">Check which students have meals ON/OFF</p>
       </div>
-      <div class="text-4xl">
+      <div class="text-4xl text-purple-300">
         <i class="fas fa-user-check"></i>
       </div>
     </a>
 
-    <!-- Generate Monthly Report -->
-    <a href="{% url 'managers:export_monthly_summary' %}?month=2025-10"
-    class="block rounded-2xl shadow-md p-6 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white flex justify-between items-center hover:from-yellow-500 hover:to-yellow-700 transition">
-    <i class="fas fa-file-excel mr-2"></i> Download Monthly Summary
+    <!-- Monthly Summary -->
+    <a href="{% url 'managers:monthly_summary' %}" 
+       class="block rounded-2xl shadow-md p-6 bg-gradient-to-r from-blue-600 to-blue-800 text-white flex justify-between items-center 
+              transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:from-blue-700 hover:to-blue-900">
       <div>
-        <h4 class="text-lg font-semibold mb-2">Generate Monthly Report</h4>
-        <p class="text-sm text-white/90">Review and export monthly summaries</p>
+        <h4 class="text-lg font-semibold mb-2">Monthly Summary</h4>
+        <p class="text-sm text-white/90">Review and export monthly reports</p>
       </div>
-      <div class="text-4xl">
+      <div class="text-4xl text-amber-300">
         <i class="fas fa-chart-bar"></i>
       </div>
     </a>
 
     <!-- Coming Soon -->
-    <div class="block rounded-2xl shadow-md p-6 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 flex justify-between items-center cursor-not-allowed">
+    <div class="block rounded-2xl shadow-md p-6 bg-gradient-to-r from-blue-50 to-blue-100 text-gray-700 flex justify-between items-center 
+                cursor-not-allowed transform transition-all duration-300 hover:scale-100">
       <div>
         <h4 class="text-lg font-semibold mb-2">Coming Soon</h4>
         <p class="text-sm">More tools coming soon!</p>
       </div>
-      <div class="text-4xl">
+      <div class="text-4xl text-blue-400">
         <i class="fas fa-tools"></i>
       </div>
     </div>

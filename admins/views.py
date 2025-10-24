@@ -7,7 +7,7 @@ from django.db.models import Q
 
 from managers.forms import ManagerRegistrationForm
 from managers.models import ManagerProfile, WeeklyMenuProposal
-from students.models import Student, WeeklyMenu, StudentDetails
+from students.models import Student, WeeklyMenu, StudentDetails, Complaint
 from accounts.models import CustomUser
 from accounts.decorators import admin_required
 from .forms import StudentRegistrationForm
@@ -330,7 +330,6 @@ def review_weekly_proposals(request):
     if not selected_week and weeks:
         selected_week = weeks[0].strftime("%Y-%m-%d")
 
-  
     proposals = WeeklyMenuProposal.objects.filter(
         status="pending", week_start_date=selected_week
     ).order_by("day_of_week")
@@ -378,4 +377,17 @@ def review_weekly_proposals(request):
         request,
         "admins/review_weekly_proposals.html",
         {"proposals": proposals, "weeks": weeks, "selected_week": selected_week},
+    )
+
+
+@admin_required
+def view_complaints(request):
+    complaints = Complaint.objects.all().order_by("-created_at")
+    return render(
+        request,
+        "admins/view_complaints.html",
+        {
+            "complaints": complaints,
+            "page_title": "View Complaints",
+        },
     )

@@ -1,7 +1,7 @@
 from django.db import models
 from datetime import date, timedelta
 from meal_system import settings
-
+from django.utils import timezone
 
 WEEKDAY_CHOICES = [
     ("Monday", "Monday"),
@@ -30,7 +30,6 @@ class ManagerProfile(models.Model):
 
     def __str__(self):
         return f"{self.full_name} ({self.user.username})"
-
 
 
 class WeeklyMenuProposal(models.Model):
@@ -89,3 +88,55 @@ class WeeklyMenuProposal(models.Model):
         """Return Monday of current week."""
         today = date.today()
         return today - timedelta(days=today.weekday())
+
+
+class SpecialMealRequest(models.Model):
+    STATUS_PENDING = "pending"
+    STATUS_ACCEPTED = "accepted"
+    STATUS_DECLINED = "declined"
+    STATUS_COMPLETED = "completed"
+
+    STATUS_CHOICES = [
+        (STATUS_PENDING, "Pending"),
+        (STATUS_ACCEPTED, "Accepted"),
+        (STATUS_DECLINED, "Declined"),
+        (STATUS_COMPLETED, "Completed"),
+    ]
+
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="special_requests_created",
+    )
+    manager = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="special_requests_assigned",
+    )
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    requested_date = models.DateField()
+    meal_type = models.CharField(
+        max_length=20,
+        choices=[("breakfast", "Breakfast"), ("lunch", "Lunch"), ("dinner", "Dinner")],
+    )
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default=STATUS_PENDING
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    responded_at = models.DateTimeField(null=True, blank=True)
+    response_note = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def mark_responded(self, status, note=""):
+        self.status = status
+        self.response_note = note
+        self.responded_at = timezone.now()
+        self.save()
+
+    def __str__(self):
+        return (
+            f"{self.title} ({self.requested_date} - {self.meal_type}) - {self.status}"
+        )

@@ -13,7 +13,7 @@ from students.models import Student, DailyMealStatus
 from .forms import EmailOrUsernameAuthenticationForm
 from .decorators import student_required, manager_required, admin_required
 from .models import CustomUser
-
+from notices.utils import get_unread_notice_count
 import logging
 
 logger = logging.getLogger(__name__)
@@ -37,7 +37,8 @@ class RoleBasedLoginView(LoginView):
 
 @login_required
 def role_aware_home(request):
-    return render(request, "accounts/home.html")
+    unread_notices = get_unread_notice_count(request.user)
+    return render(request, "accounts/home.html", {"unread_notices": unread_notices})
 
 
 @student_required

@@ -3,11 +3,12 @@ from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
+from django.utils import timezone
 from openpyxl import Workbook
 
 from students.utils import generate_monthly_summary_for_all
 
-from students.models import MonthlyMealSummary, StudentMealPreference
+from students.models import Complaint, MonthlyMealSummary, StudentMealPreference
 from .models import WeeklyMenuProposal
 from students.models import MonthlyMealSummary, WeeklyMenu, WEEKDAY_CHOICES
 from .forms import WeeklyMenuProposalForm
@@ -276,3 +277,21 @@ def export_monthly_summary(request):
 
     wb.save(response)
     return response
+
+@manager_required
+def manage_complaints(request):
+    complaints = Complaint.objects.all().order_by("-created_at")
+
+    if request.method == "POST":
+        complaint_id = request.POST.get("complaint_id")
+        complaint = Complaint.objects.get(id=complaint_id)
+        complaint.is_fixed = not complaint.is_fixed
+        complaint.fixed_by = request.user if complaint.is_fixed else None
+        complaint.fixed_at = timezone.now() if complaint.is_fixed else None
+        complaint.save()
+        messages.success(request, "Complaint status updated successfully!")
+        return redirect("managers:manage_complaints")
+
+    return render(
+        request, "managers/manage_complaints.html", {"complaints": complaints}
+    )

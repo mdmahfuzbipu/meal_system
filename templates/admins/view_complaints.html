@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+
+  <!-- Back to dashboard -->
+  <a href="{% url 'accounts:home' %}"
+    class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-2 rounded-full text-md font-semibold shadow hover:from-blue-700 hover:to-blue-900 transition mb-8">
+    <i class="fas fa-arrow-left text-white"></i>
+    Back to Home
+  </a>
+
+
+<div class="max-w-6xl mx-auto bg-white p-6 rounded-2xl shadow-lg mt-10">
+  <h2 class="text-2xl font-semibold mb-4 text-center text-purple-700">All Student Complaints</h2>
+
+  <table class="min-w-full border-collapse bg-white">
+    <thead class="bg-gray-100 text-gray-700">
+      <tr>
+        <th class="p-3 text-left">Name</th>
+        <th class="p-3 text-left">Room</th>
+        <th class="p-3 text-left">Phone</th>
+        <th class="p-3 text-left">Description</th>
+        <th class="p-3 text-center">Status</th>
+        <th class="p-3 text-center">Fixed By</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in complaints %}
+      <tr class="border-t">
+        <td class="p-3">{{ c.name }}</td>
+        <td class="p-3">{{ c.room_number }}</td>
+        <td class="p-3">{{ c.phone_number }}</td>
+        <td class="p-3">{{ c.description }}</td>
+        <td class="p-3 text-center">
+          {% if c.is_fixed %}
+            <span class="px-2 py-1 bg-green-200 text-green-800 rounded-full text-sm">Fixed</span>
+          {% else %}
+            <span class="px-2 py-1 bg-red-200 text-red-800 rounded-full text-sm">Pending</span>
+          {% endif %}
+        </td>
+        <td class="p-3 text-center">
+          {% if c.fixed_by %}
+            {{ c.fixed_by.username }}
+          {% else %}
+            —
+          {% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" class="text-center py-4 text-gray-500">No complaints submitted.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+</div>
+{% endblock %}

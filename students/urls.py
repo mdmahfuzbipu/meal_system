@@ -18,7 +18,5 @@ urlpatterns = [
     path("my-meal-preference", views.my_meal_preference, name="my_meal_preference"),
     path("meal-history/", views.meal_history, name="meal_history"),
     path("weekly-menu/", views.weekly_menu_view, name="weekly_menu"),
-    path("complain/", views.complain_create, name="complain_create"),
-    #path("monthly-summary/", views.monthly_summary, name="monthly_summary"),
-    #path("meal-cost/", views.student_meal_cost_view, name="student_meal_cost"),
+    path("submit-complaint/", views.submit_complaint, name="submit_complaint"),
 ]

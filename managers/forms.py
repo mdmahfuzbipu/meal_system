@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 
-from .models import WeeklyMenuProposal, ManagerProfile
+from .models import WeeklyMenuProposal, ManagerProfile, SpecialMealRequest
 
 
 User = get_user_model()
@@ -96,4 +96,14 @@ class WeeklyMenuProposalForm(forms.ModelForm):
             "dinner_cost_alternate": forms.NumberInput(
                 attrs={"step": "0.01", "min": "0"}
             ),
+        }
+
+
+class SpecialMealRequestForm(forms.ModelForm):
+    class Meta:
+        model = SpecialMealRequest
+        fields = ["title", "description", "requested_date", "meal_type", "manager"]
+        widgets = {
+            "requested_date": forms.DateInput(attrs={"type": "date"}),
+            "description": forms.Textarea(attrs={"rows": 4}),
         }

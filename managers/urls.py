@@ -12,4 +12,5 @@ urlpatterns = [
         views.export_monthly_summary,
         name="export_monthly_summary",
     ),
+    path("manage-complaints/", views.manage_complaints, name="manage_complaints"),
 ]

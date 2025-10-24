@@ -17,10 +17,11 @@ from .models import (
     MonthlyMealSummary, 
     Student,
     StudentMealPreference,
-    WeeklyMenu
+    WeeklyMenu, 
+    Complaint
 )
 
-from .forms import StudentMealPreferenceForm, ComplainForm
+from .forms import StudentMealPreferenceForm
 from .utils import calculate_monthly_cost
 
 from calendar import monthrange
@@ -405,19 +406,30 @@ def weekly_menu_view(request):
 
 
 @login_required
-def complain_create(request):
+def submit_complaint(request):
+    student = request.user.student
     if request.method == "POST":
-        form = ComplainForm(request.POST)
-        if form.is_valid():
-            complain = form.save(commit=False)
-            complain.user = request.user
-            complain.save()
-            messages.success(request, "Your complaint has been submitted successfully.")
-            return redirect("home")  
-    else:
-        form = ComplainForm()
+        name = request.POST.get("name")
+        room = request.POST.get("room_number")
+        phone = request.POST.get("phone_number")
+        desc = request.POST.get("description")
+
+        if not all([name, room, phone, desc]):
+            messages.error(request, "All fields are required.")
+            return redirect("students:submit_complaint")
+
+        Complaint.objects.create(
+            student=student,
+            name=name,
+            room_number=room,
+            phone_number=phone,
+            description=desc,
+        )
+        messages.success(request, "Complaint submitted successfully!")
+        return redirect("students:submit_complaint")
+
     return render(
         request,
-        "students/complain_form.html",
-        {"page_title": "Complain Box", "form": form},
+        "students/submit_complaint.html",
+        {"page_title": "Complaint Box",},
     )

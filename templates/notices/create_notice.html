@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block page_title %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="bg-gradient-to-r from-yellow-600 to-yellow-800 text-white p-4 rounded-xl shadow-sm inline-flex items-center space-x-3 w-fit hover:from-yellow-700 hover:to-yellow-900 transition">
+    <div>
+      <h2 class="text-2xl font-bold text-white">
+        <i class="fas fa-bullhorn text-white text-3xl mr-2"></i>
+        Notice Board
+      </h2>
+      <p class="text-md text-white mt-1">Post new notices for Boral Hall students</p>
+    </div>
+  </div>
+</div>
+{% endblock page_title %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+  <!-- Back to dashboard -->
+  <a href="{% url 'accounts:home' %}"
+    class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-2 rounded-full text-md font-semibold shadow hover:from-blue-700 hover:to-blue-900 transition mb-8">
+    <i class="fas fa-arrow-left text-white"></i>
+    Back to Home
+  </a>
+
+<div class="flex justify-center mb-0">
+  <div class="inline-flex items-center space-x-3 bg-gradient-to-r from-yellow-600 to-yellow-800 text-white px-6 py-3 rounded-2xl shadow w-fit">
+    <i class="fas fa-pen-to-square text-yellow-200 text-xl"></i>
+    <h2 class="text-xl font-semibold tracking-wide">Create New Notice</h2>
+  </div>
+</div>
+
+  <form method="post" enctype="multipart/form-data"
+        class="bg-white mt-6 p-6 rounded-2xl shadow-md space-y-6 border border-gray-100">
+    {% csrf_token %}
+
+    <div class="space-y-4">
+      {{ form.as_p }}
+    </div>
+
+    <button type="submit"
+      class="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-6 py-2 rounded-xl font-semibold shadow hover:from-blue-700 hover:to-blue-900 transition">
+      <i class="fas fa-paper-plane mr-2"></i> Post Notice
+    </button>
+  </form>
+</div>
+{% endblock %}

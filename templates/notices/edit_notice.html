@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block page_title %}
+<div class="flex justify-center mb-8">
+  <div class="inline-flex items-center space-x-3 bg-gradient-to-r from-yellow-600 to-yellow-800 text-white px-6 py-3 rounded-2xl shadow w-fit">
+    <i class="fas fa-pen-to-square text-yellow-200 text-xl"></i>
+    <h2 class="text-xl font-semibold tracking-wide">Edit Notice</h2>
+  </div>
+</div>
+{% endblock page_title %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto py-10">
+  <a href="{% url 'notices:notice_list' %}"
+    class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-2 rounded-full text-md font-semibold shadow hover:from-blue-700 hover:to-blue-900 transition mb-8">
+    <i class="fas fa-arrow-left text-white"></i>
+    Back to Notices
+  </a>
+
+  <form method="post" enctype="multipart/form-data" class="bg-white p-6 rounded-xl shadow-md space-y-4">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="bg-yellow-600 text-white px-5 py-2 rounded-lg hover:bg-yellow-700 transition">
+      Update Notice
+    </button>
+  </form>
+</div>
+{% endblock %}

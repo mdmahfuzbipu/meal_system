@@ -177,17 +177,25 @@ class MonthlyMealSummary(models.Model):
         return f"{self.student.name} - {self.month} - Total: {self.total_cost} Taka"
 
 
-class Complain(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+class Complaint(models.Model):
+    student = models.ForeignKey("Student", on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    room_number = models.CharField(max_length=20)
-    phone = models.CharField(max_length=20)
+    room_number = models.CharField(max_length=10)
+    phone_number = models.CharField(max_length=15)
     description = models.TextField()
-    is_resolved = models.BooleanField(default=False)
-    submitted_at = models.DateTimeField(auto_now_add=True)
+    is_fixed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    fixed_at = models.DateTimeField(null=True, blank=True)
+    fixed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="fixed_complaints",
+    )
 
     def __str__(self):
-        return f"Complaint: {self.description[:30]}... - Room {self.room_number}"
+        return f"{self.name} - {self.room_number} ({'Fixed' if self.is_fixed else 'Pending'})"
 
 
 from django.db.models.signals import post_save

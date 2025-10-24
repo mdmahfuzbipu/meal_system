@@ -7,7 +7,7 @@ from .models import (
     DailyMealStatus,
     DailyMealCost,
     MonthlyMealSummary,
-    Complain,
+    Complaint
 )
 
 
@@ -30,19 +30,6 @@ class StudentMealPreferenceAdmin(admin.ModelAdmin):
     list_display = ("student", "month", "prefers_beef", "prefers_fish")
     list_filter = ("month", "prefers_beef", "prefers_fish")
     search_fields = ("student__name",)
-
-
-# @admin.register(WeeklyMenu)
-# class WeeklyMenuAdmin(admin.ModelAdmin):
-#     list_display = (
-#         "day_of_week",
-#         "includes_beef",
-#         "includes_fish",
-#         "base_cost",
-#         "alternate_cost",
-#     )
-#     list_filter = ("includes_beef", "includes_fish")
-#     ordering = ("day_of_week",)
 
 
 @admin.register(WeeklyMenu)
@@ -80,8 +67,15 @@ class MonthlyMealSummaryAdmin(admin.ModelAdmin):
     search_fields = ("student__name",)
 
 
-@admin.register(Complain)
-class ComplainAdmin(admin.ModelAdmin):
-    list_display = ("name", "room_number", "phone", "is_resolved", "submitted_at")
-    list_filter = ("is_resolved",)
-    search_fields = ("name", "room_number", "phone", "description")
+@admin.register(Complaint)
+class ComplaintAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "room_number",
+        "phone_number",
+        "is_fixed",
+        "created_at",
+        "fixed_by",
+    )
+    list_filter = ("is_fixed",)
+    search_fields = ("name", "room_number", "description")

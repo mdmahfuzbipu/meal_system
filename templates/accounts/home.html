@@ -34,6 +34,22 @@
         <i class="fas fa-user-graduate"></i>
       </div>
     </div>
+
+
+      <!-- Complain Box Card -->
+    <div class="bg-gradient-to-r from-red-500 to-red-700 text-white rounded-2xl shadow-md p-6 flex justify-between items-center hover:from-red-600 hover:to-red-800 transition">
+      <div>
+        <h3 class="text-xl font-semibold mb-1">Complain Box</h3>
+        <p class="text-sm text-white/90">Report issues or problems you’re facing</p>
+        <a href="{% url 'students:submit_complaint' %}" class="mt-4 inline-block bg-white text-red-700 px-4 py-2 rounded-md font-bold hover:bg-red-100 transition text-sm">
+          Submit a Complaint
+        </a>
+      </div>
+      <div class="text-4xl">
+        <i class="fas fa-comment-dots"></i>
+      </div>
+    </div>
+
     {% elif user.role == 'manager' %}
     <!-- Manager Card -->
     <div class="bg-gradient-to-r from-green-500 to-green-700 text-white rounded-2xl shadow-md p-6 flex justify-between items-center hover:from-green-600 hover:to-green-800 transition">
@@ -48,6 +64,23 @@
         <i class="fas fa-user-cog"></i>
       </div>
     </div>
+
+
+    <!-- Complain Box Card -->
+    <div class="bg-gradient-to-r from-red-500 to-red-700 text-white rounded-2xl shadow-md p-6 flex justify-between items-center hover:from-red-600 hover:to-red-800 transition">
+      <div>
+        <h3 class="text-xl font-semibold mb-1">Complain Box</h3>
+        <p class="text-sm text-white/90">Manage Complain & Issues</p>
+        <a href="{% url 'managers:manage_complaints' %}" class="mt-4 inline-block bg-white text-red-700 px-4 py-2 rounded-md font-bold hover:bg-red-100 transition text-sm">
+          View Complains
+        </a>
+      </div>
+      <div class="text-4xl">
+        <i class="fas fa-comment-dots"></i>
+      </div>
+    </div>
+
+
     {% elif user.is_superuser or user.role == 'admin' %}
     <!-- Admin Card -->
     <div class="bg-gradient-to-r from-purple-600 to-purple-800 text-white rounded-2xl shadow-md p-6 flex justify-between items-center hover:from-purple-700 hover:to-purple-900 transition">
@@ -64,22 +97,51 @@
         <i class="fas fa-user-shield"></i>
       </div>
     </div>
+    
+    <!-- Complain Box Card -->
+    <div class="bg-gradient-to-r from-red-500 to-red-700 text-white rounded-2xl shadow-md p-6 flex justify-between items-center hover:from-red-600 hover:to-red-800 transition">
+      <div>
+        <h3 class="text-xl font-semibold mb-1">Complain Box</h3>
+        <p class="text-sm text-white/90">Manage Complain & Issues</p>
+        <a href="{% url 'admins:view_complaints' %}" class="mt-4 inline-block bg-white text-red-700 px-4 py-2 rounded-md font-bold hover:bg-red-100 transition text-sm">
+          View Complains
+        </a>
+      </div>
+      <div class="text-4xl">
+        <i class="fas fa-comment-dots"></i>
+      </div>
+    </div>
+
     {% endif %}
 
 
     <!-- Notice Board Card -->
-    <div class="bg-gradient-to-r from-yellow-500 to-yellow-700 text-white rounded-2xl shadow-md p-6 flex justify-between items-center hover:from-yellow-600 hover:to-yellow-800 transition">
+    <div class="relative bg-gradient-to-r from-yellow-500 to-yellow-700 text-white rounded-2xl shadow-md p-6 flex justify-between items-center
+  hover:from-yellow-600 hover:to-yellow-800 transition
+  {% if user.role == 'student' and unread_notices > 0 %} ring-4 ring-red-400 animate-pulse {% endif %}">
       <div>
-        <h3 class="text-xl font-semibold mb-1">Notice Board</h3>
+        <h3 class="text-xl font-semibold mb-1 flex items-center gap-2">
+          <i class="fas fa-bullhorn"></i>
+          Notice Board
+        </h3>
         <p class="text-md text-white/90">View all recent announcements and updates</p>
-        <a href="{% url 'notice_list' %}" class="mt-4 inline-block bg-white text-yellow-700 px-4 py-2 rounded-md font-bold hover:bg-yellow-100 transition text-sm">
+        <a href="{% url 'notices:notice_list' %}" 
+          class="mt-4 inline-block bg-white text-yellow-700 px-4 py-2 rounded-md font-bold hover:bg-yellow-100 transition text-sm">
           Go to Notice Board
         </a>
       </div>
       <div class="text-4xl">
-        <i class="fas fa-bullhorn"></i>
+        <i class="fas fa-scroll"></i>
       </div>
+
+    {% if user.role == 'student' and unread_notices > 0 %}
+<span class="absolute top-3 right-3 bg-red-600 text-white text-sm font-bold px-3 py-1 rounded-full shadow-lg animate-pulse">
+  {{ unread_notices }} New
+</span>
+    {% endif %}
+
     </div>
+
 
     <!-- Weekly Menu Card -->
     <div class="bg-gradient-to-r from-indigo-500 to-indigo-700 text-white rounded-2xl shadow-md p-6 flex justify-between items-center hover:from-indigo-600 hover:to-indigo-800 transition">
@@ -92,22 +154,6 @@
       </div>
       <div class="text-4xl">
         <i class="fas fa-utensils"></i>
-      </div>
-    </div>
-
-
-
-    <!-- Complain Box Card -->
-    <div class="bg-gradient-to-r from-red-500 to-red-700 text-white rounded-2xl shadow-md p-6 flex justify-between items-center hover:from-red-600 hover:to-red-800 transition">
-      <div>
-        <h3 class="text-xl font-semibold mb-1">Complain Box</h3>
-        <p class="text-sm text-white/90">Report issues or problems you’re facing</p>
-        <a href="{% url 'students:complain_create' %}" class="mt-4 inline-block bg-white text-red-700 px-4 py-2 rounded-md font-bold hover:bg-red-100 transition text-sm">
-          Submit a Complaint
-        </a>
-      </div>
-      <div class="text-4xl">
-        <i class="fas fa-comment-dots"></i>
       </div>
     </div>
 
