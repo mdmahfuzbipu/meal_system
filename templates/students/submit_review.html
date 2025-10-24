@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block page_title %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="bg-green-700 p-4 rounded-xl text-white inline-flex items-center space-x-3 w-fit">
+    <i class="fas fa-utensils text-2xl"></i>
+    <h2 class="text-xl font-semibold">Submit Your Meal Review</h2>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto py-8">
+  <a href="{% url 'accounts:student_dashboard' %}" class="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-green-800 text-white px-4 py-2 rounded-full shadow mb-6">
+    <i class="fas fa-arrow-left"></i> Back to Dashboard
+  </a>
+
+  <div class="bg-white rounded-xl p-6 shadow">
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button class="bg-green-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-green-700 transition">Submit Review</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

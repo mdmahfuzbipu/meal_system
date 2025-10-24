@@ -18,10 +18,11 @@ from .models import (
     Student,
     StudentMealPreference,
     WeeklyMenu, 
-    Complaint
+    Complaint,
+    WeeklyMenuReview
 )
 
-from .forms import StudentMealPreferenceForm
+from .forms import StudentMealPreferenceForm, WeeklyMenuReviewForm
 from .utils import calculate_monthly_cost
 
 from calendar import monthrange
@@ -432,4 +433,54 @@ def submit_complaint(request):
         request,
         "students/submit_complaint.html",
         {"page_title": "Complaint Box",},
+    )
+
+
+@student_required
+def submit_review(request):
+    if request.method == "POST":
+        form = WeeklyMenuReviewForm(request.POST)
+        if form.is_valid():
+            review, created = WeeklyMenuReview.objects.update_or_create(
+                student=request.user.student,
+                day_of_week=form.cleaned_data["day_of_week"],
+                meal_type=form.cleaned_data["meal_type"],
+                defaults={
+                    "rating": form.cleaned_data["rating"],
+                    "comment": form.cleaned_data["comment"],
+                },
+            )
+            if created:
+                messages.success(request, "Review submitted successfully!")
+            else:
+                messages.info(request, "Your review has been updated.")
+            return redirect("students:reviews_list")
+    else:
+        form = WeeklyMenuReviewForm()
+    return render(
+        request,
+        "students/submit_review.html",
+        {"form": form, "page_title": "Submit Review"},
+    )
+
+
+@login_required
+def reviews_list(request):
+    """Show aggregated ratings and recent reviews"""
+    agg = (
+        WeeklyMenuReview.objects.values("day_of_week", "meal_type")
+        .annotate(avg_rating=Avg("rating"), total_reviews=Count("id"))
+        .order_by("day_of_week", "meal_type")
+    )
+    recent_reviews = WeeklyMenuReview.objects.select_related("student").order_by(
+        "-created_at"
+    )[:10]
+    return render(
+        request,
+        "students/reviews_list.html",
+        {
+            "aggregated": agg,
+            "recent_reviews": recent_reviews,
+            "page_title": "Weekly Food Reviews",
+        },
     )

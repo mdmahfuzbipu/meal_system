@@ -19,4 +19,6 @@ urlpatterns = [
     path("meal-history/", views.meal_history, name="meal_history"),
     path("weekly-menu/", views.weekly_menu_view, name="weekly_menu"),
     path("submit-complaint/", views.submit_complaint, name="submit_complaint"),
+    path("reviews/submit/", views.submit_review, name="submit_review"),
+    path("reviews/", views.reviews_list, name="reviews_list"),
 ]

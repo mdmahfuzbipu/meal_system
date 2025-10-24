@@ -211,3 +211,39 @@ def update_daily_cost(sender, instance, **kwargs):
     Automatically calculate and save cost when meal status is updated.
     """
     save_daily_cost(instance.student, instance.date)
+
+
+class WeeklyMenuReview(models.Model):
+    MEAL_CHOICES = [
+        ("breakfast", "Breakfast"),
+        ("lunch", "Lunch"),
+        ("dinner", "Dinner"),
+    ]
+
+    WEEKDAY_CHOICES = [
+        ("Monday", "Monday"),
+        ("Tuesday", "Tuesday"),
+        ("Wednesday", "Wednesday"),
+        ("Thursday", "Thursday"),
+        ("Friday", "Friday"),
+        ("Saturday", "Saturday"),
+        ("Sunday", "Sunday"),
+    ]
+
+    student = models.ForeignKey("students.Student", on_delete=models.CASCADE)
+    day_of_week = models.CharField(max_length=10, choices=WEEKDAY_CHOICES)
+    meal_type = models.CharField(max_length=10, choices=MEAL_CHOICES)
+    rating = models.PositiveSmallIntegerField(
+        choices=[(i, str(i)) for i in range(1, 6)]
+    )
+    comment = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("student", "day_of_week", "meal_type")
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return (
+            f"{self.student.name} - {self.day_of_week} {self.meal_type}: {self.rating}"
+        )

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block page_title %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="bg-yellow-700 p-4 rounded-xl text-white inline-flex items-center space-x-3 w-fit">
+    <i class="fas fa-star text-2xl"></i>
+    <h2 class="text-xl font-semibold">Weekly Food Reviews</h2>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto py-8 space-y-8">
+  <div class="bg-white rounded-xl shadow p-6">
+    <h3 class="text-lg font-bold mb-4">Average Ratings by Day & Meal</h3>
+    <table class="w-full border-collapse">
+      <thead>
+        <tr class="bg-gray-100">
+          <th class="p-2 text-left">Day</th>
+          <th class="p-2 text-left">Meal</th>
+          <th class="p-2 text-left">Avg Rating</th>
+          <th class="p-2 text-left">Total Reviews</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in aggregated %}
+        <tr class="border-b hover:bg-gray-50">
+          <td class="p-2">{{ row.day_of_week }}</td>
+          <td class="p-2 capitalize">{{ row.meal_type }}</td>
+          <td class="p-2 font-semibold text-yellow-600">
+            ⭐ {{ row.avg_rating|floatformat:1 }}
+          </td>
+          <td class="p-2 text-gray-600">{{ row.total_reviews }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" class="text-center py-4 text-gray-500">No reviews yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="bg-white rounded-xl shadow p-6">
+    <h3 class="text-lg font-bold mb-4">Recent Student Reviews</h3>
+    {% for r in recent_reviews %}
+    <div class="border-b py-3">
+      <div class="flex justify-between items-center">
+        <span class="font-semibold">{{ r.student.name }}</span>
+        <span class="text-sm text-gray-500">{{ r.day_of_week }} • {{ r.meal_type|capfirst }}</span>
+      </div>
+      <div class="text-yellow-500 mt-1">
+        {% for i in "12345"|make_list %}
+          {% if i|add:"0"|int <= r.rating %}⭐{% else %}<span class="text-gray-300">⭐</span>{% endif %}
+        {% endfor %}
+      </div>
+      {% if r.comment %}
+      <p class="text-gray-700 mt-2">{{ r.comment }}</p>
+      {% endif %}
+    </div>
+    {% empty %}
+    <p class="text-gray-500">No reviews submitted yet.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
