@@ -13,4 +13,17 @@ urlpatterns = [
         name="export_monthly_summary",
     ),
     path("manage-complaints/", views.manage_complaints, name="manage_complaints"),
+    path(
+        "special-requests/create/",
+        views.create_special_request,
+        name="create_special_request",
+    ),
+    path(
+        "special-requests/", views.manager_requests_list, name="manager_requests_list"
+    ),
+    path(
+        "special-requests/<int:pk>/",
+        views.manager_request_detail,
+        name="manager_request_detail",
+    ),
 ]

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block page_title %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="bg-blue-800 p-4 rounded-xl text-white inline-flex items-center space-x-3 w-fit">
+    <i class="fas fa-clipboard-list text-2xl"></i>
+    <h2 class="text-xl font-semibold">Create Special Meal Request</h2>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto py-8">
+  <a href="{% url 'accounts:admin_dashboard' %}" class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-2 rounded-full shadow mb-6">
+    <i class="fas fa-arrow-left"></i> Back to Dashboard
+  </a>
+
+  <div class="bg-white rounded-xl p-6 shadow">
+    <form method="post">{% csrf_token %}
+      {{ form.as_p }}
+      <button class="bg-green-600 text-white px-4 py-2 rounded">Send Request</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

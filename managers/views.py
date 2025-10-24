@@ -7,14 +7,16 @@ from django.utils import timezone
 from openpyxl import Workbook
 
 from students.utils import generate_monthly_summary_for_all
-
 from students.models import Complaint, MonthlyMealSummary, StudentMealPreference
 from .models import WeeklyMenuProposal
 from students.models import MonthlyMealSummary, WeeklyMenu, WEEKDAY_CHOICES
 from .forms import WeeklyMenuProposalForm
-from accounts.decorators import manager_required
+from accounts.decorators import manager_required, admin_required
 from datetime import date, datetime, timedelta
 
+
+from .models import SpecialMealRequest
+from .forms import SpecialMealRequestForm
 
 def is_manager(user):
     return user.role == "manager"
@@ -294,4 +296,59 @@ def manage_complaints(request):
 
     return render(
         request, "managers/manage_complaints.html", {"complaints": complaints}
+    )
+
+
+@admin_required
+def create_special_request(request):
+    if request.method == "POST":
+        form = SpecialMealRequestForm(request.POST)
+        if form.is_valid():
+            req = form.save(commit=False)
+            req.created_by = request.user
+            req.save()
+            messages.success(request, "Special meal request submitted to the manager.")
+            return redirect("managers:manager_dashboard")
+    else:
+        form = SpecialMealRequestForm()
+    return render(
+        request,
+        "managers/create_special_request.html",
+        {"form": form, "page_title": "Create Special Meal Request"},
+    )
+
+
+@manager_required
+def manager_requests_list(request):
+    # show requests assigned to this manager
+    requests_qs = SpecialMealRequest.objects.filter(manager=request.user).order_by(
+        "-created_at"
+    )
+    return render(
+        request,
+        "managers/manager_requests_list.html",
+        {"requests": requests_qs, "page_title": "Special Meal Requests"},
+    )
+
+
+@manager_required
+def manager_request_detail(request, pk):
+    req = get_object_or_404(SpecialMealRequest, pk=pk, manager=request.user)
+    if request.method == "POST":
+        action = request.POST.get("action")
+        note = request.POST.get("response_note", "")
+        if action == "accept":
+            req.mark_responded(SpecialMealRequest.STATUS_ACCEPTED, note)
+            messages.success(request, "Request accepted.")
+        elif action == "decline":
+            req.mark_responded(SpecialMealRequest.STATUS_DECLINED, note)
+            messages.success(request, "Request declined.")
+        elif action == "complete":
+            req.mark_responded(SpecialMealRequest.STATUS_COMPLETED, note)
+            messages.success(request, "Marked as completed.")
+        return redirect("managers:manager_requests_list")
+    return render(
+        request,
+        "managers/manager_request_detail.html",
+        {"request_obj": req, "page_title": "Request Detail"},
     )

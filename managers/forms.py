@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 
 from .models import WeeklyMenuProposal, ManagerProfile, SpecialMealRequest
 
@@ -107,3 +108,9 @@ class SpecialMealRequestForm(forms.ModelForm):
             "requested_date": forms.DateInput(attrs={"type": "date"}),
             "description": forms.Textarea(attrs={"rows": 4}),
         }
+        
+    def clean_manager(self):
+        manager = self.cleaned_data["manager"]
+        if getattr(manager, "role", None) != "manager":
+            raise ValidationError("Please select a valid manager account.")
+        return manager
