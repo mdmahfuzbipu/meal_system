@@ -16,8 +16,21 @@
 
   <div class="bg-white rounded-xl p-6 shadow">
     <form method="post">{% csrf_token %}
-      {{ form.as_p }}
-      <button class="bg-green-600 text-white px-4 py-2 rounded">Send Request</button>
+       {% for field in form %}
+            <div class="mb-4">
+                {{ field.label_tag }}<br>
+                {{ field }}
+                
+                {% if field.errors %}
+                    <p class="text-red-600 text-sm">{{ field.errors }}</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+      <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition">
+        Send Request
+      </button>
+
     </form>
   </div>
 </div>

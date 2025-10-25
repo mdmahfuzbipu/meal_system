@@ -320,7 +320,6 @@ def create_special_request(request):
 
 @manager_required
 def manager_requests_list(request):
-    # show requests assigned to this manager
     requests_qs = SpecialMealRequest.objects.filter(manager=request.user).order_by(
         "-created_at"
     )
@@ -334,19 +333,15 @@ def manager_requests_list(request):
 @manager_required
 def manager_request_detail(request, pk):
     req = get_object_or_404(SpecialMealRequest, pk=pk, manager=request.user)
+
     if request.method == "POST":
-        action = request.POST.get("action")
         note = request.POST.get("response_note", "")
-        if action == "accept":
-            req.mark_responded(SpecialMealRequest.STATUS_ACCEPTED, note)
-            messages.success(request, "Request accepted.")
-        elif action == "decline":
-            req.mark_responded(SpecialMealRequest.STATUS_DECLINED, note)
-            messages.success(request, "Request declined.")
-        elif action == "complete":
-            req.mark_responded(SpecialMealRequest.STATUS_COMPLETED, note)
-            messages.success(request, "Marked as completed.")
+
+        # marking as accepted
+        req.mark_responded(SpecialMealRequest.STATUS_ACCEPTED, note)
+        messages.success(request, "Special meal request marked as accepted.")
         return redirect("managers:manager_requests_list")
+
     return render(
         request,
         "managers/manager_request_detail.html",

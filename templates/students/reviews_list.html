@@ -46,11 +46,11 @@
         <span class="font-semibold">{{ r.student.name }}</span>
         <span class="text-sm text-gray-500">{{ r.day_of_week }} • {{ r.meal_type|capfirst }}</span>
       </div>
-      <div class="text-yellow-500 mt-1">
-        {% for i in "12345"|make_list %}
-          {% if i|add:"0"|int <= r.rating %}⭐{% else %}<span class="text-gray-300">⭐</span>{% endif %}
-        {% endfor %}
-      </div>
+
+    <div class="mt-1 text-yellow-600 font-semibold">
+        ⭐ {{ r.rating|floatformat:1 }}
+    </div>
+
       {% if r.comment %}
       <p class="text-gray-700 mt-2">{{ r.comment }}</p>
       {% endif %}

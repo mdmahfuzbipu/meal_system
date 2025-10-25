@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}
+<div class="px-4 sm:px-6 lg:px-8 mb-6">
+  <div class="bg-gradient-to-r from-orange-600 to-orange-800 p-4 rounded-xl shadow-sm inline-flex items-center space-x-3 w-fit">
+    <i class="fas fa-list fa-lg text-orange-200"></i>
+    <div>
+      <h2 class="text-2xl font-bold text-white">Add Options — {{ poll.title }}</h2>
+      <p class="text-sm text-orange-100 mt-1">Add choices for the poll. After adding options, students can vote.</p>
+    </div>
+  </div>
+</div>
+{% endblock page_title %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+  <!-- Back / Go to Results -->
+  <div class="flex items-center justify-between mb-6">
+    <a href="{% url 'votes:poll_list' %}" class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-2 rounded-full shadow hover:from-blue-700 hover:to-blue-900 transition">
+      <i class="fas fa-arrow-left"></i> Back to Polls
+    </a>
+    <a href="{% url 'votes:poll_results' poll.id %}" class="inline-flex items-center gap-2 bg-white text-orange-700 px-4 py-2 rounded-full shadow hover:bg-gray-50 transition">
+      <i class="fas fa-chart-bar"></i> View Results
+    </a>
+  </div>
+
+  <!-- Messages -->
+  {% if messages %}
+    <div class="mb-4">
+      {% for message in messages %}
+        <div class="p-3 rounded text-sm font-medium
+          {% if message.tags == 'success' %}bg-green-100 text-green-800 border border-green-300
+          {% elif message.tags == 'error' %}bg-red-100 text-red-800 border border-red-300
+          {% else %}bg-gray-100 text-gray-800 border border-gray-300{% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- Poll Info -->
+  <div class="bg-white rounded-2xl shadow-md p-6 mb-6">
+    <h3 class="text-xl font-semibold text-gray-800">{{ poll.title }}</h3>
+    <p class="text-gray-600 mt-1 whitespace-pre-line">{{ poll.question }}</p>
+    <div class="mt-3 text-sm text-gray-500">
+      Created by <strong>{{ poll.created_by.username }}</strong>
+      {% if poll.expires_at %} • Expires: {{ poll.expires_at|date:"M j, Y h:i A" }}{% endif %}
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    <!-- Existing Options List -->
+    <div class="bg-white rounded-2xl shadow-md p-6">
+      <h4 class="text-lg font-semibold mb-3">Current Options</h4>
+
+      {% if poll.options.all %}
+        <ul class="space-y-3">
+          {% for opt in poll.options.all %}
+            <li class="flex items-center justify-between p-3 rounded-lg border border-gray-100">
+              <div>
+                <div class="font-medium text-gray-800">{{ opt.option_text }}</div>
+                <div class="text-xs text-gray-500 mt-1">Votes: {{ opt.votes.count }}</div>
+              </div>
+              <span class="text-sm text-gray-400">id: {{ opt.id }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-gray-500">No options yet. Add one using the form.</p>
+      {% endif %}
+    </div>
+
+    <!-- Add Option Form -->
+    <div class="bg-white rounded-2xl shadow-md p-6">
+      <h4 class="text-lg font-semibold mb-3">Add New Option</h4>
+      <form method="post" class="space-y-4">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Option Text</label>
+          {{ form.option_text }}
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button type="submit" class="bg-orange-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-orange-700 transition">
+            <i class="fas fa-plus mr-2"></i> Add Option
+          </button>
+          <a href="{% url 'votes:poll_results' poll.id %}" class="text-sm text-gray-600 hover:underline">Skip & see results</a>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+{% endblock content %}

@@ -108,7 +108,7 @@ class SpecialMealRequestForm(forms.ModelForm):
             "requested_date": forms.DateInput(attrs={"type": "date"}),
             "description": forms.Textarea(attrs={"rows": 4}),
         }
-        
+
     def clean_manager(self):
         manager = self.cleaned_data["manager"]
         if getattr(manager, "role", None) != "manager":

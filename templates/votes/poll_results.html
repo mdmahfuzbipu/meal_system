@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto p-6">
+
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-3xl font-bold text-gray-800"><i class="fas fa-poll"></i> {{ poll.title }}</h2>
+    <a href="{% url 'votes:poll_list' %}" class="text-sm text-blue-600 hover:underline">← Back to Polls</a>
+  </div>
+
+  <!-- Question -->
+  <p class="text-lg text-gray-700 mb-4">{{ poll.question }}</p>
+
+  <!-- Total votes -->
+  <p class="text-sm text-gray-500 mb-8">
+    Total Votes: <span class="font-semibold">{{ total_votes }}</span>
+  </p>
+
+  <!-- Results -->
+  <div class="space-y-6">
+    {% for option in options %}
+      {% with count=option.votes.count %}
+        {% if total_votes > 0 %}
+          {% widthratio count total_votes 100 as percent %}
+        {% else %}
+          {% assign percent = 0 %}
+        {% endif %}
+      {% endwith %}
+
+      {% comment %} Highlight student choice {% endcomment %}
+      {% if user.is_authenticated %}
+        {% if option.votes.filter(voted_by=user).exists %}
+          {% assign highlight = "bg-green-100 border-green-400" %}
+        {% else %}
+          {% assign highlight = "bg-white border-gray-200" %}
+        {% endif %}
+      {% else %}
+        {% assign highlight = "bg-white border-gray-200" %}
+      {% endif %}
+
+      <div class="p-5 rounded-2xl shadow border {{ highlight }} hover:shadow-lg transition">
+        <div class="flex justify-between mb-1">
+          <span class="text-gray-800 font-semibold">{{ option.option_text }}</span>
+          <span class="text-gray-600 text-sm font-medium">{{ count }} vote{{ count|pluralize }}</span>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+          <div class="bg-gradient-to-r from-blue-500 to-blue-700 h-4 rounded-full transition-all duration-700 ease-in-out"
+               style="width: {{ percent }}%;"></div>
+        </div>
+
+        <!-- Percentage -->
+        <div class="mt-2 text-sm text-gray-600">{{ percent }}%</div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Poll status -->
+  <div class="text-center mt-8">
+    {% if poll.is_expired %}
+      <p class="text-red-600 font-semibold"><i class="fas fa-times-circle"></i> Poll has ended</p>
+    {% else %}
+      <p class="text-green-600 font-semibold"><i class="fas fa-check-circle"></i> Poll is active</p>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock content %}

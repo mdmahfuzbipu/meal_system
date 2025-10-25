@@ -1,42 +1,34 @@
 {% extends "base.html" %}
+
 {% block page_title %}
-<div class="px-4 sm:px-6 lg:px-8">
-  <div class="bg-blue-800 p-4 rounded-xl text-white inline-flex items-center space-x-3 w-fit">
-    <i class="fas fa-eye text-2xl"></i>
-    <h2 class="text-xl font-semibold">Request Detail</h2>
-  </div>
-</div>
+<h2 class="text-2xl font-semibold text-gray-800">Request Detail</h2>
 {% endblock %}
 
 {% block content %}
 <div class="max-w-3xl mx-auto py-8">
-  <a href="{% url 'managers:manager_requests_list' %}" class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-2 rounded-full shadow mb-6">
-    <i class="fas fa-arrow-left"></i> Back
-  </a>
+  <div class="bg-white p-6 rounded-xl shadow space-y-4">
+    <h3 class="font-semibold text-lg">{{ request_obj.title }}</h3>
+    <p class="text-gray-600">Date: {{ request_obj.requested_date }} | Meal: {{ request_obj.get_meal_type_display }}</p>
+    <p class="text-gray-500">Created by: {{ request_obj.created_by.username }}</p>
+    <p>Status: <span class="font-semibold">{{ request_obj.get_status_display }}</span></p>
+    <p class="text-gray-700">Description: {{ request_obj.description }}</p>
 
-  <div class="bg-white p-6 rounded shadow">
-    <h3 class="text-lg font-semibold">{{ request_obj.title }}</h3>
-    <p class="text-sm text-gray-600">{{ request_obj.requested_date }} — {{ request_obj.meal_type|capfirst }}</p>
-    <p class="mt-3">{{ request_obj.description }}</p>
-
-    <div class="mt-4">
-      <form method="post">
-        {% csrf_token %}
-        <textarea name="response_note" rows="3" class="w-full border rounded px-3 py-2" placeholder="Optional response note…"></textarea>
-        <div class="mt-3 flex gap-2">
-          <button name="action" value="accept" class="bg-green-600 text-white px-4 py-2 rounded">Accept</button>
-          <button name="action" value="decline" class="bg-red-600 text-white px-4 py-2 rounded">Decline</button>
-          <button name="action" value="complete" class="bg-indigo-600 text-white px-4 py-2 rounded">Mark Completed</button>
-        </div>
-      </form>
-    </div>
-
-    {% if request_obj.response_note %}
-    <div class="mt-4 text-sm text-gray-700">
-      <strong>Manager response:</strong>
-      <div>{{ request_obj.response_note }}</div>
-    </div>
+    {% if request_obj.status == "pending" %}
+    <form method="post">{% csrf_token %}
+      <label for="response_note" class="block font-medium mt-4 mb-1">Notes (optional)</label>
+      <textarea name="response_note" id="response_note" rows="3" class="w-full border rounded p-2"></textarea>
+      <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded mt-2">
+        Mark as Accepted
+      </button>
+    </form>
+    {% else %}
+      <p class="text-green-600 font-semibold">This request has been accepted.</p>
+      {% if request_obj.response_note %}
+      <p class="text-gray-500">Note: {{ request_obj.response_note }}</p>
+      {% endif %}
     {% endif %}
   </div>
+
+  <a href="{% url 'managers:manager_requests_list' %}" class="inline-block mt-4 text-blue-600 hover:underline">Back to Requests</a>
 </div>
 {% endblock %}
