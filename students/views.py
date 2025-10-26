@@ -484,3 +484,24 @@ def reviews_list(request):
             "page_title": "Weekly Food Reviews",
         },
     )
+
+
+@login_required
+def profile_view(request):
+    """Display the logged-in student's full profile info"""
+    student = request.user.student
+
+    # To avoid circular import issues
+    from .models import StudentDetails
+
+    try:
+        details = StudentDetails.objects.get(student=student)
+    except StudentDetails.DoesNotExist:
+        details = None
+
+    context = {
+        "page_title": "My Profile",
+        "student": student,
+        "details": details,
+    }
+    return render(request, "students/profile.html", context)

@@ -60,6 +60,7 @@ class StudentDetails(models.Model):
     national_id = models.CharField(max_length=20, unique=True)
     address = models.TextField(blank=True)
     phone_number = models.CharField(max_length=16)
+    email = models.EmailField(max_length=100, blank=True, null=True)
     blood_group = models.CharField(max_length=3,choices=BLOOD_GROUP_CHOICES)
     guardian_name = models.CharField(max_length=40)
     guardian_phone = models.CharField(max_length=16)

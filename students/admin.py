@@ -20,7 +20,7 @@ class StudentAdmin(admin.ModelAdmin):
 
 @admin.register(StudentDetails)
 class StudentDetailsAdmin(admin.ModelAdmin):
-    list_display = ("student", "university_id", "department", "batch", "phone_number")
+    list_display = ("student", "university_id", "department", "batch", "phone_number", "email")
     search_fields = ("student__name", "university_id", "national_id")
     list_filter = ("department", "batch", "blood_group")
 
