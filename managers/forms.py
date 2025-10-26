@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
+from accounts.models import CustomUser
+
 from .models import WeeklyMenuProposal, ManagerProfile, SpecialMealRequest
 
 
@@ -108,6 +110,11 @@ class SpecialMealRequestForm(forms.ModelForm):
             "requested_date": forms.DateInput(attrs={"type": "date"}),
             "description": forms.Textarea(attrs={"rows": 4}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Only show users with role "manager" in the manager dropdown
+        self.fields["manager"].queryset = CustomUser.objects.filter(role="manager")
 
     def clean_manager(self):
         manager = self.cleaned_data["manager"]

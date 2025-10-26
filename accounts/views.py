@@ -9,6 +9,7 @@ from django.utils.timezone import now
 from django.contrib import messages
 
 
+from managers.models import SpecialMealRequest
 from students.models import Student, DailyMealStatus
 from .forms import EmailOrUsernameAuthenticationForm
 from .decorators import student_required, manager_required, admin_required
@@ -48,8 +49,21 @@ def student_dashboard(request):
 
 @manager_required
 def manager_dashboard(request):
-    return render(request, "accounts/manager_dashboard.html")
+    # Get pending special meal requests for this manager
+    pending_requests = SpecialMealRequest.objects.filter(
+        manager=request.user, status=SpecialMealRequest.STATUS_PENDING
+    )
+    pending_count = pending_requests.count()
 
+    return render(
+        request,
+        "accounts/manager_dashboard.html",
+        {
+            "pending_requests": pending_requests,
+            "pending_count": pending_count,
+            "page_title": "Manager Dashboard",
+        },
+    )
 
 # @admin_required
 # def admin_dashboard(request):

@@ -1,67 +1,110 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block content %}
-<div class="max-w-4xl mx-auto p-6">
+{% block page_title %}
+<div class="px-4 sm:px-6 lg:px-8 mb-6">
+  <div class="bg-gradient-to-r from-blue-600 to-blue-800 p-4 rounded-xl shadow-sm inline-flex items-center space-x-3 w-fit">
+    <i class="fas fa-list fa-lg text-blue-200"></i>
+    <div>
+      <h2 class="text-2xl font-bold text-white">Poll List</h2>
+      <p class="text-sm text-blue-100 mt-1">View all active and past polls with their scopes and expiry dates.</p>
+    </div>
+  </div>
+</div>
+{% endblock page_title %}
 
-  <div class="flex justify-between items-center mb-6">
-    <h2 class="text-2xl font-bold text-gray-800">
-      <i class="fas fa-list-alt"></i> Polls
-    </h2>
-    {% if user.role in "admin manager" %}
-      <a href="{% url 'votes:create_poll' %}" class="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-        <i class="fas fa-plus"></i> Create Poll
-      </a>
-    {% endif %}
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+  <!-- Create Poll Button -->
+  <div class="flex justify-end mb-6">
+    <a href="{% url 'votes:create_poll' %}" class="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-full shadow hover:bg-green-700 transition">
+      <i class="fas fa-plus"></i> Create Poll
+    </a>
   </div>
 
-  {% if polls %}
-    <div class="space-y-4">
-      {% for poll in polls %}
-        <div class="bg-white shadow rounded-2xl p-5 flex justify-between items-center hover:bg-gray-50 transition">
-          <div>
-            <h3 class="text-lg font-semibold text-gray-800">{{ poll.title }}</h3>
-            <p class="text-gray-600 text-sm mt-1">{{ poll.question }}</p>
-            <p class="text-xs mt-1">
-              Created by <strong>{{ poll.created_by.username }}</strong>
-              • Expires: {{ poll.expires_at|date:"M j, Y H:i" }}
-              • Status:
-              {% if poll.is_expired %}
-                <span class="text-red-600 font-semibold"><i class="fas fa-times-circle"></i> Expired</span>
-              {% else %}
-                <span class="text-green-600 font-semibold"><i class="fas fa-check-circle"></i> Active</span>
-              {% endif %}
-            </p>
-          </div>
-
-          <div class="flex items-center gap-2">
-            {% if not poll.is_expired and user.role == "student" %}
-              <a href="{% url 'votes:cast_vote' poll.id %}" class="bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 transition">
-                <i class="fas fa-vote-yea"></i> Vote
-              </a>
-            {% endif %}
-
-            <a href="{% url 'votes:poll_results' poll.id %}" class="bg-gray-100 text-gray-800 px-3 py-2 rounded-md hover:bg-gray-200 transition">
-              <i class="fas fa-chart-bar"></i> Results
-            </a>
-
-            {% if user.role in "admin manager" %}
-              <a href="{% url 'votes:add_options' poll.id %}" class="bg-yellow-500 text-white px-3 py-2 rounded-md hover:bg-yellow-600 transition">
-                <i class="fas fa-plus"></i> Options
-              </a>
-
-              <a href="{% url 'votes:delete_poll' poll.id %}" class="bg-red-600 text-white px-3 py-2 rounded-md hover:bg-red-700 transition">
-                <i class="fas fa-trash-alt"></i> Delete
-              </a>
-            {% endif %}
-          </div>
-
+  <!-- Messages -->
+  {% if messages %}
+    <div class="mb-4">
+      {% for message in messages %}
+        <div class="p-3 rounded text-sm font-medium
+          {% if message.tags == 'success' %}bg-green-100 text-green-800 border border-green-300
+          {% elif message.tags == 'error' %}bg-red-100 text-red-800 border border-red-300
+          {% else %}bg-gray-100 text-gray-800 border border-gray-300{% endif %}">
+          {{ message }}
         </div>
       {% endfor %}
     </div>
-  {% else %}
-    <p class="text-gray-600">No polls available.</p>
   {% endif %}
 
+  <!-- Poll List Table -->
+  <div class="overflow-x-auto bg-white shadow-md rounded-xl">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-blue-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Title</th>
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Question</th>
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Scope</th>
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Expires At</th>
+          <th class="px-6 py-3 text-center text-sm font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        {% for poll in polls %}
+        <tr class="hover:bg-blue-50 transition">
+          <td class="px-6 py-4 text-sm text-gray-900 font-medium flex items-center gap-2">
+            <i class="fas fa-poll text-blue-500"></i>
+            {{ poll.title }}
+          </td>
+          <td class="px-6 py-4 text-sm text-gray-600">{{ poll.question|truncatechars:80 }}</td>
+          <td class="px-6 py-4 text-sm text-gray-800">
+            {% if poll.scope == 'universal' %}
+              <span class="inline-flex items-center gap-1 bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">
+                <i class="fas fa-globe"></i> Universal
+              </span>
+            {% else %}
+              <span class="inline-flex items-center gap-1 bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-medium">
+                <i class="fas fa-building"></i> Floor {{ poll.floor_number }}
+              </span>
+            {% endif %}
+          </td>
+          <td class="px-6 py-4 text-sm text-gray-600">
+            {{ poll.expires_at|date:"M d, Y h:i A" }}
+          </td>
+
+
+        <td class="px-6 py-4 text-center text-sm flex justify-center gap-2">
+        {% if user.role == 'student' %}
+            {% if poll.is_expired or poll.already_voted %}
+            <a href="{% url 'votes:poll_results' poll.id %}" class="inline-flex items-center gap-1 bg-blue-600 text-white px-3 py-1.5 rounded-full hover:bg-blue-700 transition">
+                <i class="fas fa-chart-bar"></i> Results
+            </a>
+            {% else %}
+            <a href="{% url 'votes:cast_vote' poll.id %}" class="inline-flex items-center gap-1 bg-green-600 text-white px-3 py-1.5 rounded-full hover:bg-green-700 transition">
+                <i class="fas fa-vote-yea"></i> Vote
+            </a>
+            {% endif %}
+        {% endif %}
+
+        {% if user.role in 'admin manager' %}
+            <a href="{% url 'votes:add_options' poll.id %}" class="inline-flex items-center gap-1 bg-indigo-600 text-white px-3 py-1.5 rounded-full hover:bg-indigo-700 transition">
+            <i class="fas fa-plus"></i> Options
+            </a>
+        {% endif %}
+
+        <a href="{% url 'votes:poll_results' poll.id %}" class="inline-flex items-center gap-1 bg-blue-600 text-white px-3 py-1.5 rounded-full hover:bg-blue-700 transition">
+            <i class="fas fa-chart-bar"></i> Results
+        </a>
+        </td>
+
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="text-center py-6 text-gray-500 text-sm">No polls available.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 {% endblock content %}

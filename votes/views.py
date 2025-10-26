@@ -4,6 +4,9 @@ from accounts.decorators import admin_required, student_required, manager_requir
 from django.contrib.auth.decorators import login_required , user_passes_test
 from django.contrib import messages
 from django.utils import timezone
+from django.db.models import Q
+
+from students.models import Student
 from .models import VotePoll, VoteOption, Vote
 from .forms import VotePollForm, VoteOptionForm
 
@@ -54,6 +57,18 @@ def add_options(request, poll_id):
 @student_required
 def cast_vote(request, poll_id):
     poll = get_object_or_404(VotePoll, id=poll_id)
+    student = Student.objects.get(user=request.user)
+    student_floor = student.room_number[0] if student.room_number else None
+
+    # Check if poll is floor-specific and matches student's floor
+    if poll.scope == "floor" and str(poll.floor_number) != str(student_floor):
+        messages.error(
+            request,
+            "You cannot vote in this poll. It is for Floor {} only.".format(
+                poll.floor_number
+            ),
+        )
+        return redirect("votes:poll_list")
 
     # Check if poll is expired
     if poll.is_expired():
@@ -96,13 +111,44 @@ def poll_results(request, poll_id):
         },
     )
 
+
 # ---------- Public Poll List ----------
 @login_required
 def poll_list(request):
-    if request.user.role == "student":
-        polls = [poll for poll in VotePoll.objects.all() if not poll.is_expired()]
-    else:
-        polls = VotePoll.objects.all()
+    user = request.user
+    polls = []
+
+    # Admins/managers see all polls
+    if user.role in ["admin", "manager"] or user.is_superuser:
+        polls = VotePoll.objects.all().order_by("-created_at")
+
+    # Students see universal + floor polls
+    elif user.role == "student":
+        try:
+            student = Student.objects.get(user=user)
+            student_floor = student.room_number[0] if student.room_number else None
+
+            polls_qs = VotePoll.objects.filter(
+                Q(scope="universal") | Q(scope="floor", floor_number=student_floor)
+            ).order_by("-created_at")
+
+            # Only show active polls
+            polls = [poll for poll in polls_qs if not poll.is_expired()]
+
+            # Precompute if student has voted for each poll
+            for poll in polls:
+                poll.already_voted = Vote.objects.filter(
+                    poll=poll, voted_by=user
+                ).exists()
+
+        except Student.DoesNotExist:
+            polls_qs = VotePoll.objects.filter(scope="universal").order_by(
+                "-created_at"
+            )
+            polls = [poll for poll in polls_qs if not poll.is_expired()]
+            for poll in polls:
+                poll.already_voted = False
+
     return render(request, "votes/poll_list.html", {"polls": polls})
 
 

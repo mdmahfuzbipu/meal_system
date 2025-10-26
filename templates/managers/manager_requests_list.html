@@ -1,34 +1,35 @@
 {% extends "base.html" %}
 {% block page_title %}
 <div class="px-4 sm:px-6 lg:px-8">
-  <div class="bg-blue-800 p-4 rounded-xl text-white inline-flex items-center space-x-3 w-fit">
-    <i class="fas fa-clipboard-list text-2xl"></i>
-    <h2 class="text-xl font-semibold">Assigned Special Requests</h2>
+  <div class="bg-yellow-700 p-4 rounded-xl text-white inline-flex items-center space-x-3 w-fit">
+    <i class="fas fa-concierge-bell text-2xl"></i>
+    <h2 class="text-xl font-semibold">Special Meal Requests</h2>
   </div>
 </div>
 {% endblock %}
 
 {% block content %}
 <div class="max-w-4xl mx-auto py-8">
+  <a href="{% url 'accounts:home' %}" class="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-600 to-yellow-800 text-white px-4 py-2 rounded-full shadow mb-6">
+    <i class="fas fa-arrow-left"></i> Back to Dashboard
+  </a>
+
   {% if requests %}
-    <div class="space-y-4">
+    <ul class="space-y-3">
       {% for req in requests %}
-      <div class="bg-white shadow rounded-xl p-4 flex justify-between items-center">
-        <div>
-          <h3 class="font-semibold text-lg">{{ req.title }}</h3>
-          <p class="text-gray-600">Date: {{ req.requested_date }} | Meal: {{ req.get_meal_type_display }}</p>
-          <p class="text-gray-500 text-sm">Created by: {{ req.created_by.username }}</p>
-          <p>Status: <span class="font-semibold">{{ req.get_status_display }}</span></p>
-        </div>
-        <div>
-          <a href="{% url 'managers:manager_request_detail' req.id %}" 
-             class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">View</a>
-        </div>
-      </div>
+        <li class="border p-4 rounded shadow flex justify-between items-center">
+          <div>
+            <p class="font-semibold">{{ req.title }}</p>
+            <p class="text-sm text-gray-500">{{ req.requested_date }} | {{ req.get_status_display }}</p>
+          </div>
+          <a href="{% url 'managers:manager_request_detail' req.pk %}" class="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded">
+            View
+          </a>
+        </li>
       {% endfor %}
-    </div>
+    </ul>
   {% else %}
-    <p class="text-gray-500">No pending requests.</p>
+    <p class="text-gray-600">No special meal requests.</p>
   {% endif %}
 </div>
 {% endblock %}

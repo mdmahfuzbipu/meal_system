@@ -26,6 +26,12 @@ def is_admin(user):
     return user.role == "admin"
 
 
+def is_admin_or_manager(user):
+    return user.is_authenticated and (
+        user.role in ["admin", "manager"] or user.is_superuser
+    )
+
+
 @login_required
 @user_passes_test(is_manager)
 def manager_menu_list(request):
@@ -308,7 +314,7 @@ def create_special_request(request):
             req.created_by = request.user
             req.save()
             messages.success(request, "Special meal request submitted to the manager.")
-            return redirect("managers:manager_dashboard")
+            return redirect("managers:create_special_request")
     else:
         form = SpecialMealRequestForm()
     return render(
@@ -318,11 +324,14 @@ def create_special_request(request):
     )
 
 
-@manager_required
+@user_passes_test(is_admin_or_manager)
 def manager_requests_list(request):
-    requests_qs = SpecialMealRequest.objects.filter(manager=request.user).order_by(
-        "-created_at"
-    )
+    if request.user.role == "admin":
+        # Admin can see all requests
+        requests_qs = SpecialMealRequest.objects.all().order_by("-created_at")
+    else:
+        requests_qs = SpecialMealRequest.objects.filter(manager=request.user).order_by("-created_at")
+
     return render(
         request,
         "managers/manager_requests_list.html",

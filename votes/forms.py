@@ -6,10 +6,21 @@ from .models import VotePoll, VoteOption
 class VotePollForm(forms.ModelForm):
     class Meta:
         model = VotePoll
-        fields = ["title", "question", "expires_at"]
+        fields = ["title", "question", "scope", "floor_number", "expires_at"]
         widgets = {
-            "expires_at": forms.DateTimeInput(attrs={"type": "datetime-local"}),
+            "expires_at": forms.DateInput(attrs={"type": "datetime-local"}),
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        scope = cleaned_data.get("scope")
+        floor_number = cleaned_data.get("floor_number")
+
+        if scope == "floor" and not floor_number:
+            raise forms.ValidationError(
+                "Please specify the floor number for a floor-specific poll."
+            )
+        return cleaned_data
 
     def clean_expires_at(self):
         expires_at = self.cleaned_data.get("expires_at")

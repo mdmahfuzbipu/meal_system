@@ -40,6 +40,7 @@
   <!-- Poll Form Card -->
   <div class="bg-blue-100 rounded-2xl shadow-md p-6">
     <h3 class="text-xl font-semibold text-gray-800 mb-4">Poll Details</h3>
+
     <form method="post" class="space-y-4">
       {% csrf_token %}
       {{ poll_form.non_field_errors }}
@@ -54,6 +55,20 @@
       <div>
         <label class="block text-sm font-medium text-gray-700">Question</label>
         {{ poll_form.question }}
+      </div>
+
+      <!-- Scope Selection -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Poll Scope</label>
+        {{ poll_form.scope }}
+        <p class="text-xs text-gray-500 mt-1">Select whether this poll is for all students or a specific floor.</p>
+      </div>
+
+      <!-- Floor Number (Hidden by default) -->
+      <div id="floor_field" style="display: none;">
+        <label class="block text-sm font-medium text-gray-700">Floor Number</label>
+        {{ poll_form.floor_number }}
+        <p class="text-xs text-gray-500 mt-1">Specify the floor number for this poll.</p>
       </div>
 
       <!-- Expiry Date -->
@@ -72,4 +87,26 @@
     </form>
   </div>
 </div>
+
+<!-- Show floor input when "floor" is selected -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const scopeSelect = document.getElementById("id_scope");
+    const floorField = document.getElementById("floor_field");
+
+    function toggleFloorField() {
+      if (scopeSelect.value === "floor") {
+        floorField.style.display = "block";
+      } else {
+        floorField.style.display = "none";
+      }
+    }
+
+    // Run when page loads
+    toggleFloorField();
+
+    // Run whenever scope changes
+    scopeSelect.addEventListener("change", toggleFloorField);
+  });
+</script>
 {% endblock content %}

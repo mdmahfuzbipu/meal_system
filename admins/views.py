@@ -6,7 +6,7 @@ from django.db import transaction
 from django.db.models import Q
 
 from managers.forms import ManagerRegistrationForm
-from managers.models import ManagerProfile, WeeklyMenuProposal
+from managers.models import ManagerProfile, SpecialMealRequest, WeeklyMenuProposal
 from students.models import Student, WeeklyMenu, StudentDetails, Complaint
 from accounts.models import CustomUser
 from accounts.decorators import admin_required

@@ -19,7 +19,7 @@ urlpatterns = [
         name="create_special_request",
     ),
     path(
-        "special-requests/", views.manager_requests_list, name="manager_requests_list"
+        "special_requests/", views.manager_requests_list, name="manager_requests_list"
     ),
     path(
         "special-requests/<int:pk>/",

@@ -1,69 +1,104 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block page_title %}
+<div class="px-4 sm:px-6 lg:px-8 mb-6">
+  <div class="bg-gradient-to-r from-indigo-600 to-indigo-800 p-4 rounded-xl shadow-sm inline-flex items-center space-x-3 w-fit">
+    <i class="fas fa-poll fa-lg text-indigo-200"></i>
+    <div>
+      <h2 class="text-2xl font-bold text-white">Poll Results</h2>
+      <p class="text-sm text-indigo-100 mt-1">See how students have voted in this poll.</p>
+    </div>
+  </div>
+</div>
+{% endblock page_title %}
+
 {% block content %}
-<div class="max-w-3xl mx-auto p-6">
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-  <!-- Header -->
-  <div class="flex justify-between items-center mb-6">
-    <h2 class="text-3xl font-bold text-gray-800"><i class="fas fa-poll"></i> {{ poll.title }}</h2>
-    <a href="{% url 'votes:poll_list' %}" class="text-sm text-blue-600 hover:underline">← Back to Polls</a>
+  <!-- Back Button -->
+  <div class="mb-6">
+    <a href="{% url 'votes:poll_list' %}" class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-2 rounded-full shadow hover:from-blue-700 hover:to-blue-900 transition">
+      <i class="fas fa-arrow-left"></i> Back to Polls
+    </a>
   </div>
 
-  <!-- Question -->
-  <p class="text-lg text-gray-700 mb-4">{{ poll.question }}</p>
-
-  <!-- Total votes -->
-  <p class="text-sm text-gray-500 mb-8">
-    Total Votes: <span class="font-semibold">{{ total_votes }}</span>
-  </p>
-
-  <!-- Results -->
-  <div class="space-y-6">
-    {% for option in options %}
-      {% with count=option.votes.count %}
-        {% if total_votes > 0 %}
-          {% widthratio count total_votes 100 as percent %}
-        {% else %}
-          {% assign percent = 0 %}
-        {% endif %}
-      {% endwith %}
-
-      {% comment %} Highlight student choice {% endcomment %}
-      {% if user.is_authenticated %}
-        {% if option.votes.filter(voted_by=user).exists %}
-          {% assign highlight = "bg-green-100 border-green-400" %}
-        {% else %}
-          {% assign highlight = "bg-white border-gray-200" %}
-        {% endif %}
+  <!-- Poll Info Card -->
+  <div class="bg-white rounded-2xl shadow p-6 mb-6">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-2xl font-semibold text-gray-900">{{ poll.title }}</h2>
+      {% if poll.scope == "universal" %}
+        <span class="bg-green-100 text-green-700 text-lg font-medium px-3 py-1 rounded-full inline-flex items-center gap-1">
+          <i class="fas fa-globe"></i> Universal Poll
+        </span>
       {% else %}
-        {% assign highlight = "bg-white border-gray-200" %}
+        <span class="bg-yellow-100 text-yellow-700 text-lg font-medium px-3 py-1 rounded-full inline-flex items-center gap-1">
+          <i class="fas fa-building"></i> Floor {{ poll.floor_number }}
+        </span>
       {% endif %}
+    </div>
 
-      <div class="p-5 rounded-2xl shadow border {{ highlight }} hover:shadow-lg transition">
-        <div class="flex justify-between mb-1">
-          <span class="text-gray-800 font-semibold">{{ option.option_text }}</span>
-          <span class="text-gray-600 text-sm font-medium">{{ count }} vote{{ count|pluralize }}</span>
-        </div>
+    <p class="text-gray-700 mb-4">{{ poll.question }}</p>
 
-        <!-- Progress Bar -->
-        <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
-          <div class="bg-gradient-to-r from-blue-500 to-blue-700 h-4 rounded-full transition-all duration-700 ease-in-out"
-               style="width: {{ percent }}%;"></div>
-        </div>
-
-        <!-- Percentage -->
-        <div class="mt-2 text-sm text-gray-600">{{ percent }}%</div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-gray-600">
+      <div class="flex items-center gap-2">
+        <i class="far fa-calendar-alt text-indigo-600"></i>
+        <span><strong>Created on:</strong> {{ poll.created_at|date:"M d, Y - h:i A" }}</span>
       </div>
-    {% endfor %}
+      <div class="flex items-center gap-2">
+        <i class="far fa-clock text-indigo-600"></i>
+        <span><strong>Expires:</strong> {{ poll.expires_at|date:"M d, Y - h:i A" }}</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <i class="fas fa-user text-indigo-600"></i>
+        <span><strong>Created by:</strong> {{ poll.created_by.get_full_name|default:poll.created_by.username }}</span>
+      </div>
+      <div class="flex items-center gap-2">
+        {% if is_expired %}
+          <i class="fas fa-times-circle text-red-600"></i>
+          <span class="text-red-600 font-semibold">Poll Expired</span>
+        {% else %}
+          <i class="fas fa-check-circle text-green-600"></i>
+          <span class="text-green-600 font-semibold">Poll Active</span>
+        {% endif %}
+      </div>
+    </div>
   </div>
 
-  <!-- Poll status -->
-  <div class="text-center mt-8">
-    {% if poll.is_expired %}
-      <p class="text-red-600 font-semibold"><i class="fas fa-times-circle"></i> Poll has ended</p>
+  <!-- Results Card -->
+  <div class="bg-indigo-50 rounded-2xl shadow p-6">
+    <h3 class="text-xl font-semibold text-indigo-900 mb-4 flex items-center gap-2">
+      <i class="fas fa-chart-bar text-indigo-700"></i> Results
+    </h3>
+
+    {% if total_votes > 0 %}
+      <ul class="space-y-4">
+        {% for option in options %}
+          <li class="bg-white p-4 rounded-xl shadow-sm border">
+            <div class="flex justify-between mb-1">
+              <span class="font-medium text-gray-800">{{ option.option_text }}</span>
+              <span class="text-gray-600">{{ option.vote_count }} vote{{ option.vote_count|pluralize }}</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+              <div
+                class="bg-indigo-600 h-3 rounded-full"
+                style="width: {% widthratio option.vote_count total_votes 100 %}%;"
+              ></div>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">
+              {% widthratio option.vote_count total_votes 100 %}% of total votes
+            </p>
+          </li>
+        {% endfor %}
+      </ul>
+
+      <div class="mt-6 text-center text-gray-700 font-medium flex justify-center items-center gap-2">
+        <i class="fas fa-vote-yea text-indigo-700"></i>
+        Total Votes: {{ total_votes }}
+      </div>
+
     {% else %}
-      <p class="text-green-600 font-semibold"><i class="fas fa-check-circle"></i> Poll is active</p>
+      <p class="text-center text-gray-600 italic">No votes have been cast yet.</p>
     {% endif %}
   </div>
 

@@ -35,6 +35,24 @@
       </div>
     </a>
 
+    <!-- Pending Special Meal Requests -->
+    <a href="{% url 'managers:manager_requests_list' %}" 
+      class="block rounded-2xl shadow-md p-6 bg-gradient-to-r from-yellow-600 to-yellow-800 text-white flex justify-between items-center 
+              transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:from-yellow-700 hover:to-yellow-900">
+      <div>
+        <h4 class="text-lg font-semibold mb-2">Pending Special Requests</h4>
+        {% if pending_count %}
+          <p class="text-sm text-white/90">{{ pending_count }} pending request{{ pending_count|pluralize }}</p>
+        {% else %}
+          <p class="text-sm text-white/90">No pending requests</p>
+        {% endif %}
+      </div>
+      <div class="text-4xl text-white">
+        <i class="fas fa-concierge-bell"></i>
+      </div>
+    </a>
+
+
     <!-- Issue Meal Tokens -->
     <a href="{% url 'managers:manager_menu_list' %}" 
        class="block rounded-2xl shadow-md p-6 bg-gradient-to-r from-blue-600 to-blue-800 text-white flex justify-between items-center 
