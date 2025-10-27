@@ -491,17 +491,24 @@ def profile_view(request):
     """Display the logged-in student's full profile info"""
     student = request.user.student
 
-    # To avoid circular import issues
-    from .models import StudentDetails
+    from .models import StudentDetails, StudentMealPreference
+    import datetime
 
     try:
         details = StudentDetails.objects.get(student=student)
     except StudentDetails.DoesNotExist:
         details = None
 
+    latest_meal = (
+        StudentMealPreference.objects.filter(student=student)
+        .order_by("-month", "-created_at")  # latest month first
+        .first()
+    )
+
     context = {
         "page_title": "My Profile",
         "student": student,
         "details": details,
+        "latest_meal": latest_meal, 
     }
     return render(request, "students/profile.html", context)
