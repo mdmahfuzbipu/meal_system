@@ -8,7 +8,7 @@ from openpyxl import Workbook
 
 from students.utils import generate_monthly_summary_for_all
 from students.models import Complaint, MonthlyMealSummary, StudentMealPreference
-from .models import WeeklyMenuProposal
+from .models import ManagerProfile, WeeklyMenuProposal
 from students.models import MonthlyMealSummary, WeeklyMenu, WEEKDAY_CHOICES
 from .forms import WeeklyMenuProposalForm
 from accounts.decorators import manager_required, admin_required
@@ -356,3 +356,16 @@ def manager_request_detail(request, pk):
         "managers/manager_request_detail.html",
         {"request_obj": req, "page_title": "Request Detail"},
     )
+
+
+@login_required
+@user_passes_test(is_manager)
+def manager_profile_view(request):
+    """Display the logged-in manager's full profile info"""
+    manager = get_object_or_404(ManagerProfile, user=request.user)
+
+    context = {
+        "page_title": "My Profile",
+        "manager": manager,
+    }
+    return render(request, "managers/profile.html", context)

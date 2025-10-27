@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto p-6 bg-white shadow-lg rounded-2xl">
+    <h1 class="text-2xl font-semibold mb-4 text-center">{{ page_title }}</h1>
+
+    <!-- Success/Error messages -->
+    {% if messages %}
+    <div class="mb-4 space-y-2">
+        {% for message in messages %}
+        <div class="px-4 py-2 rounded-lg
+                    {% if message.tags == 'success' %}bg-green-100 text-green-800
+                    {% elif message.tags == 'error' %}bg-red-100 text-red-800{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="overflow-x-auto">
+            <table class="w-full border border-gray-200 rounded-lg">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="p-3 border-b text-center">Date</th>
+                        <th class="p-3 border-b text-center">Breakfast</th>
+                        <th class="p-3 border-b text-center">Lunch</th>
+                        <th class="p-3 border-b text-center">Dinner</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for day in month_statuses %}
+                    <tr class="hover:bg-gray-50 {% if day.disabled %}bg-gray-100{% endif %}">
+                        <td class="p-3 border-b text-center font-medium">
+                            {{ day.date|date:"D, d M Y" }}
+                            {% if day.date == today %}
+                                <span class="text-blue-600 font-semibold">(Today)</span>
+                            {% elif day.date == tomorrow and tomorrow_cutoff_passed %}
+                                <span class="text-red-600 font-semibold">(Tomorrow - Cutoff Passed)</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Breakfast -->
+                        <td class="p-3 border-b text-center">
+                            <input type="checkbox"
+                                   name="breakfast_{{ day.date|date:'Y-m-d' }}"
+                                   value="1"
+                                   {% if day.breakfast_on %}checked{% endif %}
+                                   {% if day.disabled %}disabled{% endif %}>
+                        </td>
+
+                        <!-- Lunch -->
+                        <td class="p-3 border-b text-center">
+                            <input type="checkbox"
+                                   name="lunch_{{ day.date|date:'Y-m-d' }}"
+                                   value="1"
+                                   {% if day.lunch_on %}checked{% endif %}
+                                   {% if day.disabled %}disabled{% endif %}>
+                        </td>
+
+                        <!-- Dinner -->
+                        <td class="p-3 border-b text-center">
+                            <input type="checkbox"
+                                   name="dinner_{{ day.date|date:'Y-m-d' }}"
+                                   value="1"
+                                   {% if day.dinner_on %}checked{% endif %}
+                                   {% if day.disabled %}disabled{% endif %}>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-4 flex justify-center">
+            <button type="submit"
+                    class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+                Save Changes
+            </button>
+        </div>
+
+        {% if tomorrow_cutoff_passed %}
+        <p class="text-sm text-red-600 mt-2 text-center">
+            Note: Tomorrow's meals cannot be updated as the 8:00 PM cutoff has passed.
+        </p>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}

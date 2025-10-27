@@ -26,4 +26,5 @@ urlpatterns = [
         views.manager_request_detail,
         name="manager_request_detail",
     ),
+    path("profile/", views.manager_profile_view, name="manager_profile"),
 ]

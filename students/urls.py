@@ -16,6 +16,11 @@ urlpatterns = [
         name="update_meal_preference",
     ),
     path("my-meal-preference", views.my_meal_preference, name="my_meal_preference"),
+    path(
+        "meal-status/update/",
+        views.update_multiple_days_meal_status,
+        name="update_multiple_days_meal_status",
+    ),
     path("meal-history/", views.meal_history, name="meal_history"),
     path("weekly-menu/", views.weekly_menu_view, name="weekly_menu"),
     path("submit-complaint/", views.submit_complaint, name="submit_complaint"),

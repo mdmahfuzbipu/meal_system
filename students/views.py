@@ -54,21 +54,28 @@ def my_daily_meal_status(request):
 
     student = Student.objects.get(user=request.user)
 
+    # Get or create today's status
     today_status, _ = DailyMealStatus.objects.get_or_create(
         student=student,
         date=today,
         defaults={
-            "breakfast_on": True,
-            "lunch_on": True,
-            "dinner_on": True,
-        },  
+            "breakfast_on": False,
+            "lunch_on": False,
+            "dinner_on": False,
+        },
     )
 
-    # Tomorrow's meal status
-    tomorrow_status, _ = DailyMealStatus.objects.get_or_create(
+    # Tomorrow defaults are copied from today's current values
+    tomorrow_defaults = {
+        "breakfast_on": today_status.breakfast_on,
+        "lunch_on": today_status.lunch_on,
+        "dinner_on": today_status.dinner_on,
+    }
+
+    tomorrow_status, created = DailyMealStatus.objects.get_or_create(
         student=student,
         date=tomorrow,
-        defaults={"breakfast_on": True, "lunch_on": True, "dinner_on": True},
+        defaults=tomorrow_defaults,
     )
 
     if request.method == "POST":
@@ -78,15 +85,14 @@ def my_daily_meal_status(request):
         tomorrow_status.save()
         return redirect("students:my_meal_status")
 
+    # Get current month's meal statuses
     first_day = date(current_year, current_month, 1)
     last_day = date(
         current_year, current_month, monthrange(current_year, current_month)[1]
     )
-
     statuses = DailyMealStatus.objects.filter(
-        student=student,
-        date__range=(first_day, last_day)
-    ).order_by('-date')
+        student=student, date__range=(first_day, last_day)
+    ).order_by("-date")
 
     context = {
         "page_title": "Daily Meal Status",
@@ -107,10 +113,7 @@ def update_tomorrow_meal_status(request, meal_type):
     student = Student.objects.get(user=request.user)
     current_dt = localtime(now())
 
-    cutoff_dt = current_dt.replace(
-        hour=20, minute=0, second=0, microsecond=0
-    )  # 18:00 or 6:00 PM
-
+    cutoff_dt = current_dt.replace(hour=20, minute=0, second=0, microsecond=0)
     if current_dt >= cutoff_dt:
         messages.error(
             request,
@@ -118,17 +121,33 @@ def update_tomorrow_meal_status(request, meal_type):
         )
         return redirect("students:my_meal_status")
 
-    tomorrow = current_dt.date() + timedelta(days=1)
+    today = current_dt.date()
+    tomorrow = today + timedelta(days=1)
+
+    # Get today's status to inherit defaults
+    today_status, _ = DailyMealStatus.objects.get_or_create(
+        student=student,
+        date=today,
+        defaults={
+            "breakfast_on": False,
+            "lunch_on": False,
+            "dinner_on": False,
+        },
+    )
+
+    # Tomorrow inherits today's current values
+    tomorrow_defaults = {
+        "breakfast_on": today_status.breakfast_on,
+        "lunch_on": today_status.lunch_on,
+        "dinner_on": today_status.dinner_on,
+    }
 
     meal_status, _ = DailyMealStatus.objects.get_or_create(
         student=student,
         date=tomorrow,
-        defaults={
-            "breakfast_on": True,
-            "lunch_on": True,
-            "dinner_on": True,
-        },  
+        defaults=tomorrow_defaults,
     )
+
     # Toggle the selected meal
     if meal_type == "breakfast":
         meal_status.breakfast_on = not meal_status.breakfast_on
@@ -209,6 +228,95 @@ def my_meal_preference(request):
     }
 
     return render(request, "students/my_meal_preference.html", context)
+
+
+from django.utils import timezone
+from datetime import datetime, date, timedelta
+from calendar import monthrange
+
+
+@login_required
+def update_multiple_days_meal_status(request):
+    student = request.user.student
+    current_dt = timezone.localtime(timezone.now())
+    today = current_dt.date()
+    tomorrow = today + timedelta(days=1)
+
+    # Tomorrow cutoff time (8:00 PM today)
+    tomorrow_cutoff = current_dt.replace(hour=20, minute=0, second=0, microsecond=0)
+
+    # Month range
+    current_year = today.year
+    current_month = today.month
+    first_day = date(current_year, current_month, 1)
+    last_day = date(
+        current_year, current_month, monthrange(current_year, current_month)[1]
+    )
+    month_dates = [
+        first_day + timedelta(days=i) for i in range((last_day - first_day).days + 1)
+    ]
+
+    # Fetch existing statuses for the month
+    statuses_qs = DailyMealStatus.objects.filter(
+        student=student, date__range=(first_day, last_day)
+    )
+    statuses_dict = {s.date: s for s in statuses_qs}
+
+    if request.method == "POST":
+        # Loop over all future days
+        for day in month_dates:
+            if day < tomorrow:
+                continue
+            if day == tomorrow and current_dt >= tomorrow_cutoff:
+                continue
+
+            # Get or create DailyMealStatus
+            status, _ = DailyMealStatus.objects.get_or_create(
+                student=student,
+                date=day,
+                defaults={"breakfast_on": False, "lunch_on": False, "dinner_on": False},
+            )
+
+            # Update all meal statuses based on submitted checkboxes
+            for meal_type in ["breakfast", "lunch", "dinner"]:
+                checkbox_name = f"{meal_type}_{day.strftime('%Y-%m-%d')}"
+                setattr(status, f"{meal_type}_on", checkbox_name in request.POST)
+
+            status.save()
+
+        messages.success(request, "Meal status updated successfully for future days!")
+        return redirect("students:update_multiple_days_meal_status")
+
+    # Prepare data for template
+    month_statuses = []
+    for day in month_dates:
+        status = statuses_dict.get(day)
+        # Determine disabled state
+        if day < tomorrow:
+            disabled = True
+        elif day == tomorrow and current_dt >= tomorrow_cutoff:
+            disabled = True
+        else:
+            disabled = False
+
+        month_statuses.append(
+            {
+                "date": day,
+                "breakfast_on": status.breakfast_on if status else True,
+                "lunch_on": status.lunch_on if status else True,
+                "dinner_on": status.dinner_on if status else True,
+                "disabled": disabled,
+            }
+        )
+
+    context = {
+        "page_title": "Update Multiple Days Meal Status",
+        "month_statuses": month_statuses,
+        "today": today,
+        "tomorrow": tomorrow,
+        "tomorrow_cutoff_passed": current_dt >= tomorrow_cutoff,
+    }
+    return render(request, "students/update_multiple_days_meal_status.html", context)
 
 
 @login_required

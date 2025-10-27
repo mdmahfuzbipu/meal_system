@@ -129,7 +129,7 @@ class WeeklyMenu(models.Model):
 class DailyMealStatus(models.Model):
     student = models.ForeignKey("Student", on_delete=models.CASCADE)
     date = models.DateField()
-    
+
     breakfast_on = models.BooleanField(default=True)
     lunch_on = models.BooleanField(default=True)
     dinner_on = models.BooleanField(default=True)
@@ -144,8 +144,14 @@ class DailyMealStatus(models.Model):
         ]
         ordering = ['-date']
 
+
     def __str__(self):
-        return f"{self.student.name} - {self.date} - {'ON' if self.status else 'OFF'}"
+        return (
+            f"{self.student.name} - {self.date} - "
+            f"B:{'ON' if self.breakfast_on else 'OFF'} "
+            f"L:{'ON' if self.lunch_on else 'OFF'} "
+            f"D:{'ON' if self.dinner_on else 'OFF'}"
+        )
 
 
 class DailyMealCost(models.Model):

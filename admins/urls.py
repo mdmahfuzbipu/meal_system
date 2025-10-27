@@ -15,6 +15,15 @@ urlpatterns = [
     path("register-student/", views.register_student, name="register_student"),
     path("manage-students/", views.manage_students, name="manage_students"),
     path("edit-student/<int:student_id>/", views.edit_student, name="edit_student"),
+    path("register-admin/", views.register_admin, name="register_admin"),
+    # Manage Admins
+    path("manage-admins/", views.manage_admins, name="manage_admins"),
+    path("edit-admin/<int:admin_id>/", views.edit_admin, name="edit_admin"),
+    path(
+        "toggle-admin-status/<int:admin_id>/",
+        views.toggle_admin_status,
+        name="toggle_admin_status",
+    ),
     path(
         "toggle-student-status/<int:student_id>/",
         views.toggle_student_status,
@@ -35,4 +44,5 @@ urlpatterns = [
     path("menus/<int:proposal_id>/approve/", views.approve_menu, name="approve_menu"),
     path("menus/<int:proposal_id>/reject/", views.reject_menu, name="reject_menu"),
     path("view-complaints/", views.view_complaints, name="view_complaints"),
+    path("profile/", views.profile_view, name="admin_profile"),
 ]

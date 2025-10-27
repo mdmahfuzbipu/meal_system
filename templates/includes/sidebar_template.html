@@ -70,19 +70,7 @@
             </a>
         </li>
 
-        <li class="nav-header">Complaints & Notifications</li>
-        <li class="nav-item">
-            <a href="{% url 'admins:meal_costs' %}" class="nav-link">
-            <i class="nav-icon fas fa-bullhorn"></i>
-            <p>Notify Students</p>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="{% url 'admins:analytics' %}" class="nav-link">
-            <i class="nav-icon fas fa-bullhorn"></i>
-            <p>Notify Managers</p>
-            </a>
-        </li>
+        <li class="nav-header">Complaints</li>
         <li class="nav-item">
             <a href="{% url 'admins:view_complaints' %}" class="nav-link">
             <i class="nav-icon fas fa-exclamation-circle"></i>
@@ -92,12 +80,22 @@
 
         <li class="nav-header">Account</li>
         <li class="nav-item">
-            <form method="post" action="{% url 'accounts:logout' %}" onsubmit="return confirm('Your session would be terminated.\n\nProceed?')">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger nav-link text-left text-white">
-                <i class="nav-icon fas fa-sign-out-alt"></i>
-                <p>Logout</p>
-            </button>
+            <a href="{% url 'admins:admin_profile' %}" class="nav-link">
+                <i class="nav-icon fas fa-user-circle"></i>
+            <p>View Profile</p>
+            </a>
+        </li>
+
+        <li class="nav-item mt-3">
+            <form method="post" action="{% url 'accounts:logout' %}" 
+                onsubmit="return confirm('Your session will be terminated.\n\nProceed?')">
+                {% csrf_token %}
+                <button type="submit" 
+                    class="nav-link d-flex justify-content-start align-items-center bg-danger text-white w-100" 
+                    style="border: none; padding-left: 55px;">
+                    <i class="nav-icon fas fa-sign-out-alt mr-2"></i>
+                    <span>Log Out</span>
+                </button>
             </form>
         </li>
 
@@ -149,11 +147,12 @@
 
             <li class="nav-header">Account</li>
             <li class="nav-item">
-                <a href="{% url 'home' %}" class="nav-link">
-                <i class="nav-icon fas fa-user-cog"></i>
-                <p>View/Edit Profile</p>
+                <a href="{% url 'managers:manager_profile' %}" class="nav-link">
+                    <i class="nav-icon fas fa-user-circle"></i>
+                    <p>View Profile</p>
                 </a>
             </li>
+
             <li class="nav-item">
                 <form method="post" action="{% url 'accounts:logout' %}" onsubmit="return confirm('Your session would be terminated.\n\nProceed?')">
                 {% csrf_token %}

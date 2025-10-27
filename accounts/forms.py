@@ -34,7 +34,7 @@ UserModel = get_user_model()
 class EmailOrUsernameAuthenticationForm(forms.Form):
     login = forms.CharField(label=_("Username or Email"), max_length=254)
     password = forms.CharField(label=_("Password"), strip=False, widget=forms.PasswordInput)
-    captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox())
+    # captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox())
 
     error_messages = {
         "invalid_login": _("Please enter a correct username/email and password."),

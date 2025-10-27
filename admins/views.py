@@ -4,13 +4,18 @@ from django.core.paginator import Paginator
 from django.contrib import messages
 from django.db import transaction
 from django.db.models import Q
+from django.contrib.auth import get_user_model
 
+from admins.models import AdminProfile
 from managers.forms import ManagerRegistrationForm
 from managers.models import ManagerProfile, SpecialMealRequest, WeeklyMenuProposal
 from students.models import Student, WeeklyMenu, StudentDetails, Complaint
 from accounts.models import CustomUser
 from accounts.decorators import admin_required
 from .forms import StudentRegistrationForm
+
+User = get_user_model()
+
 
 def is_admin(user):
     role = getattr(user, "role", None)
@@ -391,3 +396,123 @@ def view_complaints(request):
             "page_title": "View Complaints",
         },
     )
+
+
+@login_required
+def profile_view(request):
+    """Display the logged-in admin’s profile information"""
+    admin_profile = get_object_or_404(AdminProfile, user=request.user)
+
+    context = {
+        "page_title": "My Profile",
+        "admin_profile": admin_profile,
+    }
+    return render(request, "admins/profile.html", context)
+
+
+def is_super_admin(user):
+    return user.is_superuser
+
+from django.contrib.auth.hashers import make_password
+
+
+@login_required
+@user_passes_test(is_super_admin)
+def register_admin(request):
+    """Register a new admin and redirect to Manage Admins"""
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        name = request.POST.get("name")
+        employee_id = request.POST.get("employee_id")
+        user_type = request.POST.get("user_type", "teacher")
+        designation = request.POST.get("designation")
+        hall_role = request.POST.get("hall_role")
+        department = request.POST.get("department")
+        phone = request.POST.get("phone")
+        email = request.POST.get("email")
+
+        # Create User
+        user = User.objects.create(
+            username=username,
+            password=make_password(password),
+            is_active=True,
+        )
+
+        # Create AdminProfile
+        AdminProfile.objects.create(
+            user=user,
+            name=name,
+            employee_id=employee_id,
+            user_type=user_type,
+            designation=designation,
+            hall_role=hall_role,
+            department=department,
+            phone=phone,
+            email=email,
+        )
+
+        messages.success(request, f"Admin '{name}' registered successfully!")
+        return redirect("admins:manage_admins")
+
+    
+    context = {
+        "DESIGNATION_CHOICES": AdminProfile.DESIGNATION_CHOICES,
+        "HALL_ROLE_CHOICES": AdminProfile.HALL_ROLE_CHOICES,
+    }
+    return render(request, "admins/register_admin.html", context)
+
+
+# ---------------- Manage Admins ----------------
+@login_required
+@user_passes_test(is_super_admin)
+def manage_admins(request):
+    """Display a list of all admins."""
+    admins = AdminProfile.objects.all().order_by("name")
+    return render(
+        request,
+        "admins/manage_admins.html",
+        {
+            "admins": admins,
+            "page_title": "Manage Admin",
+        },
+    )
+
+
+# ---------------- Edit Admin ----------------
+@login_required
+@user_passes_test(is_super_admin)
+def edit_admin(request, admin_id):
+    admin_profile = get_object_or_404(AdminProfile, id=admin_id)
+
+    if request.method == "POST":
+        admin_profile.name = request.POST.get("name")
+        admin_profile.employee_id = request.POST.get("employee_id")
+        admin_profile.department = request.POST.get("department")
+        admin_profile.designation = request.POST.get("designation")
+        admin_profile.hall_role = request.POST.get("hall_role")
+        admin_profile.hall_responsibilities = request.POST.get("hall_responsibilities")
+        admin_profile.assigned_floor = request.POST.get("assigned_floor")
+        admin_profile.phone = request.POST.get("phone")
+        admin_profile.email = request.POST.get("email")
+        admin_profile.save()
+
+        messages.success(
+            request, f"Admin '{admin_profile.name}' updated successfully."
+        )
+        return redirect("admins:manage_admins")
+
+    return render(request, "admins/edit_admin.html", {"admin_profile": admin_profile})
+
+
+# ---------------- Toggle Admin Status ----------------
+@login_required
+@user_passes_test(is_super_admin)
+def toggle_admin_status(request, admin_id):
+    admin_profile = get_object_or_404(AdminProfile, id=admin_id)
+    user = admin_profile.user
+    user.is_active = not user.is_active
+    user.save()
+    status = "activated" if user.is_active else "deactivated"
+    messages.success(request, f"Admin '{admin_profile.name}' has been {status}.")
+    return redirect("admins:manage_admins")
