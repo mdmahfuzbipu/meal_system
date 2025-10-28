@@ -140,7 +140,7 @@ python manage.py runserver
 ## 🧩 Future Roadmap
 
 - 📱 Add mobile-friendly dashboard using Tailwind responsive design  
-- 🔔 Real-time notifications for students meals  
+- 🔔 Real-time notifications for students meals, notices, updates
 - 💳 Add payment tracking for monthly meal bills  
 - 📊 Add analytics dashboard with charts for meal statistics  
 - 🧩 Implement role-based dashboards with custom widgets for admins, managers, and students  
