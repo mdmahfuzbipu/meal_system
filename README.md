@@ -1,40 +1,51 @@
 # 🍽️ Hostel Meal Management System – Django Web Application
 
 **Hostel Meal Management System** is a professional-grade Django web application designed to manage student meals, preferences, daily meal status, and monthly cost summaries in a hostel environment.  
-It provides a complete digital solution for **students, managers, and admins**, enabling seamless coordination between meal tracking, cost calculation, and token issuance.
+It provides a complete digital solution for **students, managers, and admins**, enabling seamless coordination between meal tracking, cost calculation, token issuance, voting, notices, and complaints.
 
 ---
 
-## 🚀 Features (Till Now)
+## 🚀 Features (Till Now) — **Total 25 Features**
 
 ### 👨‍🎓 Student Features
-- 🟢 Toggle daily meal status (ON/OFF for breakfast, lunch, dinner)
-- 🕕 Cutoff time control (change allowed before 6:00 PM)
-- 🍛 Choose monthly meal preferences (Beef/Fish vs Mutton/Egg)
-- 💰 View monthly meal summary with total cost
-- 📅 View cost history and total ON/OFF days
+- 🟢 Toggle daily meal status (ON/OFF for breakfast, lunch, dinner)  
+- 🕕 Cutoff time meal change system (change allowed before 8:00 PM)  
+- 🍛 Choose monthly meal preferences (Beef/Fish vs Mutton/Egg)  
+- 💰 View monthly meal summary with total cost  
+- 📅 View cost history and total ON/OFF days  
+- 🗳️ Participate in voting (Universal / Floor-wise polls)  
+- 📝 Submit complaints  
 
 ### 👨‍🍳 Manager Features
-- 👀 View student meal status by room number
-- 🎟️ Issue meal tokens based on student preferences
-- 📊 View daily and monthly summaries
-- 📤 Export monthly summaries to Excel
-- 📈 View total Beef/Mutton and Fish/Egg statistics
+- 👀 View student meal status by room number  
+- 🎟️ Issue meal tokens based on student preferences  
+- 📊 View daily and monthly summaries  
+- 📤 Export monthly summaries to Excel  
+- 📈 View total Beef/Mutton and Fish/Egg statistics  
+- 🗳️ Manage voting system (create polls, view results)  
 
 ### 🧑‍💼 Admin Features
-- ➕ Register new students, managers
-- ✏️ Edit or deactivate existing students, managers
-- 👥 Manage roles (Admin / Manager / Student)
-- 📈 View total Beef/Mutton and Fish/Egg statistics
-- 🧾 Generate monthly reports for all students
+- ➕ Register new students, managers, admins  
+- ✏️ Edit or deactivate existing users  
+- 📊 View daily and monthly summaries  
+- 👥 Manage roles (Admin / Manager / Student)  
+- 🧾 Generate monthly reports for all students  
 
 ### 🍲 Meal Management
-- 📆 Manage weekly menus (Breakfast, Lunch, Dinner)
-- 🔄 Automatically handle substitutions:
-  - Beef → Mutton
-  - Fish → Egg
-- 💸 Calculate cost dynamically based on menu & preferences
-- 🗓️ Track total ON days and generate cost summaries for every student
+- 📆 Manage weekly menus (Breakfast, Lunch, Dinner)  
+- 🔄 Automatically handle substitutions:  
+  - Beef → Mutton  
+  - Fish → Egg  
+- 💸 Calculate cost dynamically based on menu & preferences  
+- 🗓️ Track total ON days and generate cost summaries for every student  
+
+### 🗞️ Notices & Complaints
+- 📰 View and manage notices  
+- 📝 Submit and view complaints  
+
+### 🗳️ Voting System
+- 📌 Floor-wise voting  
+- 🌐 Universal voting  
 
 ---
 
@@ -58,6 +69,7 @@ meal_management/
 ├── students/               # Student dashboard, daily status, preferences
 ├── meal_system/            # Core app for meal types, weekly menu, and summaries
 ├── notices/                # Notice management module
+├── votes/                  # Voting system app
 ├── media/                  # User-uploaded files 
 ├── static/                 # Static assets (CSS, JS, images)
 ├── templates/              # Global and app-level templates
@@ -74,7 +86,7 @@ meal_management/
 
 ### 1. Clone the Repository
 ```
-git clone https://github.com/your-username/meal-management-system.git
+git clone https://github.com/mdmahfuzbipu/meal_system.git
 cd meal-management-system
 ```
 ### 2. Create and Activate Virtual Environment
@@ -92,7 +104,7 @@ At the root of your project:
 DEBUG=True
 SECRET_KEY=your-secret-key
 ALLOWED_HOSTS=127.0.0.1,localhost
-DATABASE_URL=sqlite:///db.sqlite3
+DATABASE_URL=postgresql:///db.postgresql
 ```
 ### 5. Apply Migrations
 ```
@@ -128,7 +140,7 @@ python manage.py runserver
 ## 🧩 Future Roadmap
 
 - 📱 Add mobile-friendly dashboard using Tailwind responsive design  
-- 🔔 Real-time notifications for managers when students toggle meals  
+- 🔔 Real-time notifications for students meals  
 - 💳 Add payment tracking for monthly meal bills  
 - 📊 Add analytics dashboard with charts for meal statistics  
 - 🧩 Implement role-based dashboards with custom widgets for admins, managers, and students  

@@ -125,7 +125,7 @@ from students.models import MonthlyMealSummary, StudentMealPreference
 from accounts.decorators import manager_required  # if using custom decorator
 
 
-@manager_required
+@user_passes_test(is_admin_or_manager)
 def monthly_summary_view(request):
     months = (
         MonthlyMealSummary.objects.values_list("month", flat=True)
@@ -188,6 +188,7 @@ def monthly_summary_view(request):
             "no_beef_count": no_beef_count,
             "fish_count": fish_count,
             "no_fish_count": no_fish_count,
+            "page_title": "Total Monthly Meal Summary"
         },
     )
 
@@ -269,7 +270,7 @@ def _build_workbook(summaries, prefs, month):
     return wb
 
 
-@manager_required
+@user_passes_test(is_admin_or_manager)
 def export_monthly_summary(request):
     month = request.GET.get("month")
     if not month:
@@ -288,7 +289,7 @@ def export_monthly_summary(request):
     return response
 
 
-@manager_required
+@user_passes_test(is_admin_or_manager)
 def regenerate_monthly_summary(request, month):
     from students.utils import generate_monthly_summary_for_all
 
@@ -298,7 +299,7 @@ def regenerate_monthly_summary(request, month):
     return redirect("managers:monthly_summary")
 
 
-@manager_required
+@user_passes_test(is_admin_or_manager)
 def manage_complaints(request):
     complaints = Complaint.objects.all().order_by("-created_at")
 

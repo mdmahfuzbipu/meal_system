@@ -184,3 +184,7 @@ EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD", default="")
 from datetime import datetime
 
 CURRENT_YEAR = datetime.now().year
+
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False 
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 7 

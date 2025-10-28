@@ -7,6 +7,9 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils.decorators import method_decorator
 from django.utils.timezone import now
 from django.contrib import messages
+from django.contrib.auth import login
+from django.utils.http import http_date
+from datetime import datetime, timedelta
 
 from meal_system import settings
 from managers.models import SpecialMealRequest
@@ -25,16 +28,38 @@ class RoleBasedLoginView(LoginView):
     template_name = "accounts/login.html"
     authentication_form = EmailOrUsernameAuthenticationForm
 
+    def form_valid(self, form):
+        user = form.get_user()
+        login(self.request, user)
+
+        remember_me = self.request.POST.get("remember")
+        response = super().form_valid(form)
+
+        if remember_me:
+            # Keep session for 30 days
+            self.request.session.set_expiry(60 * 60 * 24 * 30)  # 30 days
+
+            # Set cookie with proper expires as string
+            expires = datetime.utcnow() + timedelta(days=30)
+            response.set_cookie(
+                "remember_login",
+                form.cleaned_data.get("login"),
+                max_age=60 * 60 * 24 * 30,  # seconds
+                expires=http_date(expires.timestamp()),  # ✅ convert to HTTP date
+            )
+        else:
+            # Session expires on browser close
+            self.request.session.set_expiry(0)
+            response.delete_cookie("remember_login")
+
+        return response
+
     def get_success_url(self):
         user = self.request.user
-        if user.role == "student":
+        if user.role in ["student", "manager", "admin"] or user.is_superuser:
             return reverse_lazy("home")
-        elif user.role == "manager":
-            return reverse_lazy("home")
-        elif user.is_superuser or user.role == "admin":
-            return reverse_lazy("home")
-        logger.warning(f"User {user.username} has unknown role: {user.role}")
         return reverse_lazy("accounts:login")
+
 
 @login_required
 def role_aware_home(request):

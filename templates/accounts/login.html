@@ -1,30 +1,27 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Boral | Log in</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Core CSS -->
   <link rel="stylesheet" href="{% static 'plugins/fontawesome-free/css/all.min.css' %}">
-  <link rel="stylesheet" href="{% static 'plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
   <link rel="stylesheet" href="{% static 'dist/css/adminlte.min.css' %}">
-  <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    /* Full-screen blurred background with overlay */
     body.login-page {
       background: url("{% static 'images/bauet_campus.jpg' %}") no-repeat center center fixed;
       background-size: cover;
       font-family: 'Poppins', sans-serif;
-      position: relative;
-      height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
     }
 
     body::before {
@@ -32,117 +29,147 @@
       position: absolute;
       inset: 0;
       background: rgba(0, 0, 0, 0.55);
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(6px);
       z-index: 1;
     }
 
-    /* Login Box */
+    /* Premium Card */
     .login-box {
       position: relative;
       z-index: 2;
-      background: rgba(255, 255, 255, 0.93);
-      border-radius: 16px;
-      padding: 40px 35px;
-      max-width: 420px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(245,245,245,0.85));
+      border: 1px solid rgba(40,167,69,0.3);
+      box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+      backdrop-filter: blur(15px);
+      border-radius: 25px;
+      padding: 50px 45px;
       width: 100%;
-      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.35);
-      animation: slideUp 0.8s ease;
+      max-width: 420px;
+      animation: fadeIn 0.8s ease;
+      color: #333;
     }
 
-    @keyframes slideUp {
-      from {
-        transform: translateY(50px);
-        opacity: 0;
-      }
-
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Logo and Title */
+    /* Logo */
     .login-logo img {
-      height: 65px;
-      margin-bottom: 10px;
+    height: 90px; 
+    margin-bottom: px;
     }
-
+    
     .login-title {
-      font-size: 22px;
-      font-weight: 700;
-      color: #222;
-      text-align: center;
-      margin-bottom: 25px;
+    font-size: 26px;
+    font-weight: 700;
+    color: #28a745;
+    text-align: center;
+    margin-bottom: 10px;
     }
 
-    /* Card Body */
-    .login-card-body {
-      padding: 0;
-    }
-
-    .form-control {
-      height: 45px;
-      border-radius: 6px;
+    .login-box-msg {
       font-size: 15px;
+      color: #555;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    /* Inputs */
+    .form-control {
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.08);
+      height: 48px;
+      border-radius: 15px;
+      border: 1px solid #ced4da;
+      font-size: 15px;
+      color: #495057;
+      background: #ffffff;
+      transition: all 0.3s;
     }
 
     .form-control:focus {
       border-color: #28a745;
-      box-shadow: 0 0 5px rgba(40, 167, 69, 0.4);
+      box-shadow: 0 0 12px rgba(40, 167, 69, 0.3);
+      outline: none;
+    }
+
+    .input-group-text {
+      background: #28a745;
+      border: none;
+      color: #fff;
+      border-radius: 0 15px 15px 0;
     }
 
     /* Button */
-    .btn-success {
+    .btn-login {
+      background: linear-gradient(135deg, #28a745, #2ecc71);
+      border: none;
       font-weight: 600;
       font-size: 16px;
-      padding: 10px 0;
-      border-radius: 6px;
-      box-shadow: 0 3px 10px rgba(40, 167, 69, 0.4);
-      transition: 0.3s;
+      padding: 12px 0;
+      border-radius: 15px;
+      color: #fff;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 25px rgba(40,167,69,0.4), 0 0 10px rgba(40,167,69,0.15) inset;
     }
 
-    .btn-success:hover {
+    .btn-login:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(40, 167, 69, 0.6);
+      box-shadow: 0 12px 30px rgba(46, 204, 113, 0.5);
     }
 
-    /* Forgot Password */
+    .login-box:hover {
+        box-shadow: 0 25px 60px rgba(0,0,0,0.35), 0 0 20px rgba(40,167,69,0.2) inset;
+        transform: translateY(-2px);
+        transition: all 0.3s ease;
+    }
+
+
+    
     .forgot-link {
       font-size: 14px;
-      color: #555;
+      color: #28a745;
       text-decoration: none;
-      transition: color 0.3s;
     }
 
     .forgot-link:hover {
-      color: #28a745;
+      text-decoration: underline;
+    }
+
+    label {
+      color: #555;
     }
 
     /* Messages */
     .alert {
       font-size: 14px;
-      margin-top: 10px;
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      color: #333;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      text-align: center;
     }
 
-    /* Input Icon Button */
     #togglePassword {
       border: none;
-      background: transparent;
-      color: #666;
+      background: #28a745;
+      color: white;
+      border-radius: 0 15px 15px 0;
+      padding: 0 12px;
+      transition: all 0.3s;
     }
 
     #togglePassword:hover {
-      color: #28a745;
+      opacity: 0.9;
     }
 
-    /* Responsive */
     @media (max-width: 480px) {
       .login-box {
-        padding: 30px 25px;
+        padding: 35px 25px;
       }
-
       .login-title {
-        font-size: 20px;
+        font-size: 22px;
       }
     }
   </style>
@@ -151,79 +178,51 @@
 <body class="login-page">
   <div class="login-box">
     <div class="login-logo text-center">
-      <a href="/">
-        <img src="{% static 'images/bauet_logo.png' %}" alt="Boral Hall Logo">
-      </a>
+      <img src="{% static 'images/bauet_logo.png' %}" alt="BAUET Logo">
     </div>
     <h2 class="login-title">Boral Hall Meal Management System</h2>
+    <p class="login-box-msg">Log in to manage your daily meals</p>
 
-    <div class="card-body login-card-body">
-      <p class="login-box-msg text-center text-muted mb-3">Log in to manage your meal</p>
-
-      {% if messages %}
+    {% if messages %}
       {% for message in messages %}
-      <div class="alert alert-{{ message.tags }} text-center">
-        {{ message }}
-      </div>
+        <div class="alert alert-{{ message.tags }}">
+          {{ message }}
+        </div>
       {% endfor %}
-      {% endif %}
+    {% endif %}
 
-      {% if form.non_field_errors %}
-      <div class="alert alert-danger text-center">
-        {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+    <form method="post" action="{% url 'accounts:login' %}">
+      {% csrf_token %}
+
+      <div class="input-group mb-3">
+        <input type="text" name="login" class="form-control" placeholder="Email or Username"
+           value="{{ request.COOKIES.remember_login|default:'' }}" required autofocus>
+        <div class="input-group-append">
+          <span class="input-group-text"><i class="fas fa-user"></i></span>
+        </div>
       </div>
-      {% endif %}
 
-      <form action="{% url 'accounts:login' %}" method="post">
-        {% csrf_token %}
-
-        <div class="input-group mb-3">
-          <input type="text" name="login" class="form-control" placeholder="Email or Username"
-            value="{{ form.data.login }}" required autofocus>
-          <div class="input-group-append">
-            <div class="input-group-text"><span class="fas fa-user"></span></div>
-          </div>
+      <div class="input-group mb-3">
+        <input id="password" type="password" name="password" class="form-control" placeholder="Password" required>
+        <div class="input-group-append">
+          <button type="button" id="togglePassword"><i class="fas fa-eye-slash"></i></button>
         </div>
+      </div>
 
-        {% for error in form.login.errors %}
-        <div class="text-danger small mb-2">{{ error }}</div>
-        {% endfor %}
-
-        <div class="input-group mb-3">
-          <input id="password" type="password" name="password" class="form-control" placeholder="Password" required>
-          <div class="input-group-append">
-            <button type="button" id="togglePassword" aria-label="Toggle password visibility">
-              <i class="fas fa-eye-slash"></i>
-            </button>
-          </div>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="icheck-primary">
+          <input type="checkbox" id="remember" name="remember">
+          <label for="remember" style="font-size: 14px;">Remember Me</label>
         </div>
+        <a href="{% url 'accounts:password_reset' %}" class="forgot-link">Forgot Password?</a>
+      </div>
 
-        {% for error in form.password.errors %}
-        <div class="text-danger small mb-2">{{ error }}</div>
-        {% endfor %}
-
-        <div class="row align-items-center mb-2">
-          <div class="col-6">
-            <div class="icheck-primary">
-              <input type="checkbox" id="remember">
-              <label for="remember" style="font-size: 14px;">Remember Me</label>
-            </div>
-          </div>
-          <div class="col-6 text-right">
-            <a href="{% url 'accounts:password_reset' %}" class="forgot-link">Forgot Password?</a>
-          </div>
-        </div>
-
-        <button type="submit" class="btn btn-success btn-block">Log In</button>
-      </form>
-    </div>
+      <button type="submit" class="btn btn-login btn-block">Log In</button>
+    </form>
   </div>
 
-  <!-- Scripts -->
+  <!-- JS -->
   <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
-  <script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-  <script src="{% static 'dist/js/adminlte.min.js' %}"></script>
-
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       const togglePassword = document.querySelector("#togglePassword");
@@ -239,5 +238,4 @@
     });
   </script>
 </body>
-
 </html>
