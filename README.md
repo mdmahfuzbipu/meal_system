@@ -5,7 +5,7 @@ It provides a complete digital solution for **students, managers, and admins**, 
 
 ---
 
-## 🚀 Features (Till Now) — **Total 25 Features**
+## 🚀 Features (Till Now) — **Total 25+ Features**
 
 ### 👨‍🎓 Student Features (7)
 - 🟢 Toggle daily meal status (ON/OFF for breakfast, lunch, dinner)  
@@ -31,7 +31,7 @@ It provides a complete digital solution for **students, managers, and admins**, 
 - 👥 Manage roles (Admin / Manager / Student)  
 - 🧾 Generate monthly reports for all students  
 
-### 🍲 Meal Management
+### 🍲 Meal Management (4)
 - 📆 Manage weekly menus (Breakfast, Lunch, Dinner)  
 - 🔄 Automatically handle substitutions:  
   - Beef → Mutton  
@@ -40,7 +40,7 @@ It provides a complete digital solution for **students, managers, and admins**, 
 - 🗓️ Track total ON days and generate cost summaries for every student  
 
 
-### 🗞️ Notices & Complaints
+### 🗞️ Notices & Complaints (2)
 - 📰 View and manage notices  
 - 📝 Submit and view complaints  
 
