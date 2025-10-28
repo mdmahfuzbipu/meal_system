@@ -7,16 +7,16 @@ It provides a complete digital solution for **students, managers, and admins**, 
 
 ## 🚀 Features (Till Now) — **Total 25 Features**
 
-### 👨‍🎓 Student Features
+### 👨‍🎓 Student Features (7)
 - 🟢 Toggle daily meal status (ON/OFF for breakfast, lunch, dinner)  
-- 🕕 Cutoff time meal change system (change allowed before 8:00 PM)  
+- 🕕 Cutoff time meal change system (before 8:00 PM) 
 - 🍛 Choose monthly meal preferences (Beef/Fish vs Mutton/Egg)  
 - 💰 View monthly meal summary with total cost  
 - 📅 View cost history and total ON/OFF days  
-- 🗳️ Participate in voting (Universal / Floor-wise polls)  
+- 🗳️ Voting system participation (Universal / Floor-wise polls)
 - 📝 Submit complaints  
 
-### 👨‍🍳 Manager Features
+### 👨‍🍳 Manager Features (6)
 - 👀 View student meal status by room number  
 - 🎟️ Issue meal tokens based on student preferences  
 - 📊 View daily and monthly summaries  
@@ -24,7 +24,7 @@ It provides a complete digital solution for **students, managers, and admins**, 
 - 📈 View total Beef/Mutton and Fish/Egg statistics  
 - 🗳️ Manage voting system (create polls, view results)  
 
-### 🧑‍💼 Admin Features
+### 🧑‍💼 Admin Features (5)
 - ➕ Register new students, managers, admins  
 - ✏️ Edit or deactivate existing users  
 - 📊 View daily and monthly summaries  
@@ -39,9 +39,11 @@ It provides a complete digital solution for **students, managers, and admins**, 
 - 💸 Calculate cost dynamically based on menu & preferences  
 - 🗓️ Track total ON days and generate cost summaries for every student  
 
+
 ### 🗞️ Notices & Complaints
 - 📰 View and manage notices  
 - 📝 Submit and view complaints  
+
 
 ### 🗳️ Voting System
 - 📌 Floor-wise voting  
