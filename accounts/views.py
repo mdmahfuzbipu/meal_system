@@ -8,7 +8,7 @@ from django.utils.decorators import method_decorator
 from django.utils.timezone import now
 from django.contrib import messages
 
-
+from meal_system import settings
 from managers.models import SpecialMealRequest
 from students.models import Student, DailyMealStatus
 from .forms import EmailOrUsernameAuthenticationForm
@@ -107,3 +107,17 @@ def admin_dashboard(request):
         "today": today,
     }
     return render(request, "accounts/admin_dashboard.html", context)
+
+
+from django.contrib.auth.views import PasswordResetView
+
+
+class CustomPasswordResetView(PasswordResetView):
+    email_template_name = "accounts/password_reset_email.html"
+    subject_template_name = "accounts/password_reset_subject.txt"
+    template_name = "accounts/password_reset.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["current_year"] = settings.CURRENT_YEAR
+        return context

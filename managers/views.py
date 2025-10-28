@@ -410,6 +410,7 @@ def search_students_by_room(request):
     meals = ["breakfast", "lunch", "dinner"]
 
     context = {
+        "page_title": "Issue Daily Token",
         "students": students,
         "room_number": room_number,
         "today": today,
