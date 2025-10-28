@@ -286,6 +286,17 @@ def export_monthly_summary(request):
     wb.save(response)
     return response
 
+
+@manager_required
+def regenerate_monthly_summary(request, month):
+    from students.utils import generate_monthly_summary_for_all
+
+    y, m = map(int, month.split("-"))
+    generate_monthly_summary_for_all(y, m)
+    messages.success(request, f"Monthly summary regenerated for {month}")
+    return redirect("managers:monthly_summary")
+
+
 @manager_required
 def manage_complaints(request):
     complaints = Complaint.objects.all().order_by("-created_at")

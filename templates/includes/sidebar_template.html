@@ -153,15 +153,19 @@
                 </a>
             </li>
 
-            <li class="nav-item">
-                <form method="post" action="{% url 'accounts:logout' %}" onsubmit="return confirm('Your session would be terminated.\n\nProceed?')">
+        <li class="nav-item mt-3">
+            <form method="post" action="{% url 'accounts:logout' %}" 
+                onsubmit="return confirm('Your session will be terminated.\n\nProceed?')">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-danger nav-link text-left text-white">
-                    <i class="nav-icon fas fa-sign-out-alt"></i>
-                    <p>Logout</p>
+                <button type="submit" 
+                    class="nav-link d-flex justify-content-start align-items-center bg-danger text-white w-100" 
+                    style="border: none; padding-left: 55px;">
+                    <i class="nav-icon fas fa-sign-out-alt mr-2"></i>
+                    <span>Log Out</span>
                 </button>
-                </form>
-            </li>
+            </form>
+        </li>
+
 
             </ul>
         </nav>

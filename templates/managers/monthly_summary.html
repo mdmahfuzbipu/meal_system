@@ -26,7 +26,7 @@
 
   {% if selected_month %}
   <!-- Summary Stats -->
-  <div class="grid md:grid-cols-3 gap-6 mb-10">
+  <div class="grid md:grid-cols-4 gap-6 mb-10">
     <!-- Total Students -->
     <div class="bg-green-50 rounded-xl p-6 shadow text-center">
       <i class="fas fa-user-friends text-green-600 text-2xl mb-2"></i>
@@ -50,6 +50,19 @@
         <i class="fas fa-download mr-1"></i> Download Excel
       </a>
     </div>
+
+    <!-- Regenerate Summary -->
+    <div class="bg-orange-50 rounded-xl p-6 shadow text-center">
+      <i class="fas fa-sync-alt text-orange-600 text-2xl mb-2"></i>
+      <div class="text-lg font-semibold">Regenerate Summary</div>
+      <a href="{% url 'managers:regenerate_monthly_summary' selected_month %}"
+        class="inline-block bg-red-500 hover:bg-red-700 text-white mt-3 px-4 py-2 rounded-lg shadow transition">
+        <i class="fas fa-redo mr-1"></i> Regenerate Now
+      </a>
+    </div>
+
+
+
   </div>
 
   <!-- Preference Breakdown -->

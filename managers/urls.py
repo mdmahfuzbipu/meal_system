@@ -12,6 +12,11 @@ urlpatterns = [
         views.export_monthly_summary,
         name="export_monthly_summary",
     ),
+    path(
+        "regenerate-summary/<str:month>/",
+        views.regenerate_monthly_summary,
+        name="regenerate_monthly_summary",
+    ),
     path("manage-complaints/", views.manage_complaints, name="manage_complaints"),
     path(
         "special-requests/create/",
