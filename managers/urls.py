@@ -32,4 +32,24 @@ urlpatterns = [
         name="manager_request_detail",
     ),
     path("profile/", views.manager_profile_view, name="manager_profile"),
+    path(
+        "search-students/",
+        views.search_students_by_room,
+        name="search_students_by_room",
+    ),
+    path(
+        "issue-token/<int:student_id>/<str:meal_type>/",
+        views.issue_token,
+        name="issue_token",
+    ),
+    path(
+        "daily-token-summary/",
+        views.daily_token_summary,
+        name="daily_token_summary",
+    ),
+    path(
+        "export-daily-token-summary/",
+        views.export_daily_token_summary,
+        name="export_daily_token_summary",
+    ),
 ]

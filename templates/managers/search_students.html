@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_title %}
+<div class="px-4 sm:px-6 lg:px-8">
+
+    <div class="inline-flex items-center space-x-3 text-blue-800 mb-4 w-fit">
+        <i class="fas fa-ticket-alt text-2xl"></i>
+        <h2 class="text-2xl font-bold">Issue Meal Tokens</h2>
+    </div>
+</div>
+{% endblock %}
+
+
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+
+   <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+    <a href="{% url 'accounts:manager_dashboard' %}"
+      class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-2 rounded-full text-md font-semibold shadow hover:from-blue-700 hover:to-blue-900 transition">
+      <i class="fas fa-arrow-left text-white"></i>
+      Back to Dashboard
+    </a>
+   </div>
+
+  <!-- Search Form -->
+  <form method="get" class="mb-6 flex gap-3">
+    <input type="text" name="room_number" value="{{ room_number }}" placeholder="Enter room number"
+      class="border border-gray-300 rounded-lg px-4 py-2 w-full focus:outline-none focus:ring focus:ring-blue-200" required>
+    <button type="submit"
+      class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+      Search
+    </button>
+  </form>
+
+  {% if students %}
+    <div class="bg-white shadow rounded-xl p-4">
+      <h3 class="text-xl font-semibold mb-4 text-gray-800">Room {{ room_number }}</h3>
+
+      <table class="w-full border-collapse">
+        <thead>
+        <tr class="bg-blue-100 text-gray-700">
+            <th class="py-2 px-3 text-left">Name</th>
+            <th class="py-2 px-3 text-center">Beef/Mutton</th>
+            <th class="py-2 px-3 text-center">Fish/Egg</th>
+            <th class="py-2 px-3 text-center">Breakfast</th>
+            <th class="py-2 px-3 text-center">Lunch</th>
+            <th class="py-2 px-3 text-center">Dinner</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for student in students %}
+            <tr class="border-b hover:bg-gray-50 transition">
+            <td class="py-2 px-3 font-medium text-gray-900">{{ student.name }}</td>
+            <td class="text-center">
+                {% if student.current_pref.prefers_beef %}
+                Beef
+                {% else %}
+                Mutton
+                {% endif %}
+            </td>
+            <td class="text-center">
+                {% if student.current_pref.prefers_fish %}
+                Fish
+                {% else %}
+                Egg
+                {% endif %}
+            </td>
+
+            {% for meal in meals %}
+                {% with status=student.today_status %}
+                {% if status %}
+                    {% if meal == 'breakfast' and status.breakfast_on %}
+                    <td class="text-center">
+                        {% if meal in student.issued_meals %}
+                        <span class="bg-green-100 text-green-700 text-sm font-medium px-3 py-1 rounded-lg">Issued ✅</span>
+                        {% else %}
+                        <a href="{% url 'managers:issue_token' student.id meal %}"
+                            class="issue-btn text-sm bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg transition">
+                            Issue
+                        </a>
+                        {% endif %}
+                    </td>
+                    {% elif meal == 'lunch' and status.lunch_on %}
+                    <td class="text-center">
+                        {% if meal in student.issued_meals %}
+                        <span class="bg-green-100 text-green-700 text-sm font-medium px-3 py-1 rounded-lg">Issued ✅</span>
+                        {% else %}
+                        <a href="{% url 'managers:issue_token' student.id meal %}"
+                            class="issue-btn text-sm bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg transition">
+                            Issue
+                        </a>
+                        {% endif %}
+                    </td>
+                    {% elif meal == 'dinner' and status.dinner_on %}
+                    <td class="text-center">
+                        {% if meal in student.issued_meals %}
+                        <span class="bg-green-100 text-green-700 text-sm font-medium px-3 py-1 rounded-lg">Issued ✅</span>
+                        {% else %}
+                        <a href="{% url 'managers:issue_token' student.id meal %}"
+                            class="issue-btn text-sm bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg transition">
+                            Issue
+                        </a>
+                        {% endif %}
+                    </td>
+                    {% else %}
+                    <td class="text-center text-gray-400">OFF</td>
+                    {% endif %}
+                {% else %}
+                    <td class="text-center text-gray-400">OFF</td>
+                {% endif %}
+                {% endwith %}
+            {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+
+      </table>
+    </div>
+  {% endif %}
+</div>
+
+<!-- Disable "Issue" button after click -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const buttons = document.querySelectorAll(".issue-btn");
+  buttons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      btn.textContent = "Issuing...";
+      btn.classList.add("opacity-60", "pointer-events-none");
+    });
+  });
+});
+</script>
+{% endblock %}

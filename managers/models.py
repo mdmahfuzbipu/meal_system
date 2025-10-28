@@ -3,6 +3,8 @@ from datetime import date, timedelta
 from meal_system import settings
 from django.utils import timezone
 
+from students.models import Student
+
 WEEKDAY_CHOICES = [
     ("Monday", "Monday"),
     ("Tuesday", "Tuesday"),
@@ -140,3 +142,42 @@ class SpecialMealRequest(models.Model):
         return (
             f"{self.title} ({self.requested_date} - {self.meal_type}) - {self.status}"
         )
+
+
+class MealToken(models.Model):
+    MEAL_CHOICES = [
+        ("breakfast", "Breakfast"),
+        ("lunch", "Lunch"),
+        ("dinner", "Dinner"),
+    ]
+
+    TOKEN_TYPE_CHOICES = [
+        ("main", "Main Token"),  
+        ("alternate", "Alternate Token"),  
+    ]
+
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    date = models.DateField()
+    meal_type = models.CharField(max_length=10, choices=MEAL_CHOICES)
+    token_type = models.CharField(max_length=10, choices=TOKEN_TYPE_CHOICES)
+    issued_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="tokens_issued",
+    )
+    collected = models.BooleanField(default=False)
+    issued_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["student", "date", "meal_type"],
+                name="unique_token_per_meal_per_day",
+            )
+        ]
+        ordering = ["-issued_at"]
+
+    def __str__(self):
+        return f"{self.student.name} - {self.meal_type} ({self.token_type})"

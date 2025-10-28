@@ -2,7 +2,15 @@
 {% load static %}
 
 {% block content %}
-<div class="max-w-5xl mx-auto p-6 bg-white shadow-lg rounded-2xl">
+<div class="max-w-5xl mx-auto p-6 bg-blue-100 shadow-lg rounded-2xl">
+
+    <!-- Back to dashboard-->
+    <a href="{% url 'accounts:student_dashboard' %}"
+      class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-2 rounded-full text-md font-semibold shadow text-white hover:from-blue-700 hover:to-blue-900 transition mb-8">
+      <i class="fas fa-arrow-left text-white"></i>
+      Back to Dashboard
+    </a>
+
     <h1 class="text-2xl font-semibold mb-4 text-center">{{ page_title }}</h1>
 
     <!-- Success/Error messages -->
@@ -21,8 +29,8 @@
     <form method="POST">
         {% csrf_token %}
         <div class="overflow-x-auto">
-            <table class="w-full border border-gray-200 rounded-lg">
-                <thead class="bg-gray-100">
+            <table class="w-full border border-green-200 rounded-lg">
+                <thead class="bg-gray-200">
                     <tr>
                         <th class="p-3 border-b text-center">Date</th>
                         <th class="p-3 border-b text-center">Breakfast</th>
@@ -32,7 +40,7 @@
                 </thead>
                 <tbody>
                     {% for day in month_statuses %}
-                    <tr class="hover:bg-gray-50 {% if day.disabled %}bg-gray-100{% endif %}">
+                    <tr class="hover:bg-green-200 {% if day.disabled %}bg-gray-100{% endif %}">
                         <td class="p-3 border-b text-center font-medium">
                             {{ day.date|date:"D, d M Y" }}
                             {% if day.date == today %}

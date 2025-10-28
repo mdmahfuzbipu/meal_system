@@ -36,14 +36,41 @@ class StudentMealPreferenceAdmin(admin.ModelAdmin):
 class WeeklyMenuAdmin(admin.ModelAdmin):
     list_display = (
         "day_of_week",
-        "breakfast_main",
-        "breakfast_cost",
-        "lunch_main",
-        "lunch_cost",
-        "dinner_main",
-        "dinner_cost",
+        "breakfast_main_display",
+        "lunch_display",
+        "dinner_display",
     )
     list_filter = ("day_of_week",)
+    search_fields = ("day_of_week",)
+
+    def breakfast_main_display(self, obj):
+        return f"{obj.breakfast_main} ({obj.breakfast_cost}৳)"
+
+    breakfast_main_display.short_description = "Breakfast"
+
+    def lunch_display(self, obj):
+        icons = []
+        if obj.lunch_contains_beef:
+            icons.append("🥩")
+        if obj.lunch_contains_fish:
+            icons.append("🐟")
+        icons = " ".join(icons) if icons else "🍛"
+
+        return f"{icons} {obj.lunch_main} ({obj.lunch_cost}৳) / Alt: {obj.lunch_alternate} ({obj.lunch_cost_alternate}৳)"
+
+    lunch_display.short_description = "Lunch"
+
+    def dinner_display(self, obj):
+        icons = []
+        if obj.dinner_contains_beef:
+            icons.append("🥩")
+        if obj.dinner_contains_fish:
+            icons.append("🐟")
+        icons = " ".join(icons) if icons else "🍽️"
+
+        return f"{icons} {obj.dinner_main} ({obj.dinner_cost}৳) / Alt: {obj.dinner_alternate} ({obj.dinner_cost_alternate}৳)"
+
+    dinner_display.short_description = "Dinner"
 
 
 @admin.register(DailyMealStatus)

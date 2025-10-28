@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import ManagerProfile, WeeklyMenuProposal, SpecialMealRequest
+from .models import ManagerProfile, MealToken, WeeklyMenuProposal, SpecialMealRequest
 
 admin.site.register(WeeklyMenuProposal)
 
@@ -29,3 +29,21 @@ class SpecialMealRequestAdmin(admin.ModelAdmin):
         "created_by__username",
         "manager__username",
     )
+
+
+@admin.register(MealToken)
+class MealTokenAdmin(admin.ModelAdmin):
+    list_display = (
+        "student",
+        "date",
+        "meal_type",
+        "token_type",
+        "collected",
+        "issued_by",
+        "issued_at",
+    )
+    list_filter = ("date", "meal_type", "token_type", "collected")
+    search_fields = ("student__name", "student__room_number")
+    ordering = ("-issued_at",)
+    date_hierarchy = "date"
+    list_per_page = 25

@@ -1,3 +1,4 @@
+import csv
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
@@ -7,8 +8,8 @@ from django.utils import timezone
 from openpyxl import Workbook
 
 from students.utils import generate_monthly_summary_for_all
-from students.models import Complaint, MonthlyMealSummary, StudentMealPreference
-from .models import ManagerProfile, WeeklyMenuProposal
+from students.models import Complaint, DailyMealStatus, MonthlyMealSummary, Student, StudentMealPreference
+from .models import ManagerProfile, MealToken, WeeklyMenuProposal
 from students.models import MonthlyMealSummary, WeeklyMenu, WEEKDAY_CHOICES
 from .forms import WeeklyMenuProposalForm
 from accounts.decorators import manager_required, admin_required
@@ -380,3 +381,185 @@ def manager_profile_view(request):
         "manager": manager,
     }
     return render(request, "managers/profile.html", context)
+
+
+@login_required
+@user_passes_test(manager_required)
+def search_students_by_room(request):
+    students = []
+    room_number = request.GET.get("room_number")
+    today = timezone.localdate()
+
+    if room_number:
+        students = Student.objects.filter(room_number=room_number)
+        for student in students:
+            # Today's status
+            student.today_status = DailyMealStatus.objects.filter(
+                student=student, date=today
+            ).first()
+
+            # Current month's preference
+            student.current_pref = StudentMealPreference.objects.filter(
+                student=student, month=today.strftime("%Y-%m")
+            ).first()
+
+            # Tokens already issued today
+            tokens = MealToken.objects.filter(student=student, date=today)
+            student.issued_meals = {token.meal_type for token in tokens}
+
+    meals = ["breakfast", "lunch", "dinner"]
+
+    context = {
+        "students": students,
+        "room_number": room_number,
+        "today": today,
+        "meals": meals,
+    }
+    return render(request, "managers/search_students.html", context)
+
+
+@login_required
+@user_passes_test(manager_required)
+def issue_token(request, student_id, meal_type):
+    student = get_object_or_404(Student, id=student_id)
+    today = timezone.localdate()
+
+    # Check if token already exists
+    if MealToken.objects.filter(
+        student=student, date=today, meal_type=meal_type
+    ).exists():
+        messages.warning(
+            request, f"Token already issued for {student.name} ({meal_type})"
+        )
+        return redirect(request.META.get('HTTP_REFERER', '/'))
+
+    # Get student meal preference for current month
+    pref = StudentMealPreference.objects.filter(
+        student=student, month=today.strftime("%Y-%m")
+    ).first()
+
+    # Get today's menu
+    weekly_menu = WeeklyMenu.objects.get(day_of_week=today.strftime("%A"))
+
+    # Determine token type
+    token_type = "main"
+    if (
+        (
+            meal_type == "lunch"
+            and weekly_menu.lunch_contains_beef
+            and not pref.prefers_beef
+        )
+        or (
+            meal_type == "lunch"
+            and weekly_menu.lunch_contains_fish
+            and not pref.prefers_fish
+        )
+        or (
+            meal_type == "dinner"
+            and weekly_menu.dinner_contains_beef
+            and not pref.prefers_beef
+        )
+        or (
+            meal_type == "dinner"
+            and weekly_menu.dinner_contains_fish
+            and not pref.prefers_fish
+        )
+    ):
+        token_type = "alternate"
+
+    # Create token
+    MealToken.objects.create(
+        student=student,
+        date=today,
+        meal_type=meal_type,
+        token_type=token_type,
+        issued_by=request.user,
+        collected=True,
+    )
+
+    messages.success(
+        request, f"{token_type.title()} token issued for {student.name} ({meal_type})"
+    )
+    return redirect(request.META.get("HTTP_REFERER", "/"))
+
+
+@login_required
+@user_passes_test(manager_required)
+def daily_token_summary(request):
+    today = timezone.localdate()
+    tokens = MealToken.objects.filter(date=today)
+
+    summary = {
+        "breakfast_main": tokens.filter(
+            meal_type="breakfast", token_type="main"
+        ).count(),
+        "breakfast_alt": tokens.filter(
+            meal_type="breakfast", token_type="alternate"
+        ).count(),
+        "lunch_main": tokens.filter(meal_type="lunch", token_type="main").count(),
+        "lunch_alt": tokens.filter(meal_type="lunch", token_type="alternate").count(),
+        "dinner_main": tokens.filter(meal_type="dinner", token_type="main").count(),
+        "dinner_alt": tokens.filter(meal_type="dinner", token_type="alternate").count(),
+        "total_tokens": tokens.count(),
+    }
+
+    return render(
+        request,
+        "managers/daily_token_summary.html",
+        {
+            "summary": summary,
+            "tokens": tokens,
+            "today": today,
+            "page_title": "Daily Token Summary",
+        },
+    )
+
+
+@login_required
+@user_passes_test(manager_required)
+def export_daily_token_summary(request):
+    # Get date from query params or use today
+    date_str = request.GET.get("date")
+    if date_str:
+        from datetime import datetime
+
+        try:
+            date = datetime.strptime(date_str, "%Y-%m-%d").date()
+        except ValueError:
+            date = timezone.localdate()
+    else:
+        date = timezone.localdate()
+
+    tokens = MealToken.objects.filter(date=date)
+
+    # Create Excel workbook
+    wb = Workbook()
+    ws = wb.active
+    ws.title = f"Tokens_{date}"
+
+    # Header row
+    headers = ["Student", "Room", "Meal", "Token Type", "Issued At", "Issued By"]
+    ws.append(headers)
+
+    # Data rows
+    for token in tokens:
+        ws.append(
+            [
+                token.student.name,
+                token.student.room_number,
+                token.meal_type.capitalize(),
+                token.token_type.capitalize(),
+                token.issued_at.strftime("%Y-%m-%d %H:%M:%S"),
+                token.issued_by.username if token.issued_by else "N/A",
+            ]
+        )
+
+    # Response
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    response["Content-Disposition"] = (
+        f'attachment; filename="daily_token_summary_{date}.xlsx"'
+    )
+    wb.save(response)
+    return response
