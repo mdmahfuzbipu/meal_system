@@ -1,0 +1,140 @@
+{% if user.is_authenticated and user.role == "student" %}
+<!-- Floating Chat Assistant -->
+<div id="chat-widget">
+
+  <!-- Floating Button -->
+  <button id="chat-toggle"
+          class="fixed bottom-6 right-6 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 
+                 text-white p-4 rounded-full shadow-lg focus:outline-none z-50 transition-all duration-300 hover:scale-110">
+    💬
+  </button>
+
+  <!-- Chat Window -->
+  <div id="chat-window"
+       class="hidden fixed bottom-20 right-6 bg-white/90 backdrop-blur-lg shadow-2xl rounded-2xl w-80 h-[480px] flex flex-col 
+              z-50 border border-gray-200 overflow-hidden transition-all duration-300 transform scale-95 opacity-0">
+
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+        <span class="font-semibold text-lg">Boral AI Assistant</span>
+      </div>
+      <button id="close-chat" 
+              class="text-white text-xl font-bold hover:text-gray-200 transition">&times;</button>
+    </div>
+
+    <!-- Chat Messages -->
+    <div id="chat-content" 
+         class="flex-1 overflow-y-auto p-4 bg-gradient-to-b from-gray-50 to-gray-100 text-sm space-y-2">
+      <div class="text-center text-gray-400 text-xs mt-2">
+        👋 Hello {{ user.first_name|default:user.username }}! Ask me about your meals, cost, or menu.
+      </div>
+    </div>
+
+    <!-- Input Section -->
+    <div class="border-t border-gray-300 p-2 bg-white flex items-center">
+      <input id="chat-input" type="text"
+             class="flex-1 border border-gray-300 rounded-l-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+             placeholder="Ask me anything..." />
+      <button id="send-btn"
+              class="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 
+                     text-white px-4 py-2 rounded-r-lg font-medium transition-all duration-300">
+        Send
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(function () {
+  const chatToggle = $("#chat-toggle");
+  const chatWindow = $("#chat-window");
+  const chatContent = $("#chat-content");
+  const chatInput = $("#chat-input");
+
+  // Smooth scroll to bottom
+  function scrollToBottom() {
+    chatContent.scrollTop(chatContent[0].scrollHeight);
+  }
+
+  // Add a chat message
+  function addMessage(sender, text) {
+    const align = sender === "You" ? "justify-end" : "justify-start";
+    const bubbleColor = sender === "You" 
+      ? "bg-gradient-to-r from-indigo-500 to-blue-500 text-white"
+      : "bg-gray-200 text-gray-800";
+
+    const msg = `
+      <div class="flex ${align}">
+        <div class="${bubbleColor} px-3 py-2 rounded-2xl max-w-[80%] shadow-sm">${text}</div>
+      </div>
+    `;
+    chatContent.append(msg);
+    scrollToBottom();
+  }
+
+  // Send user message to API
+  function sendMessage() {
+    const message = chatInput.val().trim();
+    if (!message) return;
+    addMessage("You", message);
+    chatInput.val("");
+
+    $.ajax({
+      url: "{% url 'chatbot:chat_api' %}",
+      data: { message },
+      dataType: "json",
+      success: function (data) {
+        addMessage("Bot", data.reply);
+      },
+      error: function () {
+        addMessage("Bot", "⚠️ Sorry, something went wrong. Please try again.");
+      },
+    });
+  }
+
+  // Open/close chat window
+  function openChat() {
+    chatWindow.removeClass("hidden opacity-0 scale-95").addClass("opacity-100 scale-100");
+  }
+
+  function closeChat() {
+    chatWindow.addClass("opacity-0 scale-95");
+    setTimeout(() => chatWindow.addClass("hidden"), 200);
+  }
+
+  chatToggle.on("click", () => {
+    if (chatWindow.hasClass("hidden")) {
+      openChat();
+    } else {
+      closeChat();
+    }
+  });
+
+  $("#close-chat").on("click", () => {
+    closeChat();
+  });
+
+  $("#send-btn").on("click", sendMessage);
+  chatInput.on("keypress", function (e) { if (e.which === 13) sendMessage(); });
+
+
+// Auto-welcome only on home page
+if ($("body").data("page") === "home") {
+    setTimeout(() => {
+        openChat();
+        const userName = "{{ user.first_name|default:user.username }}";
+        addMessage("Bot", `👋 Hello ${userName}! I'm your meal assistant.`);
+        addMessage("Bot", "👉 You can ask things like 'What's today's menu?' or 'What's the cost today?'");
+    }, 1000);
+}
+
+
+
+});
+</script>
+{% endif %}

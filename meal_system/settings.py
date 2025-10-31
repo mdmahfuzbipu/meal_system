@@ -53,9 +53,11 @@ INSTALLED_APPS = [
     "notices.apps.NoticesConfig",
     "managers.apps.ManagersConfig",
     "votes.apps.VotesConfig",
+    "chatbot.apps.ChatbotConfig",
     # add
     "django_recaptcha",
     "widget_tweaks",
+    "rest_framework",
 ]
 
 
@@ -188,3 +190,14 @@ CURRENT_YEAR = datetime.now().year
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False 
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 7 
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+}

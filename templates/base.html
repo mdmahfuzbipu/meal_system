@@ -235,7 +235,7 @@ body {
     
 </head>
 
-<body class="hold-transition sidebar-mini layout-fixed">
+<body {% block body_data %}{% endblock %} class="hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
 
         <!-- Navbar -->
@@ -350,6 +350,7 @@ body {
 
             {% endblock content %}
             <!-- /.content -->
+             {% include "includes/chat_widget.html" %}
         </div>
         <!-- /.content-wrapper -->
         {% include "includes/footer.html" %}
