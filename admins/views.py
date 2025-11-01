@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import get_object_or_404, render,redirect
 from django.core.paginator import Paginator
 from django.contrib import messages
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.db.models import Q
 from django.contrib.auth import get_user_model
 
@@ -431,31 +431,53 @@ def register_admin(request):
         department = request.POST.get("department")
         phone = request.POST.get("phone")
         email = request.POST.get("email")
+        assigned_floor = request.POST.get("assigned_floor")
+        photo = request.FILES.get("photo")
 
-        # Create User
-        user = User.objects.create(
-            username=username,
-            password=make_password(password),
-            is_active=True,
-        )
+        # Basic validation
+        if not username or not password or not name or not employee_id:
+            messages.error(request, "Please fill required fields.")
+            return redirect("admins:register_admin")
 
-        # Create AdminProfile
-        AdminProfile.objects.create(
-            user=user,
-            name=name,
-            employee_id=employee_id,
-            user_type=user_type,
-            designation=designation,
-            hall_role=hall_role,
-            department=department,
-            phone=phone,
-            email=email,
-        )
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already exists. Choose another.")
+            return redirect("admins:register_admin")
 
-        messages.success(request, f"Admin '{name}' registered successfully!")
-        return redirect("admins:manage_admins")
+        if AdminProfile.objects.filter(employee_id=employee_id).exists():
+            messages.error(request, "Employee ID already registered.")
+            return redirect("admins:register_admin")
 
-    
+        try:
+            with transaction.atomic():
+                # Use create_user to handle password hashing and any custom user logic
+                user = User.objects.create_user(
+                    username=username,
+                    password=password,
+                    is_active=True,
+                    role="admin",  # set role explicitly
+                )
+
+                AdminProfile.objects.create(
+                    user=user,
+                    name=name,
+                    employee_id=employee_id,
+                    user_type=user_type,
+                    designation=designation,
+                    hall_role=hall_role,
+                    department=department,
+                    phone=phone,
+                    email=email,
+                    assigned_floor=assigned_floor,
+                    photo=photo,
+                )
+
+            messages.success(request, f"Admin '{name}' registered successfully!")
+            return redirect("admins:manage_admins")
+
+        except IntegrityError:
+            messages.error(request, "Database error during registration. Try again.")
+            return redirect("admins:register_admin")
+
     context = {
         "DESIGNATION_CHOICES": AdminProfile.DESIGNATION_CHOICES,
         "HALL_ROLE_CHOICES": AdminProfile.HALL_ROLE_CHOICES,
@@ -495,11 +517,14 @@ def edit_admin(request, admin_id):
         admin_profile.assigned_floor = request.POST.get("assigned_floor")
         admin_profile.phone = request.POST.get("phone")
         admin_profile.email = request.POST.get("email")
-        admin_profile.save()
 
-        messages.success(
-            request, f"Admin '{admin_profile.name}' updated successfully."
-        )
+        # handle uploaded photo
+        photo = request.FILES.get("photo")
+        if photo:
+            admin_profile.photo = photo
+
+        admin_profile.save()
+        messages.success(request, f"Admin '{admin_profile.name}' updated successfully.")
         return redirect("admins:manage_admins")
 
     return render(request, "admins/edit_admin.html", {"admin_profile": admin_profile})

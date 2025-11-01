@@ -54,6 +54,10 @@ class RoleBasedLoginView(LoginView):
 
         return response
 
+    def form_invalid(self, form):
+        messages.error(self.request, "Invalid username or password.")
+        return super().form_invalid(form)
+    
     def get_success_url(self):
         user = self.request.user
         if user.role in ["student", "manager", "admin"] or user.is_superuser:

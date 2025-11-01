@@ -15,98 +15,79 @@
 {% endblock page_title %}
 
 {% block content %}
-<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
-  <!-- Back to dashboard -->
-  <a href="{% url 'accounts:home' %}"
-    class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-2 rounded-full text-md font-semibold shadow hover:from-blue-700 hover:to-blue-900 transition mb-8">
-    <i class="fas fa-arrow-left text-white"></i>
-    Back to Home
+  <!-- Back button -->
+  <a href="{% url 'accounts:home' %}" 
+     class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-2 rounded-full font-semibold shadow hover:from-blue-700 hover:to-blue-900 transition mb-8">
+    <i class="fas fa-arrow-left text-white"></i> Back to Home
   </a>
 
-  <!-- Header row -->
-  <div class="flex justify-between items-center mb-6">
-    <div class="flex items-center space-x-3 bg-gradient-to-r from-yellow-600 to-yellow-800 text-white px-6 py-3 rounded-2xl shadow">
+  <!-- Centered Header -->
+  <div class="text-center mb-8">
+    <div class="inline-flex items-center space-x-3 bg-gradient-to-r from-yellow-600 to-yellow-800 text-white px-6 py-3 rounded-2xl shadow justify-center">
       <i class="fas fa-bullhorn text-xl text-yellow-200"></i>
       <h2 class="text-xl font-semibold tracking-wide">All Notices</h2>
     </div>
+  </div>
 
-    {% if user.role in 'admin manager' %}
+  <!-- New Notice button -->
+  {% if user.role in 'admin manager' %}
+  <div class="text-center mb-10">
     <a href="{% url 'notices:create_notice' %}" 
-       class="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-5 py-2 rounded-xl shadow hover:from-blue-700 hover:to-blue-900 transition">
-      <i class="fas fa-plus mr-2"></i> New Notice
+      class="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-5 py-2 rounded-xl shadow hover:from-blue-700 hover:to-blue-900 transition inline-flex items-center gap-2">
+      <i class="fas fa-plus"></i> New Notice
+    </a>
+  </div>
+  {% endif %}
+
+
+  <!-- Notice grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for notice in notices %}
+    <div class="bg-gradient-to-r from-yellow-50 to-yellow-100 p-6 rounded-2xl shadow-md hover:shadow-lg transition transform hover:-translate-y-1 border border-gray-100 flex flex-col">
+
+      
+    {% if notice.image %}
+    <a href="{{ notice.image.url }}" target="_blank">
+      <img src="{{ notice.image.url }}" alt="Notice Image" 
+          class="rounded-xl shadow-sm border border-gray-200 w-full h-48 object-cover mb-4 hover:scale-105 transition-transform">
     </a>
     {% endif %}
-  </div>
 
-  <!-- Notice cards -->
-  {% for notice in notices %}
 
-  <div class="bg-white p-6 rounded-2xl shadow-md mb-6 hover:shadow-lg transition transform hover:-translate-y-1">
-    <h3 class="text-xl font-semibold text-gray-800">{{ notice.title }}</h3>
-    <p class="text-gray-700 mt-2 whitespace-pre-line">{{ notice.message }}</p>
+      <h3 class="text-lg font-semibold text-gray-800">{{ notice.title }}</h3>
+      <p class="text-gray-700 mt-2 flex-1 whitespace-pre-line">{{ notice.message|truncatechars:150 }}</p>
 
-    {% if notice.image %}
-    <div class="mt-4">
-        <img src="{{ notice.image.url }}" alt="Notice Image" class="rounded-xl shadow-sm border border-gray-200 max-h-96 w-full object-contain">
-    </div>
-    {% endif %}
-
-      <div class="text-sm text-gray-500 mt-3">
-        Posted by <b>{{ notice.posted_by.username }}</b> on {{ notice.created_at|date:"M d, Y h:i A" }}
-      </div>
-
-      {% if user == notice.posted_by or user.role == 'admin' %}
-      <div class="mt-4 flex gap-3">
-        <a href="{% url 'notices:edit_notice' notice.pk %}" class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition">
-          <i class="fas fa-edit mr-1"></i> Edit
-        </a>
-        <a href="{% url 'notices:delete_notice' notice.pk %}" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition">
-          <i class="fas fa-trash mr-1"></i> Delete
-        </a>
+      <div class="mt-4 flex flex-col space-y-2">
+        <div class="text-sm text-gray-500">
+          Posted by <b>{{ notice.posted_by.username }}</b> on {{ notice.created_at|date:"M d, Y h:i A" }}
+        </div>
 
         {% if notice.visible_to_students %}
-          <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">Visible to Students</span>
+          <span class="self-start bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">Visible to Students</span>
         {% else %}
-          <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">Hidden</span>
+          <span class="self-start bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">Hidden</span>
+        {% endif %}
+
+        {% if user == notice.posted_by or user.role == 'admin' %}
+        <div class="flex gap-2 flex-wrap">
+          <a href="{% url 'notices:edit_notice' notice.pk %}" 
+             class="bg-yellow-500 text-white px-3 py-1 rounded-lg hover:bg-yellow-600 transition text-sm flex items-center gap-1">
+             <i class="fas fa-edit"></i> Edit
+          </a>
+          <a href="{% url 'notices:delete_notice' notice.pk %}" 
+             class="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700 transition text-sm flex items-center gap-1">
+             <i class="fas fa-trash"></i> Delete
+          </a>
+        </div>
         {% endif %}
       </div>
-      {% endif %}
     </div>
-
     {% empty %}
-    <p class="text-gray-600 text-center mt-10">No notices available yet.</p>
+    <p class="col-span-full text-gray-600 text-center mt-10">No notices available yet.</p>
     {% endfor %}
-</div>
-{% endblock %}
-
-
-
-
-
-
-
-
-
-  <div class="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 border border-gray-100">
-    <div class="flex items-center justify-between mb-3">
-      <h3 class="text-xl font-bold text-gray-800">{{ notice.title }}</h3>
-      <span class="text-sm text-gray-500">
-        {{ notice.created_at|date:"M d, Y h:i A" }}
-      </span>
-    </div>
-
-    <p class="text-gray-700 leading-relaxed whitespace-pre-line">{{ notice.message }}</p>
-
-    {% if notice.image %}
-    <div class="mt-4">
-      <img src="{{ notice.image.url }}" alt="Notice Image"
-           class="rounded-xl shadow-sm border border-gray-200 max-h-96 w-full object-contain">
-    </div>
-    {% endif %}
-
-    <div class="mt-4 text-sm text-gray-500 flex justify-between items-center">
-      <span>Posted by <b>{{ notice.posted_by.username }}</b></span>
-
-    </div>
   </div>
+
+</div>
+{% endblock content %}

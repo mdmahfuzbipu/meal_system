@@ -148,6 +148,20 @@
       </div>
     </a>
 
+
+    <!-- Manager Admin -->
+    <a href="{% url 'admins:manage_admins' %}" 
+       class="block bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-2xl shadow-md p-6 
+              transform transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:from-blue-600 hover:to-blue-800">
+      <div class="flex justify-between items-center">
+        <div>
+          <h4 class="text-lg font-semibold mb-1">Manage Admin</h4>
+          <p class="text-sm text-white/80">Edit existing admin or hall teacher</p>
+        </div>
+        <i class="fas fa-user-shield text-3xl"></i>
+      </div>
+    </a>
+
     <!-- Weekly Menu -->
     <a href="{% url 'students:weekly_menu' %}" 
        class="block bg-gradient-to-r from-pink-500 to-pink-700 text-white rounded-2xl shadow-md p-6 
