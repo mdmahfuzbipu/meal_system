@@ -626,6 +626,9 @@ def profile_view(request):
 @student_required
 def upload_payment_slip(request):
     student = request.user.student  # Only their own Student object
+    slips = PaymentSlip.objects.filter(student=student).order_by("-uploaded_at")
+    has_verified_slips = slips.filter(is_verified=True).exists()  # ✅
+
     if request.method == "POST":
         form = PaymentSlipForm(request.POST, request.FILES)
         if form.is_valid():
@@ -637,11 +640,15 @@ def upload_payment_slip(request):
         else:
             messages.error(request, "Please correct the errors below.")
     else:
-        # Show existing slips of the student only
-        slips = PaymentSlip.objects.filter(student=student).order_by("-uploaded_at")
         form = PaymentSlipForm()
+
     return render(
         request,
         "students/upload_payment_slip.html",
-        {"form": form, "page_title": "Upload Payment Slip", "slips": slips},
+        {
+            "form": form,
+            "page_title": "Upload Payment Slip",
+            "slips": slips,
+            "has_verified_slips": has_verified_slips, 
+        },
     )

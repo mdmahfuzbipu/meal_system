@@ -545,28 +545,51 @@ def toggle_admin_status(request, admin_id):
 
 @admin_required
 def admin_payment_slips(request):
-    query = request.GET.get("q", "")  # Search query
+    query = request.GET.get("q", "")
+    month_filter = request.GET.get("month", "")  
+
     slips = PaymentSlip.objects.all().order_by("-uploaded_at")
 
+    # Search by student name or room number
     if query:
         slips = slips.filter(
             Q(student__name__icontains=query) | Q(student__room_number__icontains=query)
         )
 
+    # Filter by month (YYYY-MM)
+    if month_filter:
+        slips = slips.filter(month=month_filter)
+
+    # Pagination (10 per page)
+    paginator = Paginator(slips, 10)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
     return render(
         request,
-        "students/admin_payment_slips.html",
-        {"slips": slips, "query": query, "page_title": "All Payment Slips"},
+        "admins/admin_payment_slips.html",
+        {
+            "slips": page_obj,
+            "query": query,
+            "month_filter": month_filter,
+            "page_title": "All Payment Slips",
+        },
     )
 
 
 @admin_required
 def verify_payment_slip(request, slip_id):
-    slip = PaymentSlip.objects.get(id=slip_id)
-    slip.is_verified = True
-    slip.verified_by = request.user
-    slip.save()
-    messages.success(
-        request, f"Payment for {slip.student.name} ({slip.month}) verified!"
-    )
-    return redirect("students:admin_payment_slips")
+    slip = get_object_or_404(PaymentSlip, id=slip_id)
+    if not slip.is_verified:
+        slip.is_verified = True
+        slip.verified_by = request.user
+        slip.save()
+        messages.success(
+            request, f"Payment for {slip.student.name} ({slip.month}) verified!"
+        )
+    else:
+        messages.info(
+            request,
+            f"Payment for {slip.student.name} ({slip.month}) is already verified.",
+        )
+    return redirect("admins:admin_payment_slips")
