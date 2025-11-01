@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-center">{{ page_title }}</h2>
+
+<form method="post" enctype="multipart/form-data" class="mb-4">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Upload</button>
+</form>
+
+<h3>Your Payment Slips</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Month</th>
+            <th>Amount</th>
+            <th>Transaction / Account</th>
+            <th>Slip Image</th>
+            <th>Info</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for slip in slips %}
+        <tr>
+            <td>{{ slip.month }}</td>
+            <td>{{ slip.amount }}</td>
+            <td>{{ slip.transaction_id }} / {{ slip.account_number }}</td>
+            <td>
+                {% if slip.slip_image %}
+                    <a href="{{ slip.slip_image.url }}" target="_blank">View</a>
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>{{ slip.info }}</td>
+            <td>{{ "Verified" if slip.is_verified else "Pending" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6" class="text-center">No payment slips uploaded yet.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -254,3 +254,31 @@ class WeeklyMenuReview(models.Model):
         return (
             f"{self.student.name} - {self.day_of_week} {self.meal_type}: {self.rating}"
         )
+
+
+class PaymentSlip(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    month = models.CharField(max_length=7)  # Format YYYY-MM
+    amount = models.DecimalField(max_digits=8, decimal_places=2)
+    transaction_id = models.CharField(max_length=100, blank=True, null=True)
+    account_number = models.CharField(max_length=50, blank=True, null=True)
+    slip_image = models.ImageField(upload_to="payment_slips/", blank=True, null=True)
+    info = models.TextField(
+        blank=True, null=True, help_text="Additional info or reference for the payment"
+    )
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    verified_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="verified_payments",
+    )
+    is_verified = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ("student", "month")  
+        ordering = ["-uploaded_at"]
+
+    def __str__(self):
+        return f"{self.student.name} - {self.month} - {self.amount} Taka - {'Verified' if self.is_verified else 'Pending'}"

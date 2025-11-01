@@ -45,4 +45,10 @@ urlpatterns = [
     path("menus/<int:proposal_id>/reject/", views.reject_menu, name="reject_menu"),
     path("view-complaints/", views.view_complaints, name="view_complaints"),
     path("profile/", views.profile_view, name="admin_profile"),
+    path("payment-slips/", views.admin_payment_slips, name="admin_payment_slips"),
+    path(
+        "payment-slips/verify/<int:slip_id>/",
+        views.verify_payment_slip,
+        name="verify_payment_slip",
+    ),
 ]

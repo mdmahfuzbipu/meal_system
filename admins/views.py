@@ -9,7 +9,7 @@ from django.contrib.auth import get_user_model
 from admins.models import AdminProfile
 from managers.forms import ManagerRegistrationForm
 from managers.models import ManagerProfile, SpecialMealRequest, WeeklyMenuProposal
-from students.models import Student, WeeklyMenu, StudentDetails, Complaint
+from students.models import PaymentSlip, Student, WeeklyMenu, StudentDetails, Complaint
 from accounts.models import CustomUser
 from accounts.decorators import admin_required
 from .forms import StudentRegistrationForm
@@ -541,3 +541,32 @@ def toggle_admin_status(request, admin_id):
     status = "activated" if user.is_active else "deactivated"
     messages.success(request, f"Admin '{admin_profile.name}' has been {status}.")
     return redirect("admins:manage_admins")
+
+
+@admin_required
+def admin_payment_slips(request):
+    query = request.GET.get("q", "")  # Search query
+    slips = PaymentSlip.objects.all().order_by("-uploaded_at")
+
+    if query:
+        slips = slips.filter(
+            Q(student__name__icontains=query) | Q(student__room_number__icontains=query)
+        )
+
+    return render(
+        request,
+        "students/admin_payment_slips.html",
+        {"slips": slips, "query": query, "page_title": "All Payment Slips"},
+    )
+
+
+@admin_required
+def verify_payment_slip(request, slip_id):
+    slip = PaymentSlip.objects.get(id=slip_id)
+    slip.is_verified = True
+    slip.verified_by = request.user
+    slip.save()
+    messages.success(
+        request, f"Payment for {slip.student.name} ({slip.month}) verified!"
+    )
+    return redirect("students:admin_payment_slips")

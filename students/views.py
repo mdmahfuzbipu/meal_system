@@ -14,7 +14,8 @@ from accounts.decorators import student_required
 from .models import (
     DailyMealCost,
     DailyMealStatus,
-    MonthlyMealSummary, 
+    MonthlyMealSummary,
+    PaymentSlip, 
     Student,
     StudentMealPreference,
     WeeklyMenu, 
@@ -22,7 +23,7 @@ from .models import (
     WeeklyMenuReview
 )
 
-from .forms import StudentMealPreferenceForm, WeeklyMenuReviewForm
+from .forms import PaymentSlipForm, StudentMealPreferenceForm, WeeklyMenuReviewForm
 from .utils import calculate_monthly_cost
 
 from calendar import monthrange
@@ -620,3 +621,27 @@ def profile_view(request):
         "latest_meal": latest_meal, 
     }
     return render(request, "students/profile.html", context)
+
+
+@student_required
+def upload_payment_slip(request):
+    student = request.user.student  # Only their own Student object
+    if request.method == "POST":
+        form = PaymentSlipForm(request.POST, request.FILES)
+        if form.is_valid():
+            slip = form.save(commit=False)
+            slip.student = student
+            slip.save()
+            messages.success(request, "Payment slip uploaded successfully!")
+            return redirect("students:upload_payment_slip")
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        # Show existing slips of the student only
+        slips = PaymentSlip.objects.filter(student=student).order_by("-uploaded_at")
+        form = PaymentSlipForm()
+    return render(
+        request,
+        "students/upload_payment_slip.html",
+        {"form": form, "page_title": "Upload Payment Slip", "slips": slips},
+    )

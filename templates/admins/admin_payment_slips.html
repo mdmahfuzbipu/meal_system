@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-center">{{ page_title }}</h2>
+
+<form method="get" class="mb-3">
+    <input type="text" name="q" placeholder="Search by student name or room" value="{{ query }}" class="form-control" style="max-width: 400px; display:inline-block;">
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Student</th>
+            <th>Room</th>
+            <th>Month</th>
+            <th>Amount</th>
+            <th>Transaction / Account</th>
+            <th>Slip Image</th>
+            <th>Info</th>
+            <th>Status</th>
+            <th>Verify</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for slip in slips %}
+        <tr>
+            <td>{{ slip.student.name }}</td>
+            <td>{{ slip.student.room_number }}</td>
+            <td>{{ slip.month }}</td>
+            <td>{{ slip.amount }}</td>
+            <td>{{ slip.transaction_id }} / {{ slip.account_number }}</td>
+            <td>
+                {% if slip.slip_image %}
+                    <a href="{{ slip.slip_image.url }}" target="_blank">View</a>
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>{{ slip.info }}</td>
+            <td>{{ "Verified" if slip.is_verified else "Pending" }}</td>
+            <td>
+                {% if not slip.is_verified %}
+                    <a href="{% url 'students:verify_payment_slip' slip.id %}" class="btn btn-success btn-sm">Verify</a>
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="9" class="text-center">No payment slips found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

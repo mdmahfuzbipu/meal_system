@@ -27,4 +27,5 @@ urlpatterns = [
     path("reviews/submit/", views.submit_review, name="submit_review"),
     path("reviews/", views.reviews_list, name="reviews_list"),
     path("profile/", views.profile_view, name="profile"),
+    path("payment/upload/", views.upload_payment_slip, name="upload_payment_slip"),
 ]
