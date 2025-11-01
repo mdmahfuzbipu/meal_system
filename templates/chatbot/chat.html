@@ -2,40 +2,51 @@
 {% load static %}
 
 {% block content %}
-<div class="flex justify-center items-center min-h-[90vh] bg-gradient-to-br from-indigo-50 via-white to-blue-50 py-10">
-  <div class="w-full max-w-3xl bg-white shadow-2xl rounded-3xl overflow-hidden flex flex-col">
+<div class="max-w-6xl mx-auto px-1 sm:px-1 lg:px-1 py-1 space-y-8">
 
+  <!-- Back to dashboard -->
+  <div>
+    <a href="{% url 'accounts:student_dashboard' %}"
+       class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-2 rounded-full text-md font-semibold shadow hover:from-blue-700 hover:to-blue-900 transition mb-8">
+      <i class="fas fa-arrow-left text-white"></i>
+      Back to Dashboard
+    </a>
+  </div>
+
+<div class="flex justify-center items-center min-h-[90vh] bg-gradient-to-br from-indigo-50 via-white to-blue-50 py-10">
+  <div class="w-full max-w-3xl bg-white shadow-2xl rounded-3xl overflow-hidden flex flex-col border border-gray-200">
+    
     <!-- Header -->
-    <div class="bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-6 py-4 flex justify-center items-center shadow">
-      <h2 class="text-2xl font-bold text-center flex items-center gap-3">
+    <div class="bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-6 py-4 text-center shadow">
+      <h2 class="text-2xl font-bold flex justify-center items-center gap-3">
         <i class="fas fa-robot text-3xl animate-pulse"></i>
         <span>Boral AI Assistant</span>
       </h2>
     </div>
 
-    <!-- Chat Area (fixed height) -->
+    <!-- Chat Area -->
     <div class="flex-1 overflow-hidden flex flex-col">
       <div id="chat-box"
            class="flex-1 p-6 overflow-y-auto bg-gradient-to-b from-gray-50 to-white space-y-4 border-t border-gray-200 scroll-smooth"
-           style="max-height: 460px;">
+           style="max-height: 350px;">
         <div class="text-gray-400 text-center italic mt-2 animate-fadeIn">
           👋 Say “Hi” or type <span class="text-indigo-600 font-semibold">help</span> to get started.
         </div>
       </div>
 
       <!-- Typing Indicator -->
-      <div id="typing-indicator" class="hidden px-6 py-2 text-sm text-gray-500 flex items-center gap-2">
+      <div id="typing-indicator" class="hidden px-6 py-3 text-sm text-gray-500 flex items-center gap-2 border-t border-gray-100 bg-white">
         <div class="flex items-center space-x-1">
           <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
           <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-150"></div>
           <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-300"></div>
         </div>
-        <span>Bot is typing...</span>
+        <span class="italic text-gray-600">Bot is typing...</span>
       </div>
     </div>
 
     <!-- Input Area -->
-    <div class="px-5 py-4 bg-gray-100 flex items-center gap-3 border-t border-gray-200">
+    <div class="px-5 py-4 bg-gray-100 flex items-center gap-3 border-t border-gray-300">
       <input id="chat-input" type="text"
              class="flex-1 border border-gray-300 rounded-full px-5 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
              placeholder="Ask about your meal, menu, or summary..." autocomplete="off" />
@@ -47,7 +58,7 @@
 
   </div>
 </div>
-
+</div>
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -61,21 +72,32 @@ $(function () {
     chatBox.stop().animate({ scrollTop: chatBox[0].scrollHeight }, 400);
   }
 
-  function addMessage(sender, text) {
+function addMessage(sender, text) {
     const isUser = sender === "You";
     const bubbleColor = isUser
-      ? "bg-gradient-to-r from-indigo-500 to-blue-500 text-white"
-      : "bg-gray-200 text-gray-800";
+        ? "bg-gradient-to-r from-indigo-500 to-blue-500 text-white"
+        : "bg-gray-200 text-gray-800";
     const justify = isUser ? "justify-end" : "justify-start";
 
+    const formattedText = (typeof text.replaceAll === "function")
+        ? text.replaceAll("\n", "<br>")
+        : text.split("\n").join("<br>");
+
+    // Add icon
+    const icon = isUser ? "🙋‍♂️" : "🤖";
+
     const msg = $(`
-      <div class="flex ${justify} animate-fadeIn">
-        <div class="${bubbleColor} px-4 py-3 rounded-2xl max-w-[75%] shadow-sm leading-relaxed">${text}</div>
-      </div>
+        <div class="flex ${justify} animate-fadeIn">
+            <div class="flex items-start ${bubbleColor} px-4 py-3 rounded-2xl max-w-[75%] shadow-sm leading-relaxed gap-2">
+                <span class="text-lg mr-1">${icon}</span>
+                <span class="text-sm">${formattedText}</span>
+            </div>
+        </div>
     `);
     chatBox.append(msg);
     scrollToBottom();
-  }
+}
+
 
   function sendMessage() {
     const message = chatInput.val().trim();
@@ -90,11 +112,11 @@ $(function () {
       data: { message },
       dataType: "json",
       success: function (data) {
-        // Simulate typing delay + dots animation
+        // Simulate natural typing delay
         setTimeout(() => {
           typingIndicator.addClass("hidden");
           addMessage("Bot", data.reply);
-        }, 1000);
+        }, Math.min(500 + data.reply.length * 10, 1000));
       },
       error: function () {
         typingIndicator.addClass("hidden");
