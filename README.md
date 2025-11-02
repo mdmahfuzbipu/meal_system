@@ -1,16 +1,17 @@
 # 🍽️ Hall Meal Management System – Django Web Application
 
 **Hall Meal Management System** is a professional-grade Django web application designed to manage student meals, preferences, daily meal status, and monthly cost summaries in a hostel environment.  
-It provides a complete digital solution for **students, managers, and admins**, enabling seamless coordination between meal tracking, cost calculation, token issuance, voting, notices, and complaints.
+It provides a complete digital solution for **students, managers, and admins**, enabling seamless coordination between meal tracking, cost calculation, token issuance, voting, notices, complaints and verified payment system verification.
 It goes beyond traditional digital systems by introducing **REST API endpoints**, enabling future integration with **AI Agents, mobile apps, and research systems** — making it a future-proof smart meal solution for modern institutions. It also has **AI chatbot integration (Gemini)** and a **Dockerized** production-ready environment.
 
 ---
 
-## 🚀 Features (Till Now) — **Total 25+ Features**
+## 🚀 Features (Till Now) — **Total 30+ Features**
 
 ### 🌟Core Highlights
 
 - ✅ AI-Powered Chatbot – Gemini 2.0 Flash integrated chatbot for student queries and smart meal assistance
+- 💳 Verified Payment System – Upload, verify, and manage monthly payment slips
 - 🐳 Docker Support – Full Docker setup for easy deployment and isolated PostgreSQL database
 - 📊 Automated Meal Costing – Dynamic calculation based on preferences & menus
 - 🧠 Smart Substitutions – Beef ↔ Mutton, Fish ↔ Egg handled automatically
@@ -19,13 +20,15 @@ It goes beyond traditional digital systems by introducing **REST API endpoints**
 - 🔒 Role-Based Access – Secure portals for Admins, Managers, and Students
 
 
-### 👨‍🎓 Student Features (8)
+### 👨‍🎓 Student Features (9)
 - 🟢 Toggle daily meal status (ON/OFF for breakfast, lunch, dinner)
 - 🕕 Automatic meal cutoff system (before 8:00 PM)
 - 🍛 Select monthly meal preference (Beef/Fish vs Mutton/Egg)
 - 💰 View detailed monthly cost summary
 - 📅 See cost history & total ON/OFF days
 - 🗳️ Participate in hostel voting (Universal / Floor-wise polls)
+- 📤 Upload monthly payment slips (image or PDF)
+- 🧾 Track payment slip verification status (Pending / Verified)
 - 💬 Interact with AI Chatbot (Gemini) for meal-related help
 - 📝 Submit complaints or feedback
 
@@ -37,12 +40,14 @@ It goes beyond traditional digital systems by introducing **REST API endpoints**
 - 📈 Track Beef/Mutton and Fish/Egg counts
 - 🗳️ Manage polls and results
 
-### 🧑‍💼 Admin Features (5)
+### 🧑‍💼 Admin Features (6)
 - ➕ Register and manage all users (Admin, Manager, Student)
 - ✏️ Edit/deactivate users
 - 📊 Access global summaries and reports
 - 👥 Manage roles and permissions
 - 🧾 Generate monthly reports for all students
+- ✅ Verify student payment slips (with pagination, filters, and highlights)
+
 
 ### 🍲 Meal Management (4)
 - 📆 Manage weekly menus (Breakfast, Lunch, Dinner)  
@@ -51,6 +56,15 @@ It goes beyond traditional digital systems by introducing **REST API endpoints**
   - Fish → Egg  
 - 💸 Calculate cost dynamically based on menu & preferences  
 - 🗓️ Track total ON days and generate cost summaries for every student  
+
+### 💳 Payment Slip Management (New Module)
+- 📤 Students can upload monthly payment slips (image/PDF)
+- 🧾 Admin can view, search, and verify payment slips
+- 🎨 Modern UI – clean card-based layout with status indicators
+- 🔍 Search & filter by month or student
+- ⚡ Pagination for large data
+- 🚫 Students cannot re-upload once verified
+- ✅ Verified slips are visually highlighted for clarity
 
 
 ### 🗞️ Notices & Complaints (2)
@@ -94,7 +108,7 @@ It goes beyond traditional digital systems by introducing **REST API endpoints**
 - **AI Integration**:	Google Gemini 2.0 Flash
 - **Deployment**:	Docker + Docker Compose
 - **Excel Export**: `openpyxl`
-- **Authentication**: Custom User Model with Role-based Access (Admin, Manager, Student)
+- **Authentication**: Custom User Model with Role-based Access
 - **Version Control**: Git + GitHub
 - **API**: Django REST Framework (DRF)
 ---
