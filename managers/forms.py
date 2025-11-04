@@ -29,6 +29,7 @@ class ManagerRegistrationForm(forms.ModelForm):
             "address",
             "phone_number",
             "emergency_phone",
+            "hall_responsibilities",
             "profile_picture",
         ]
 

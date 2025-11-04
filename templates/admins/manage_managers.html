@@ -52,6 +52,7 @@
                     <th>NID</th>
                     <th>Phone</th>
                     <th>Email</th>
+                    <th>Responsibilities</th>
                     <th>Joined</th>
                     <th>Status</th>
                     <th>Actions</th>
@@ -66,6 +67,7 @@
                     <td>{{ m.nid }}</td>
                     <td>{{ m.phone_number }}</td>
                     <td>{{ m.user.email }}</td>
+                    <td>{{ m.hall_responsibilities }}</td>
                     <td>{{ m.created_at|date:"M d, Y" }}</td>
                     <td>
                         {% if m.user.is_active %}

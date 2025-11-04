@@ -78,7 +78,11 @@ def register_manager(request):
 @admin_required
 def manage_managers(request):
     managers = ManagerProfile.objects.select_related("user").order_by("-created_at")
-    return render(request, "admins/manage_managers.html", {"managers": managers})
+    return render(
+        request,
+        "admins/manage_managers.html",
+        {"managers": managers, "page_title": "Manage Managers"},
+    )
 
 
 @admin_required

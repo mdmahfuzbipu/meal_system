@@ -116,7 +116,7 @@ def admin_dashboard(request):
     # Staff count
     if hasattr(CustomUser, "role"):
         total_staff = CustomUser.objects.filter(
-            role__in=["manager", "staff", "admin"]
+            role__in=["manager"]
         ).count()
     else:
         total_staff = CustomUser.objects.filter(is_staff=True).count()

@@ -17,13 +17,14 @@ WEEKDAY_CHOICES = [
 
 
 class ManagerProfile(models.Model):
-    
+
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=100)
     nid = models.CharField(max_length=30, unique=True)
     phone_number = models.CharField(max_length=20)
     emergency_phone = models.CharField(max_length=20, blank=True)
     address = models.TextField(blank=True)
+    hall_responsibilities = models.TextField(blank=True, null=True)
     profile_picture = models.ImageField(
         upload_to="manager_profiles/", blank=True, null=True
     )
