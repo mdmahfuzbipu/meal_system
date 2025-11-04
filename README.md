@@ -67,7 +67,7 @@ It goes beyond traditional web systems by offering:
 - 🗓️ Track total ON days and generate cost summaries for every student  
 
 
-### 💳 Payment Slip Management (New Module)
+### 💳 Payment Slip Management features
 - 📤 Students can upload monthly payment slips (image/PDF)
 - 🧾 Admin can view, search, and verify payment slips
 - 🎨 Modern UI – clean card-based layout with status indicators
@@ -82,7 +82,7 @@ It goes beyond traditional web systems by offering:
 - 📝 Submit and manage complaints
 
 
-### 🗳️ Voting System
+### 🗳️ Voting System (2)
 - 📌 Floor-wise voting  
 - 🌐 Universal voting  
 
