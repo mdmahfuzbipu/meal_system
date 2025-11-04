@@ -194,81 +194,102 @@ python manage.py runserver
 
 ## 📸 Screenshots
 
-<!-- Row 1 -->
-<p align="center">
-  <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/student_dashboard_main.png" alt="Student Dashboard" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
+<style>
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+.gallery figure {
+  margin: 0;
+  text-align: center;
+  flex: 1 1 30%; 
+  max-width: 250px;
+}
+.gallery img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+.gallery figcaption {
+  margin-top: 5px;
+}
+@media (max-width: 900px) {
+  .gallery figure {
+    flex: 1 1 45%; 
+  }
+}
+@media (max-width: 600px) {
+  .gallery figure {
+    flex: 1 1 90%; 
+  }
+}
+</style>
+
+<div class="gallery">
+  <figure>
+    <img src="screenshots/student_dashboard_main.png" alt="Student Dashboard"/>
     <figcaption>👨‍🎓 Student Dashboard</figcaption>
   </figure>
-  <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/manager_dashboard.png" alt="Manager Dashboard" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
+  <figure>
+    <img src="screenshots/manager_dashboard.png" alt="Manager Dashboard"/>
     <figcaption>👨‍🍳 Manager Dashboard</figcaption>
   </figure>
-  <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/admin_dashboard2.png" alt="Admin Dashboard" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
+  <figure>
+    <img src="screenshots/admin_dashboard2.png" alt="Admin Dashboard"/>
     <figcaption>🧑‍💼 Admin Dashboard</figcaption>
   </figure>
-</p>
 
-<!-- Row 2 -->
-<p align="center">
-  <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/student_profile.png" alt="Student Profile" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
+  <figure>
+    <img src="screenshots/student_profile.png" alt="Student Profile"/>
     <figcaption>👤 Student Profile</figcaption>
   </figure>
-  <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/weekly_menu.png" alt="Weekly Menu" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
+  <figure>
+    <img src="screenshots/weekly_menu.png" alt="Weekly Menu"/>
     <figcaption>📅 Weekly Menu</figcaption>
   </figure>
-  <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/boral_ai_assistant.png" alt="Boral AI Assistant" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
+  <figure>
+    <img src="screenshots/boral_ai_assistant.png" alt="Boral AI Assistant"/>
     <figcaption>🤖 Boral AI Assistant</figcaption>
   </figure>
-</p>
 
-<!-- Row 3 -->
-<p align="center">
-  <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/payment_verification_system.png" alt="Payment Verification" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
+  <figure>
+    <img src="screenshots/payment_verification_system.png" alt="Payment Verification"/>
     <figcaption>💳 Payment Verification</figcaption>
   </figure>
-  <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/student_home.png" alt="Student Home" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
+  <figure>
+    <img src="screenshots/student_home.png" alt="Student Home"/>
     <figcaption>🏠 Student Home</figcaption>
   </figure>
-  <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/two_types_poll_system.png" alt="Poll System" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
+  <figure>
+    <img src="screenshots/two_types_poll_system.png" alt="Poll System"/>
     <figcaption>🗳️ Two Types Poll System</figcaption>
   </figure>
-</p>
 
-<!-- Row 4 -->
-<p align="center">
-  <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/daily_meal_cost_summary.png" alt="Daily Meal Cost Summary" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
+  <figure>
+    <img src="screenshots/daily_meal_cost_summary.png" alt="Daily Meal Cost Summary"/>
     <figcaption>🧾 Daily Cost Summary</figcaption>
   </figure>
-  <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/monthly_meal_type.png" alt="Monthly Meal Type" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
+  <figure>
+    <img src="screenshots/monthly_meal_type.png" alt="Monthly Meal Type"/>
     <figcaption>📊 Monthly Meal Type</figcaption>
   </figure>
-  <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/daily_token_summary.png" alt="Daily Token Summary" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
+  <figure>
+    <img src="screenshots/daily_token_summary.png" alt="Daily Token Summary"/>
     <figcaption>🎟️ Daily Token Summary</figcaption>
   </figure>
-</p>
 
-<!-- Row 5 -->
-<p align="center">
-  <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/manager_meal_token_issue.png" alt="Manager Meal Token Issue" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
+  <figure>
+    <img src="screenshots/manager_meal_token_issue.png" alt="Manager Meal Token Issue"/>
     <figcaption>👨‍🍳 Manager Token Issue</figcaption>
   </figure>
-  <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/login_page.png" alt="Login Page" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
+  <figure>
+    <img src="screenshots/login_page.png" alt="Login Page"/>
     <figcaption>🔑 Login Page</figcaption>
   </figure>
-</p>
+</div>
 
 
 ## 🧩 Future Roadmap
