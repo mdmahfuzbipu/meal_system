@@ -197,15 +197,15 @@ python manage.py runserver
 <!-- Row 1 -->
 <p align="center">
   <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/student_dashboard_main.png" alt="Student Dashboard" style="width:30%; height:200px; object-fit:cover; border-radius:10px;"/>
+    <img src="screenshots/student_dashboard_main.png" alt="Student Dashboard" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
     <figcaption>👨‍🎓 Student Dashboard</figcaption>
   </figure>
   <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/manager_dashboard.png" alt="Manager Dashboard" style="width:30%; height:200px; object-fit:cover; border-radius:10px;"/>
+    <img src="screenshots/manager_dashboard.png" alt="Manager Dashboard" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
     <figcaption>👨‍🍳 Manager Dashboard</figcaption>
   </figure>
   <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/admin_dashboard2.png" alt="Admin Dashboard" style="width:30%; height:200px; object-fit:cover; border-radius:10px;"/>
+    <img src="screenshots/admin_dashboard2.png" alt="Admin Dashboard" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
     <figcaption>🧑‍💼 Admin Dashboard</figcaption>
   </figure>
 </p>
@@ -213,15 +213,15 @@ python manage.py runserver
 <!-- Row 2 -->
 <p align="center">
   <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/student_profile.png" alt="Student Profile" style="width:30%; height:200px; object-fit:cover; border-radius:10px;"/>
+    <img src="screenshots/student_profile.png" alt="Student Profile" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
     <figcaption>👤 Student Profile</figcaption>
   </figure>
   <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/weekly_menu.png" alt="Weekly Menu" style="width:30%; height:200px; object-fit:cover; border-radius:10px;"/>
+    <img src="screenshots/weekly_menu.png" alt="Weekly Menu" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
     <figcaption>📅 Weekly Menu</figcaption>
   </figure>
   <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/boral_ai_assistant.png" alt="Boral AI Assistant" style="width:30%; height:200px; object-fit:cover; border-radius:10px;"/>
+    <img src="screenshots/boral_ai_assistant.png" alt="Boral AI Assistant" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
     <figcaption>🤖 Boral AI Assistant</figcaption>
   </figure>
 </p>
@@ -229,15 +229,15 @@ python manage.py runserver
 <!-- Row 3 -->
 <p align="center">
   <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/payment_verification_system.png" alt="Payment Verification" style="width:30%; height:200px; object-fit:cover; border-radius:10px;"/>
+    <img src="screenshots/payment_verification_system.png" alt="Payment Verification" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
     <figcaption>💳 Payment Verification</figcaption>
   </figure>
   <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/student_home.png" alt="Student Home" style="width:30%; height:200px; object-fit:cover; border-radius:10px;"/>
+    <img src="screenshots/student_home.png" alt="Student Home" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
     <figcaption>🏠 Student Home</figcaption>
   </figure>
   <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/two_types_poll_system.png" alt="Poll System" style="width:30%; height:200px; object-fit:cover; border-radius:10px;"/>
+    <img src="screenshots/two_types_poll_system.png" alt="Poll System" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
     <figcaption>🗳️ Two Types Poll System</figcaption>
   </figure>
 </p>
@@ -245,15 +245,15 @@ python manage.py runserver
 <!-- Row 4 -->
 <p align="center">
   <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/daily_meal_cost_summary.png" alt="Daily Meal Cost Summary" style="width:30%; height:200px; object-fit:cover; border-radius:10px;"/>
+    <img src="screenshots/daily_meal_cost_summary.png" alt="Daily Meal Cost Summary" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
     <figcaption>🧾 Daily Cost Summary</figcaption>
   </figure>
   <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/monthly_meal_type.png" alt="Monthly Meal Type" style="width:30%; height:200px; object-fit:cover; border-radius:10px;"/>
+    <img src="screenshots/monthly_meal_type.png" alt="Monthly Meal Type" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
     <figcaption>📊 Monthly Meal Type</figcaption>
   </figure>
   <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/daily_token_summary.png" alt="Daily Token Summary" style="width:30%; height:200px; object-fit:cover; border-radius:10px;"/>
+    <img src="screenshots/daily_token_summary.png" alt="Daily Token Summary" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
     <figcaption>🎟️ Daily Token Summary</figcaption>
   </figure>
 </p>
@@ -261,15 +261,14 @@ python manage.py runserver
 <!-- Row 5 -->
 <p align="center">
   <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/manager_meal_token_issue.png" alt="Manager Meal Token Issue" style="width:30%; height:200px; object-fit:cover; border-radius:10px;"/>
+    <img src="screenshots/manager_meal_token_issue.png" alt="Manager Meal Token Issue" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
     <figcaption>👨‍🍳 Manager Token Issue</figcaption>
   </figure>
   <figure style="display:inline-block; margin:5px; text-align:center;">
-    <img src="screenshots/login_page.png" alt="Login Page" style="width:30%; height:200px; object-fit:cover; border-radius:10px;"/>
+    <img src="screenshots/login_page.png" alt="Login Page" style="width:200px; height:150px; object-fit:cover; border-radius:10px;"/>
     <figcaption>🔑 Login Page</figcaption>
   </figure>
 </p>
-
 
 
 ## 🧩 Future Roadmap
