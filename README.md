@@ -90,7 +90,7 @@ It goes beyond traditional web systems by offering:
 ### 🧠 AI Chatbot (Gemini Integration)
 - 🤖 Built-in student chatbot powered by Google Gemini 2.0 Flash API
 - 💬 Students can ask meal-related, system, or hostel questions
-- 🧩 Integrated via ai_utils.py using .env stored GOOGLE_API_KEY
+- 🧩 Integrated via ai_utils.py using .env file ensuring best security standard
 - 🔒 Secure environment handling — no hardcoded keys
 
 
