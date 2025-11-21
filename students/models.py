@@ -282,3 +282,17 @@ class PaymentSlip(models.Model):
 
     def __str__(self):
         return f"{self.student.name} - {self.month} - {self.amount} Taka - {'Verified' if self.is_verified else 'Pending'}"
+
+
+# class StudentDue(models.Model):
+#     student = models.ForeignKey("Student", on_delete=models.CASCADE)
+#     month = models.CharField(max_length=7)  # Format: YYYY-MM
+#     paid_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+#     other_hall_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+#     total_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+#     previous_due = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+#     due_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+#     created_at = models.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         return f"{self.student.name} - {self.month} (Due: {self.due_amount})"

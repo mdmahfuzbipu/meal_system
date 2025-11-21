@@ -1,6 +1,6 @@
 from .models import DailyMealStatus, WeeklyMenu, StudentMealPreference, MonthlyMealSummary, Student
 
-from datetime import date, timedelta
+from datetime import date, timedelta,datetime
 from calendar import monthrange
 from decimal import Decimal
 from django.db import transaction
@@ -120,3 +120,29 @@ def save_daily_cost(student, current_date):
     )
 
     return total_cost
+
+
+# def get_previous_month(current_month):
+#     """Helper: returns previous month in YYYY-MM format."""
+#     date_obj = datetime.strptime(current_month, "%Y-%m")
+#     first_day_current = date_obj.replace(day=1)
+#     last_month_date = first_day_current - timedelta(days=1)
+#     return last_month_date.strftime("%Y-%m")
+
+
+# def calculate_due(student, month, paid_amount, other_hall_cost):
+#     try:
+#         summary = MonthlyMealSummary.objects.get(student=student, month=month)
+#         total_cost = summary.total_cost
+#     except MonthlyMealSummary.DoesNotExist:
+#         total_cost = Decimal("0.00")
+
+#     # Get previous due (if exists)
+#     prev_month = get_previous_month(month)
+#     try:
+#         prev_due = StudentDue.objects.get(student=student, month=prev_month).due_amount
+#     except StudentDue.DoesNotExist:
+#         prev_due = Decimal("0.00")
+
+#     due_amount = (total_cost + other_hall_cost + prev_due) - paid_amount
+#     return total_cost, prev_due, due_amount

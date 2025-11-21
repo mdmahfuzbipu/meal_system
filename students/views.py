@@ -10,6 +10,7 @@ from datetime import date, timedelta, time, datetime
 from calendar import monthrange
 
 from accounts.decorators import student_required
+from managers.models import MealToken
 
 from .models import (
     DailyMealCost,
@@ -651,4 +652,37 @@ def upload_payment_slip(request):
             "slips": slips,
             "has_verified_slips": has_verified_slips, 
         },
+    )
+
+
+@login_required
+@student_required
+def meal_token_view(request):
+    """
+    Display today's meal tokens (breakfast, lunch, dinner) for the student
+    with QR codes.
+    """
+    student = request.user.student
+    today = timezone.localdate()
+
+    tokens = MealToken.objects.filter(student=student, date=today)
+
+    token_data = []
+    now = timezone.localtime()
+
+    for token in tokens:
+        is_expired = token.expiry_time and token.expiry_time < now
+        token_data.append(
+            {
+                "meal": token.meal_type,
+                "qr": token.generate_qr(),
+                "barcode": token.barcode,
+                "expired": is_expired,
+            }
+        )
+
+    return render(
+        request,
+        "students/meal_token.html",
+        {"token_data": token_data, "page_title": "My Meal Tokens"},
     )

@@ -2,6 +2,10 @@ from django.db import models
 from datetime import date, timedelta
 from meal_system import settings
 from django.utils import timezone
+import uuid
+import qrcode
+import base64
+from io import BytesIO
 
 from students.models import Student
 
@@ -153,14 +157,15 @@ class MealToken(models.Model):
     ]
 
     TOKEN_TYPE_CHOICES = [
-        ("main", "Main Token"),  
-        ("alternate", "Alternate Token"),  
+        ("main", "Main Token"),
+        ("alternate", "Alternate Token"),
     ]
 
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     date = models.DateField()
     meal_type = models.CharField(max_length=10, choices=MEAL_CHOICES)
     token_type = models.CharField(max_length=10, choices=TOKEN_TYPE_CHOICES)
+
     issued_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -168,8 +173,14 @@ class MealToken(models.Model):
         blank=True,
         related_name="tokens_issued",
     )
-    collected = models.BooleanField(default=False)
+
+    collected = models.BooleanField(default=False)  
+    used = models.BooleanField(default=False)  
+
     issued_at = models.DateTimeField(auto_now_add=True)
+
+    barcode = models.CharField(max_length=50, unique=True, blank=True)
+    expiry_time = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         constraints = [
@@ -179,6 +190,70 @@ class MealToken(models.Model):
             )
         ]
         ordering = ["-issued_at"]
+
+
+    def generate_qr(self):
+        """
+        Return QR Code as base64 encoded PNG.
+        The encoded payload is a compact, human-readable text with fields:
+        STUDENT|MEAL_SLOT|TOKEN_TYPE|DATE|BARCODE
+        Example: "Mahfuz Hossain|lunch|main|2025-11-21|A1B2C3D4"
+        """
+
+        # Prepare payload fields
+        student_name = getattr(self.student, "name", str(self.student))
+        meal_slot = self.meal_type  # "breakfast" / "lunch" / "dinner"
+        token_type = self.token_type  # "main" / "alternate"
+        # Use ISO date for easier parsing
+        date_str = self.date.isoformat() if self.date else timezone.localdate().isoformat()
+        barcode = self.barcode or ""
+
+        # Compose a compact payload (pipe-separated). Simple and parseable.
+        payload = f"{student_name}|{meal_slot}|{token_type}|{date_str}|{barcode}"
+
+        # Create QR
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_M,
+            box_size=10,
+            border=4,
+        )
+        qr.add_data(payload)
+        qr.make(fit=True)
+
+        img = qr.make_image(fill_color="black", back_color="white")
+        buffer = BytesIO()
+        img.save(buffer, format="PNG")
+        img_bytes = buffer.getvalue()
+
+        # Convert to base64 string for embedding in <img src="data:...">
+        base64_str = base64.b64encode(img_bytes).decode("utf-8")
+        return base64_str
+
+    def save(self, *args, **kwargs):
+        from django.utils import timezone
+        import uuid
+
+        # Generate barcode only once
+        if not self.barcode:
+            self.barcode = str(uuid.uuid4())[:12]
+
+        # Auto-set expiry based on meal type
+        if not self.expiry_time:
+            now = timezone.localtime(
+                self.issued_at if self.issued_at else timezone.now()
+            )
+            if self.meal_type == "breakfast":
+                self.expiry_time = now.replace(hour=10, minute=0, second=0)
+            elif self.meal_type == "lunch":
+                self.expiry_time = now.replace(hour=15, minute=15, second=0)
+            elif self.meal_type == "dinner":
+                self.expiry_time = now.replace(hour=21, minute=0, second=0)
+
+        super().save(*args, **kwargs)
+    
+    def is_scanned(self):
+        return self.collected is not None
 
     def __str__(self):
         return f"{self.student.name} - {self.meal_type} ({self.token_type})"

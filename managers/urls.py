@@ -52,4 +52,6 @@ urlpatterns = [
         views.export_daily_token_summary,
         name="export_daily_token_summary",
     ),
+    path("scan-token/", views.scan_token_page, name="scan_token_page"),
+    path("verify-token/", views.verify_token, name="verify_token"),
 ]

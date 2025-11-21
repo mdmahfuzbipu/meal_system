@@ -35,6 +35,21 @@
       </div>
     </a>
 
+    <!-- Daily Meaal Token -->
+    <a href="{% url 'students:meal_token' %}" 
+    class="block rounded-2xl shadow-md p-6 bg-gradient-to-r from-yellow-500 to-yellow-700 text-white flex justify-between items-center 
+            transform transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:from-yellow-600 hover:to-yellow-800">
+      <div>
+          <h4 class="text-lg font-semibold mb-2">Daily Meal Tokens</h4>
+          <p class="text-sm text-white/90">View your meal token QR for today</p>
+      </div>
+      <div class="text-4xl text-white">
+          <i class="fas fa-qrcode"></i>
+      </div>
+    </a>
+
+
+
     <!-- Monthly Meal Preference -->
     <a href="{% url 'students:my_meal_preference' %}" 
        class="block rounded-2xl shadow-md p-6 bg-gradient-to-r from-blue-600 to-blue-800 text-white flex justify-between items-center 

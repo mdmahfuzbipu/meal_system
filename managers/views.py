@@ -1,11 +1,12 @@
-import csv
-from django.http import HttpResponse
+import csv, json
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.utils import timezone
 from openpyxl import Workbook
+from django.views.decorators.csrf import csrf_exempt
 
 from students.utils import generate_monthly_summary_for_all
 from students.models import Complaint, DailyMealStatus, MonthlyMealSummary, Student, StudentMealPreference
@@ -16,7 +17,7 @@ from accounts.decorators import manager_required, admin_required
 from datetime import date, datetime, timedelta
 
 
-from .models import SpecialMealRequest
+from .models import SpecialMealRequest, MealToken
 from .forms import SpecialMealRequestForm
 
 def is_manager(user):
@@ -120,61 +121,92 @@ def propose_weekly_menu(request):
 
 
 from django.shortcuts import render
-from django.db.models import Sum
-from students.models import MonthlyMealSummary, StudentMealPreference
-from accounts.decorators import manager_required  # if using custom decorator
+from django.db.models import Q
+from datetime import date
+from students.models import MonthlyMealSummary, StudentMealPreference, Student
+from students.utils import generate_monthly_summary_for_all
+from django.contrib.auth.decorators import user_passes_test
 
 
 @user_passes_test(is_admin_or_manager)
 def monthly_summary_view(request):
-    months = (
+    # ----------------------------
+    # Step 1: Prepare month list
+    # ----------------------------
+    months = list(
         MonthlyMealSummary.objects.values_list("month", flat=True)
         .distinct()
         .order_by("-month")
     )
-    selected_month = request.GET.get("month")
+
+    current_month = date.today().strftime("%Y-%m")
+    if current_month not in months:
+        months.insert(0, current_month)  # Always include current month
+
+    # ----------------------------
+    # Step 2: Determine selected month & filters
+    # ----------------------------
+    selected_month = request.GET.get("month", current_month)
     filter_type = request.GET.get("type")  # 'beef_fish' or 'mutton_egg'
+    sort_by = request.GET.get("sort")  # 'room', 'days', 'cost'
 
-    summaries = []
-    total_cost = 0
+    # ----------------------------
+    # Step 3: Ensure monthly summary exists
+    # ----------------------------
+    if not MonthlyMealSummary.objects.filter(month=selected_month).exists():
+        year, month = map(int, selected_month.split("-"))
+        generate_monthly_summary_for_all(year, month)
 
-    # preference stats
-    beef_count = no_beef_count = fish_count = no_fish_count = 0
+    # ----------------------------
+    # Step 4: Fetch summaries and preferences
+    # ----------------------------
+    summaries = list(
+        MonthlyMealSummary.objects.filter(month=selected_month).select_related(
+            "student"
+        )
+    )
 
-    if selected_month:
-        # Load summaries for the selected month
-        summaries = MonthlyMealSummary.objects.filter(
-            month=selected_month
-        ).select_related("student")
+    # Attach meal preferences
+    prefs = {
+        p.student_id: p
+        for p in StudentMealPreference.objects.filter(month=selected_month)
+    }
 
-        # Attach meal preferences for each student
-        prefs = {
-            p.student_id: p
-            for p in StudentMealPreference.objects.filter(month=selected_month)
-        }
+    for s in summaries:
+        pref = prefs.get(s.student.id)
+        s.prefers_beef = pref.prefers_beef if pref else True
+        s.prefers_fish = pref.prefers_fish if pref else True
 
-        for s in summaries:
-            pref = prefs.get(s.student.id)
-            s.prefers_beef = pref.prefers_beef if pref else True
-            s.prefers_fish = pref.prefers_fish if pref else True
+    # ----------------------------
+    # Step 5: Apply filters
+    # ----------------------------
+    if filter_type == "beef_fish":
+        summaries = [s for s in summaries if s.prefers_beef and s.prefers_fish]
+    elif filter_type == "mutton_egg":
+        summaries = [s for s in summaries if not s.prefers_beef or not s.prefers_fish]
 
-        # Compute statistics
-        beef_count = sum(1 for s in summaries if s.prefers_beef)
-        no_beef_count = sum(1 for s in summaries if not s.prefers_beef)
-        fish_count = sum(1 for s in summaries if s.prefers_fish)
-        no_fish_count = sum(1 for s in summaries if not s.prefers_fish)
+    # ----------------------------
+    # Step 6: Compute statistics
+    # ----------------------------
+    beef_count = sum(1 for s in summaries if s.prefers_beef)
+    no_beef_count = sum(1 for s in summaries if not s.prefers_beef)
+    fish_count = sum(1 for s in summaries if s.prefers_fish)
+    no_fish_count = sum(1 for s in summaries if not s.prefers_fish)
+    total_cost = sum(float(s.total_cost) for s in summaries)
 
-        # Optional filtering for table view
-        if filter_type == "beef_fish":
-            summaries = [s for s in summaries if s.prefers_beef and s.prefers_fish]
-        elif filter_type == "mutton_egg":
-            summaries = [
-                s for s in summaries if not s.prefers_beef or not s.prefers_fish
-            ]
+    # ----------------------------
+    # Step 7: Apply sorting
+    # ----------------------------
+    if sort_by == "room":
+        summaries.sort(key=lambda s: s.student.room_number or "")
+    elif sort_by == "days":
+        summaries.sort(key=lambda s: s.total_on_days, reverse=True)
+    elif sort_by == "cost":
+        summaries.sort(key=lambda s: float(s.total_cost), reverse=True)
 
-        # Calculate total cost
-        total_cost = sum(float(s.total_cost) for s in summaries)
-
+    # ----------------------------
+    # Step 8: Render template
+    # ----------------------------
     return render(
         request,
         "managers/monthly_summary.html",
@@ -188,7 +220,8 @@ def monthly_summary_view(request):
             "no_beef_count": no_beef_count,
             "fish_count": fish_count,
             "no_fish_count": no_fish_count,
-            "page_title": "Total Monthly Meal Summary"
+            "sort_by": sort_by,
+            "page_title": "Total Monthly Meal Summary",
         },
     )
 
@@ -565,3 +598,63 @@ def export_daily_token_summary(request):
     )
     wb.save(response)
     return response
+
+
+def get_today_stats():
+    today = timezone.localdate()
+    qs = MealToken.objects.filter(date=today)
+
+    scanned = qs.filter(used=True).count()
+    pending = qs.filter(used=False).count()
+
+    return scanned, pending
+
+
+def scan_token_page(request):
+    scanned, pending = get_today_stats()
+    return render(
+        request,
+        "managers/scan_token_page.html",
+        {
+            "scanned": scanned,
+            "pending": pending,
+        },
+    )
+
+
+@csrf_exempt
+def verify_token(request):
+    if request.method != "POST":
+        return JsonResponse({"status": "error", "message": "Invalid request method"})
+
+    data = json.loads(request.body)
+    payload = data.get("payload", "")
+
+    try:
+        student_name, meal_slot, token_type, date_str, barcode = payload.split("|")
+    except:
+        return JsonResponse({"status": "error", "message": "QR format invalid!"})
+
+    # Find the token
+    token = MealToken.objects.filter(
+        barcode=barcode, date=date_str, meal_type=meal_slot
+    ).first()
+
+    if not token:
+        return JsonResponse({"status": "error", "message": "Token not found!"})
+
+    # Check expiration
+    if timezone.now() > token.expiry_time:
+        return JsonResponse({"status": "error", "message": "Token expired!"})
+
+    # Check if already used
+    if token.used:
+        return JsonResponse({"status": "error", "message": "Token already used!"})
+
+    # Mark as used
+    token.used = True
+    token.collected = True
+    token.issued_by = request.user
+    token.save()
+
+    return JsonResponse({"status": "success", "message": "Token verified & accepted!"})

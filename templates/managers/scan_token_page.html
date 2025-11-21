@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_title %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="bg-blue-800 p-4 rounded-xl shadow-sm inline-flex items-center space-x-3 w-fit">
+    <div>
+      <h2 class="text-2xl font-bold text-white"><i class="fas fa-qrcode text-3xl"></i> Scan Meal Token</h2>
+      <p class="text-lg text-white">Scan QR to validate student token</p>
+    </div>
+  </div>
+</div>
+{% endblock page_title %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+  <a href="{% url 'accounts:manager_dashboard' %}"
+     class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-2 rounded-full text-md font-semibold shadow hover:from-blue-700 hover:to-blue-900 transition mb-8">
+    <i class="fas fa-arrow-left"></i> Back to Dashboard
+  </a>
+
+  <!-- Daily Stats -->
+    <div class="grid grid-cols-2 gap-4 mb-8">
+
+    <div class="bg-green-100 border-l-4 border-green-500 p-4 rounded-xl shadow">
+        <h3 class="text-xl font-bold text-green-800">Today Scanned</h3>
+        <p id="today-scanned" class="text-3xl font-extrabold text-green-700 mt-1">
+        {{ scanned }}
+        </p>
+    </div>
+
+    <div class="bg-yellow-100 border-l-4 border-yellow-500 p-4 rounded-xl shadow">
+        <h3 class="text-xl font-bold text-yellow-800">Pending</h3>
+        <p id="today-pending" class="text-3xl font-extrabold text-yellow-700 mt-1">
+        {{ pending }}
+        </p>
+    </div>
+
+    </div>
+
+
+  <!-- Scanner Box -->
+  <div id="reader" class="w-full rounded-xl shadow-lg mb-6"></div>
+
+  <!-- Result Box -->
+  <div id="result-box"
+       class="hidden bg-white border border-gray-300 rounded-xl shadow p-4 text-center">
+    <h3 class="text-xl font-bold text-gray-700 mb-2">Scan Result</h3>
+    <p id="scan-result" class="text-md"></p>
+  </div>
+
+</div>
+
+<!-- QR Scanner Script -->
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+<script>
+
+    const successSound = new Audio("{% static 'sounds/success.mp3' %}");
+    const errorSound = new Audio("{% static 'sounds/error.mp3' %}");
+
+    function onScanSuccess(decodedText, decodedResult) {
+        document.getElementById("scan-result").innerText = "Validating...";
+        document.getElementById("result-box").classList.remove("hidden");
+
+        fetch("{% url 'managers:verify_token' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}",
+            },
+            body: JSON.stringify({ payload: decodedText })
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("scan-result").innerText = data.message;
+            let box = document.getElementById("result-box");
+
+            // Remove old colors
+            box.classList.remove("bg-green-100", "border-green-400", "bg-red-100", "border-red-400");
+
+            if (data.status === "success") {
+                box.classList.add("bg-green-100", "border-green-400");
+                successSound.play(); // play success sound
+                // Live counters update
+                let scannedEl = document.getElementById("today-scanned");
+                scannedEl.innerText = parseInt(scannedEl.innerText) + 1;
+                let pendingEl = document.getElementById("today-pending");
+                pendingEl.innerText = Math.max(0, parseInt(pendingEl.innerText) - 1);
+            } else {
+                box.classList.add("bg-red-100", "border-red-400");
+                errorSound.play(); // play error sound
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            document.getElementById("scan-result").innerText = "Something went wrong!";
+            errorSound.play();
+        });
+    }
+
+
+let html5QrCode = new Html5Qrcode("reader");
+html5QrCode.start(
+    { facingMode: "environment" },
+    {
+        fps: 10,
+        qrbox: { width: 300, height: 300 }
+    },
+    onScanSuccess
+);
+</script>
+
+{% endblock %}
